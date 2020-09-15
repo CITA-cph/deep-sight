@@ -15,3 +15,16 @@ How can we effectively transfer existing 3d volumetric data processing methods f
 1) analysis of a broad range of bio-materials
 2) the translation of acquired datasets into data structures commonly associated with digital design workflows   
 3) to serve the purpose of visualisation and the manipulation of data 
+
+# Dependencies
+Core library:
+- [Cmake](https://cmake.org/)
+- [Eigen](http://eigen.tuxfamily.org/) ([latest stable version](https://github.com/libigl/eigen))
+- [Boost](https://www.boost.org/)
+
+Python examples:
+- matplotlib
+- pyvista
+- numpy
+
+Python dependencies can be installed using `pip`: i.e. `> pip install matplotlib`.
