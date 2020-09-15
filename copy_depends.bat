@@ -12,3 +12,4 @@ if not exist bin\IlmImfUtil-2_4.dll copy dep\openvdb\bin\IlmImfUtil-2_4.dll bin\
 if not exist bin\IlmThread-2_4.dll copy dep\openvdb\bin\IlmThread-2_4.dll bin\IlmThread-2_4.dll
 if not exist bin\Imath-2_4.dll copy dep\openvdb\bin\Imath-2_4.dll bin\Imath-2_4.dll
 if not exist bin\tiff.dll copy dep\tiff-4.1.0\lib\tiff.dll bin\tiff.dll
+if not exist bin\__init__.py copy dep\python\__init__.py bin\__init__.py

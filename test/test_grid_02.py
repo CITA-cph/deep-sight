@@ -15,7 +15,7 @@ limitations under the License.
 '''
 
 try:
-    import _deepsight as deepsight
+    import deepsight
 except ImportError:
     import importlib.util, sys
     from os.path import abspath
