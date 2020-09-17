@@ -19,6 +19,7 @@ How can we effectively transfer existing 3d volumetric data processing methods f
 # Dependencies
 Core library:
 - [Cmake](https://cmake.org/)
+- [OpenVDB](https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb)
 - [Eigen](http://eigen.tuxfamily.org/) ([latest stable version](https://github.com/libigl/eigen))
 - [Boost](https://www.boost.org/)
 
