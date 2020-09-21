@@ -27,6 +27,7 @@ import numpy, os
 def main():
 
     # Switch to use either VDB or TIFF
+    #files = [r"data\p15_.vdb", r"data\p15_.vdb", r"data\00_GlaAI.tif"]
     vdb_path = r"data\p15_.vdb" 
     tiff_path = r"data\p15_.tiff"
     #tiff_path = r"data\00_GlaAI.tif"
