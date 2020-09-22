@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '''
 
+import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 try:
     import deepsight
 except ImportError:
@@ -22,7 +25,7 @@ except ImportError:
     spec = importlib.util.spec_from_file_location("_deepsight", abspath("../bin/_deepsight.cp{}{}-win_amd64.pyd".format(sys.version_info.major, sys.version_info.minor)))
     deepsight = importlib.util.module_from_spec(spec)
 
-import numpy, os
+import numpy
 
 def main():
 
