@@ -1,5 +1,6 @@
 import numpy as np
-from vedo import *
+# from vedo import *
+import vedo
 from vedo.pyplot import histogram
 import os
 import glob
@@ -67,12 +68,11 @@ def find_contour(img, val, col):
                     cnt_pt.append((x_a*-1)+img_stack.shape[0])
                     cnt_pt.append(y_a)
 
-
-                    cnt_pt_obj = shapes.Point(pos=cnt_pt, r=8, c=col, alpha=1)
+                    cnt_pt_obj = vedo.Point(pos=cnt_pt, r=8, c=col, alpha=1)
                     all_knot_curves_center.append(cnt_pt)
                     all_knot_curves_center_obj.append(cnt_pt_obj)
 
-                knot_curves = shapes.KSpline(lst, continuity=-1, tension=0, bias=0, closed=True, res=None)
+                knot_curves = vedo.shapes.KSpline(lst, continuity=-1, tension=0, bias=0, closed=True, res=None)
                 all_knot_curves.append(knot_curves)
     
     return all_knot_curves, all_knot_curves_center_obj
@@ -80,9 +80,10 @@ def find_contour(img, val, col):
 
 
 #set path
-all_images = "C:/Users/sgat/OneDrive - KADK/03_CITA/44_voxel/01_data/05_final_tree_data/20200505_S05/"
+all_images = "C:/Users/martin.tamke\OneDrive - KADK/GitHub/deep-sight/test/data/20200505_S05"
 #all_images = "C:/Users/sgat\OneDrive - KADK/Sebastian_after_Sync/06_bones_to_flesh/browsing male/(VKH) Anatomical Images (1,000 X 570)/"
 os.chdir(all_images)
+# os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 
@@ -97,7 +98,7 @@ print (len(files))
 
 #create image stack
 img_stack = 0
-for i in range(60): #(len(files)):
+for i in range(len(files)): #(60):
     print ("img loaded: ", i)
     img = cv2.imread(files[i],0)
     all_loaded_images.append(img)
@@ -111,6 +112,7 @@ img = cv2.imread(files[0],0)
 img.fill(0)
 img_stack = np.dstack((img_stack,img))
 
+print ("all ", len(files), "images loaded") #Debugging
 
 
 #find contours
@@ -134,8 +136,8 @@ for i in range(1,len(all_loaded_images)):
 
 
 #create volumes
-vol1 = Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=1, alpha= [0.0, 0.0, 0.5, 0.7, 1], c= "jet")
-vol2 = Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=3, alpha= [0.0, 0.0, 0.5, 0.7, 1])
+vol1 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=1, alpha= [0.0, 0.0, 0.5, 0.7, 1], c= "jet")
+vol2 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=3, alpha= [0.0, 0.0, 0.5, 0.7, 1])
 #vol1.crop(0.1, 0.1, 0.1, 0.1, 0.1, 0.1) #crop volume
 
 
@@ -151,7 +153,7 @@ def slider0(widget, event):
 
 isos = []
 for i in range (0,250,25):
-    iso = Volume(img_stack).isosurface(threshold=i, largest=True)
+    iso = vedo.Volume(img_stack).isosurface(threshold=i, largest=True)
     iso.alpha(0)
     iso.scale([z_scale,1,1])
     isos.append(iso)
@@ -173,7 +175,7 @@ pts = isos[5].clone().points()
 
 
 #render
-vp = Plotter(N=6, axes=True, bg="black", size="fullscreen")
+vp = vedo.Plotter(N=6, axes=True, bg="black", size="fullscreen")
 
 vp.show(vol1, "Voxel Render", axes=1, at=0, viewup="z")
 vp.show(vol2, "Volume Ghost", axes=0, at=1)
