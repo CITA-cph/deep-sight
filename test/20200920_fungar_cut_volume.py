@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  
 
-20200908_RawLam_examples_slider.py
+20200920_fungar_cut_volume.py
 
 This script shows how to load a volume from images and how to cut it with a cutter. It also shows how to implement a button.
 
