@@ -1,9 +1,35 @@
+'''
+Copyright 2020 CITA
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ 
+
+20200908_RawLam_examples_slider.py
+
+This script shows how to use differnt data types (volumes, meshes, curves, points), run opencv image analysis on volume slides and how to implement a slider.
+
+Author: Sebastian Gatz
+
+'''
+
 import numpy as np
-from vedo import *
+# from vedo import *
+import vedo
 from vedo.pyplot import histogram
 import os
 import glob
 import cv2
+
 
 all_loaded_images = []
 
@@ -66,12 +92,11 @@ def find_contour(img, val, col):
                     cnt_pt.append((x_a*-1)+img_stack.shape[0])
                     cnt_pt.append(y_a)
 
-
-                    cnt_pt_obj = shapes.Point(pos=cnt_pt, r=8, c=col, alpha=1)
+                    cnt_pt_obj = vedo.Point(pos=cnt_pt, r=8, c=col, alpha=1)
                     all_knot_curves_center.append(cnt_pt)
                     all_knot_curves_center_obj.append(cnt_pt_obj)
 
-                knot_curves = shapes.KSpline(lst, continuity=-1, tension=0, bias=0, closed=True, res=None)
+                knot_curves = vedo.shapes.KSpline(lst, continuity=-1, tension=0, bias=0, closed=True, res=None)
                 all_knot_curves.append(knot_curves)
     
     return all_knot_curves, all_knot_curves_center_obj
@@ -79,9 +104,11 @@ def find_contour(img, val, col):
 
 
 #set path
-all_images = "C:/Users/sgat/OneDrive - KADK/03_CITA/44_voxel/01_data/05_final_tree_data/20200505_S05/"
+all_images = "C:/Users/martin.tamke\OneDrive - KADK/GitHub/deep-sight/test/data/20200505_S05"
 #all_images = "C:/Users/sgat\OneDrive - KADK/Sebastian_after_Sync/06_bones_to_flesh/browsing male/(VKH) Anatomical Images (1,000 X 570)/"
 os.chdir(all_images)
+# os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
 
 #load all images
@@ -92,9 +119,10 @@ for f in types:
 print (len(files))
 
 
+
 #create image stack
 img_stack = 0
-for i in range(60): #(len(files)):
+for i in range(len(files)): #(60):
     print ("img loaded: ", i)
     img = cv2.imread(files[i],0)
     all_loaded_images.append(img)
@@ -108,6 +136,8 @@ img = cv2.imread(files[0],0)
 img.fill(0)
 img_stack = np.dstack((img_stack,img))
 
+print ("all ", len(files), "images loaded") #Debugging
+
 
 #find contours
 all_contours = []
@@ -120,6 +150,7 @@ for i in range(0, len(all_loaded_images), 5):
 print ("contours and centers found")
 
 
+
 #find pit
 pith_points = []
 for i in range(1,len(all_loaded_images)):
@@ -127,46 +158,66 @@ for i in range(1,len(all_loaded_images)):
     pith_points.append(centers[0])
 
 
+
 #create volumes
-vol1 = Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=1, alpha= [0.0, 0.0, 0.5, 0.7, 1], c= "jet")
-vol2 = Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=3, alpha= [0.0, 0.0, 0.5, 0.7, 1])
+vol1 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=1, alpha= [0.0, 0.0, 0.5, 0.7, 1], c= "jet")
+vol2 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=3, alpha= [0.0, 0.0, 0.5, 0.7, 1])
+#vol1.crop(0.1, 0.1, 0.1, 0.1, 0.1, 0.1) #crop volume
 
 
-#create isosurface
-ts = [120]
-isos = Volume(img_stack).isosurface(threshold=ts, largest=True)
-isos = isos.scale([z_scale,1,1])
+
+#create isosurfaces and slider
+def slider0(widget, event):
+    value = int(widget.GetRepresentation().GetValue()+0.5)
+
+    for i in range(10):
+        isos[i].alpha(0)
+        if i == value:
+            isos[i].alpha(1)
+
+isos = []
+for i in range (0,250,25):
+    iso = vedo.Volume(img_stack).isosurface(threshold=i, largest=True)
+    iso.alpha(0)
+    iso.scale([z_scale,1,1])
+    isos.append(iso)
+
+isos[5].alpha(1)
+
+print("created isosurfaces")
+
+
+#test sliders
+def slider1(widget, event):
+    value = int(widget.GetRepresentation().GetValue()+0.5)
+
 
 
 #points from isosurface
-pts = isos.clone().points()
+pts = isos[5].clone().points()
 
-
-#test matplotlib
-n = 10000
-x = np.random.normal(2, 1, n)*2 + 3
-y = np.random.normal(1, 1, n)*1 + 7
-xm, ym = np.mean(x), np.mean(y)
-
-h = histogram(x, y,
-              bins=50, 
-              aspect=4/3,
-#              cmap='Blues',
-              cmap='PuBu',
-              title='Knot Distribution',
-              )
-
-h += Marker('*', s=0.3, c='r').pos(xm, ym, 0.1)
 
 
 #render
-vp = Plotter(N=6, bg= "black", sharecam=True, size=(1500,1000))
+vp = vedo.Plotter(N=6, axes=True, bg="black", size="fullscreen")
+
 vp.show(vol1, "Voxel Render", axes=1, at=0, viewup="z")
 vp.show(vol2, "Volume Ghost", axes=0, at=1)
-vp.show(isos, "Isosurface", at=2)
+
+vp.show(isos, "Isosurface", __doc__, at=2)
+vp.addSlider2D(slider0,
+               1, 9,            # slider range
+               value=5,         # initial value
+               pos=([0.1,0.05],  # first point of slider in the renderer
+                    [0.25,0.05]), # 0.4 = 40% of the window size width
+               title="Isosurface Threshold")
+
+
 vp.show(pts, "Points", at=3)
 vp.show(all_contours, "Contours", at=4)
-vp.show(all_centers, pith_points, "Contour Centers + Pith Points", at=5) #interactive needs to be in the last vp.show
+vp.show(all_centers, pith_points, "Contour Centers + Pith Points", at=5)
 
-vp2= Plotter(N=1, bg= "white", sharecam=False, size=(500,500), pos = (1520,0), interactive=True)
-vp2.show(h)
+vp.show(interactive=True)
+
+
+
