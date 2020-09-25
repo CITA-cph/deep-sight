@@ -52,6 +52,8 @@ include_directories(
 	"${DEEPSIGHT_DEPS_DIR}openvdb/include"
 	"${DEEPSIGHT_DEPS_DIR}tbb/include"
 	"${DEEPSIGHT_DEPS_DIR}tiff-4.1.0/include"
+	"${DEEPSIGHT_DEPS_DIR}glfw-3.3.2.bin.WIN64/include"
+	"${DEEPSIGHT_DEPS_DIR}glad/include"	
 	"${PROJECT_SOURCE_DIR}/../deepsight"
 	)
 
@@ -60,6 +62,7 @@ link_directories(
 	${DEEPSIGHT_DEPS_DIR}openvdb/lib
 	${DEEPSIGHT_DEPS_DIR}tbb/lib/intel64/vc14
 	${DEEPSIGHT_DEPS_DIR}tiff-4.1.0/lib
+	${DEEPSIGHT_DEPS_DIR}glfw-3.3.2.bin.WIN64/lib-vc2019
 	)
 
 set(DEEPSIGHT_LIBS 
@@ -74,6 +77,8 @@ set(DEEPSIGHT_LIBS
 	${DEEPSIGHT_DEPS_DIR}openexr-2.4.0/lib/IlmImfUtil-2_4.lib
 	${DEEPSIGHT_DEPS_DIR}openexr-2.4.0/lib/IlmThread-2_4.lib
 	${DEEPSIGHT_DEPS_DIR}openexr-2.4.0/lib/Imath-2_4.lib
+	${DEEPSIGHT_DEPS_DIR}glfw-3.3.2.bin.WIN64/lib-vc2019/glfw3dll.lib
+	${DEEPSIGHT_DEPS_DIR}glfw-3.3.2.bin.WIN64/lib-vc2019/glfw3.lib
 	)
 
 #add_definitions(-DDEBUG)
@@ -82,9 +87,11 @@ add_subdirectory(${DEEPSIGHT_DEPS_DIR}/pybind11 ${DEEPSIGHT_DIR}/build/pybind11)
 pybind11_add_module(_deepsight
 	../deepsight/config.h
 	../deepsight/core/Grid.cpp
+	../deepsight/core/Window.cpp
 
 	py_DeepSight.cpp
 	py_Grid.cpp
+	py_Window.cpp
 )
 
 target_link_libraries(_deepsight PRIVATE ${DEEPSIGHT_LIBS})
