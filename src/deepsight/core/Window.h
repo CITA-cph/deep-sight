@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-namespace RawLam
+namespace DeepSight
 {
 	int TestOpenGLWindow();
 }

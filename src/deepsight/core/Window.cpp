@@ -1,6 +1,6 @@
 #include "Window.h"
 
-namespace RawLam
+namespace DeepSight
 {
 	static const struct
 	{
