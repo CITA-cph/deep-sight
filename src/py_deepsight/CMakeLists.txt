@@ -4,12 +4,39 @@ cmake_policy(SET CMP0081 NEW)
 cmake_policy(SET CMP0015 NEW)
 cmake_policy(SET CMP0019 NEW)
 
+
+#======== VCPKG setup ========#
+message(" [INFO] VCPKG ENV = $ENV{VCPKG_ROOT}")
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    CACHE STRING "")
+endif()
+message(" [INFO] VCPKG CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
+
+set(VCPKG_TARGET_TRIPLET "x64-windows")
+
+#======== Python paths ========#
+if(DEFINED ENV{PYTHON_PATH})
+	set(PYTHON_EXECUTABLE "$ENV{PYTHON_PATH}/python.exe")
+else()
+	message(" [INFO] PYTHON_PATH not found. Setting manually...")
+	set(PYTHON_EXECUTABLE "$ENV{LOCALAPPDATA}/Programs/Python/Python38/python.exe")
+endif()
+message(" [INFO] PYTHON_EXECUTABLE = ${PYTHON_EXECUTABLE}")
+
+#======== project configuration ========#
 project(_deepsight)
+set(CMAKE_CXX_STANDARD 17)     
 
 set (PyDeepSight_VERSION_MAJOR 0)
 set (PyDeepSight_VERSION_MINOR 1)
 
 message(STATUS ${PROJECT_SOURCE_DIR}/../../bin)
+
+set(CMAKE_GENERATOR_PLATFORM "x64")
+set(CMAKE_BUILD_TYPE "Release")
+
+#======== dependencies ========#
 
 set(DEEPSIGHT_DIR ${PROJECT_SOURCE_DIR}/../..)
 set(DEEPSIGHT_DEPS_DIR ${DEEPSIGHT_DIR}/dep/)
@@ -60,7 +87,7 @@ pybind11_add_module(_deepsight
 	py_Grid.cpp
 )
 
-target_link_libraries(_deepsight ${DEEPSIGHT_LIBS})
+target_link_libraries(_deepsight PRIVATE ${DEEPSIGHT_LIBS})
 
 set_target_properties( _deepsight PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_SOURCE_DIR}/../../bin 
