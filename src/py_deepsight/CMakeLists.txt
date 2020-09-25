@@ -85,6 +85,7 @@ set(DEEPSIGHT_LIBS
 
 add_subdirectory(${DEEPSIGHT_DEPS_DIR}/pybind11 ${DEEPSIGHT_DIR}/build/pybind11)
 pybind11_add_module(_deepsight
+	${DEEPSIGHT_DEPS_DIR}glad/src/glad.c
 	../deepsight/config.h
 	../deepsight/core/Grid.cpp
 	../deepsight/core/Window.cpp
