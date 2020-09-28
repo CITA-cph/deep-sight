@@ -19,6 +19,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 try:
     import _deepsight as deepsight
 except ImportError:
+    print("Importing local build.")
     import importlib.util, sys
     from os.path import abspath
     spec = importlib.util.spec_from_file_location("_deepsight", abspath("../bin/_deepsight.cp{}{}-win_amd64.pyd".format(sys.version_info.major, sys.version_info.minor)))

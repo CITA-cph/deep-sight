@@ -101,123 +101,123 @@ def find_contour(img, val, col):
     
     return all_knot_curves, all_knot_curves_center_obj
 
+def main():
 
-
-#set path
-all_images = "C:/Users/martin.tamke\OneDrive - KADK/GitHub/deep-sight/test/data/20200505_S05"
-#all_images = "C:/Users/sgat\OneDrive - KADK/Sebastian_after_Sync/06_bones_to_flesh/browsing male/(VKH) Anatomical Images (1,000 X 570)/"
-os.chdir(all_images)
-# os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-
-
-#load all images
-types = ('*.gif', '*.png', '*.jpg', "*bmp", "*tif")
-files = []
-for f in types:
-    files.extend(glob.glob(f))
-print (len(files))
+    #set path
+    all_images = r"C:/Users/martin.tamke\OneDrive - KADK/GitHub/deep-sight/test/data/20200505_S05"
+    #all_images = "C:/Users/sgat\OneDrive - KADK/Sebastian_after_Sync/06_bones_to_flesh/browsing male/(VKH) Anatomical Images (1,000 X 570)/"
+    os.chdir(all_images)
+    # os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 
-#create image stack
-img_stack = 0
-for i in range(len(files)): #(60):
-    print ("img loaded: ", i)
-    img = cv2.imread(files[i],0)
-    all_loaded_images.append(img)
-
-    if i == 0:
-        img.fill(0)
-        img_stack = img
-    else:
-        img_stack = np.dstack((img_stack,img))
-img = cv2.imread(files[0],0)
-img.fill(0)
-img_stack = np.dstack((img_stack,img))
-
-print ("all ", len(files), "images loaded") #Debugging
-
-
-#find contours
-all_contours = []
-all_centers = []
-for i in range(0, len(all_loaded_images), 5):
-    contours, centers = find_contour(all_loaded_images[i], 127, "red")[-2:]
-    all_contours.append(contours)
-    all_centers.append(centers)
-
-print ("contours and centers found")
+    #load all images
+    types = ('*.gif', '*.png', '*.jpg', "*bmp", "*tif")
+    files = []
+    for f in types:
+        files.extend(glob.glob(f))
+    print (len(files))
 
 
 
-#find pit
-pith_points = []
-for i in range(1,len(all_loaded_images)):
-    contours, centers = find_contour(all_loaded_images[i],60, "green")[-2:]
-    pith_points.append(centers[0])
+    #create image stack
+    img_stack = 0
+    for i in range(len(files)): #(60):
+        print ("img loaded: ", i)
+        img = cv2.imread(files[i],0)
+        all_loaded_images.append(img)
+
+        if i == 0:
+            img.fill(0)
+            img_stack = img
+        else:
+            img_stack = np.dstack((img_stack,img))
+    img = cv2.imread(files[0],0)
+    img.fill(0)
+    img_stack = np.dstack((img_stack,img))
+
+    print ("all ", len(files), "images loaded") #Debugging
+
+
+    #find contours
+    all_contours = []
+    all_centers = []
+    for i in range(0, len(all_loaded_images), 5):
+        contours, centers = find_contour(all_loaded_images[i], 127, "red")[-2:]
+        all_contours.append(contours)
+        all_centers.append(centers)
+
+    print ("contours and centers found")
 
 
 
-#create volumes
-vol1 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=1, alpha= [0.0, 0.0, 0.5, 0.7, 1], c= "jet")
-vol2 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=3, alpha= [0.0, 0.0, 0.5, 0.7, 1])
-#vol1.crop(0.1, 0.1, 0.1, 0.1, 0.1, 0.1) #crop volume
+    #find pit
+    pith_points = []
+    for i in range(1,len(all_loaded_images)):
+        contours, centers = find_contour(all_loaded_images[i],60, "green")[-2:]
+        pith_points.append(centers[0])
 
 
 
-#create isosurfaces and slider
-def slider0(widget, event):
-    value = int(widget.GetRepresentation().GetValue()+0.5)
-
-    for i in range(10):
-        isos[i].alpha(0)
-        if i == value:
-            isos[i].alpha(1)
-
-isos = []
-for i in range (0,250,25):
-    iso = vedo.Volume(img_stack).isosurface(threshold=i, largest=True)
-    iso.alpha(0)
-    iso.scale([z_scale,1,1])
-    isos.append(iso)
-
-isos[5].alpha(1)
-
-print("created isosurfaces")
-
-
-#test sliders
-def slider1(widget, event):
-    value = int(widget.GetRepresentation().GetValue()+0.5)
+    #create volumes
+    vol1 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=1, alpha= [0.0, 0.0, 0.5, 0.7, 1], c= "jet")
+    vol2 = vedo.Volume(img_stack, spacing=(z_scale,1,1), mapper="smart", mode=3, alpha= [0.0, 0.0, 0.5, 0.7, 1])
+    #vol1.crop(0.1, 0.1, 0.1, 0.1, 0.1, 0.1) #crop volume
 
 
 
-#points from isosurface
-pts = isos[5].clone().points()
+    #create isosurfaces and slider
+    def slider0(widget, event):
+        value = int(widget.GetRepresentation().GetValue()+0.5)
+
+        for i in range(10):
+            isos[i].alpha(0)
+            if i == value:
+                isos[i].alpha(1)
+
+    isos = []
+    for i in range (0,250,25):
+        iso = vedo.Volume(img_stack).isosurface(threshold=i, largest=True)
+        iso.alpha(0)
+        iso.scale([z_scale,1,1])
+        isos.append(iso)
+
+    isos[5].alpha(1)
+
+    print("created isosurfaces")
+
+
+    #test sliders
+    def slider1(widget, event):
+        value = int(widget.GetRepresentation().GetValue()+0.5)
 
 
 
-#render
-vp = vedo.Plotter(N=6, axes=True, bg="black", size="fullscreen")
-
-vp.show(vol1, "Voxel Render", axes=1, at=0, viewup="z")
-vp.show(vol2, "Volume Ghost", axes=0, at=1)
-
-vp.show(isos, "Isosurface", __doc__, at=2)
-vp.addSlider2D(slider0,
-               1, 9,            # slider range
-               value=5,         # initial value
-               pos=([0.1,0.05],  # first point of slider in the renderer
-                    [0.25,0.05]), # 0.4 = 40% of the window size width
-               title="Isosurface Threshold")
-
-
-vp.show(pts, "Points", at=3)
-vp.show(all_contours, "Contours", at=4)
-vp.show(all_centers, pith_points, "Contour Centers + Pith Points", at=5)
-
-vp.show(interactive=True)
+    #points from isosurface
+    pts = isos[5].clone().points()
 
 
 
+    #render
+    vp = vedo.Plotter(N=6, axes=True, bg="black", size="fullscreen")
+
+    vp.show(vol1, "Voxel Render", axes=1, at=0, viewup="z")
+    vp.show(vol2, "Volume Ghost", axes=0, at=1)
+
+    vp.show(isos, "Isosurface", __doc__, at=2)
+    vp.addSlider2D(slider0,
+                   1, 9,            # slider range
+                   value=5,         # initial value
+                   pos=([0.1,0.05],  # first point of slider in the renderer
+                        [0.25,0.05]), # 0.4 = 40% of the window size width
+                   title="Isosurface Threshold")
+
+
+    vp.show(pts, "Points", at=3)
+    vp.show(all_contours, "Contours", at=4)
+    vp.show(all_centers, pith_points, "Contour Centers + Pith Points", at=5)
+
+    vp.show(interactive=True)
+
+if __name__ == "__main__":
+    main()
