@@ -30,6 +30,8 @@ import glob
 import cv2
 import pyvista as pv
 
+DEEPSIGHT_DIR = os.getenv('DEEPSIGHT_DIR')
+
 def main():
     all_loaded_images = []
 

@@ -15,7 +15,10 @@ limitations under the License.
 '''
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
+DEEPSIGHT_DIR = os.getenv('DEEPSIGHT_DIR')
+if DEEPSIGHT_DIR is None:
+    DEEPSIGHT_DIR = ""
+    
 try:
     import _deepsight as deepsight
 except ImportError:

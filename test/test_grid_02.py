@@ -16,6 +16,9 @@ limitations under the License.
 
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+DEEPSIGHT_DIR = os.getenv('DEEPSIGHT_DIR')
+if DEEPSIGHT_DIR is None:
+    DEEPSIGHT_DIR = ""
 
 try:
     import deepsight
@@ -31,7 +34,7 @@ def main():
 
     # Switch to use either VDB or TIFF
     #files = [r"data\p15_.vdb", r"data\p15_.vdb", r"data\00_GlaAI.tif"]
-    vdb_path = r"data\p15_.vdb" 
+    vdb_path = r"data\p15_.vdb"
     tiff_path = r"data\p15_.tiff"
     #tiff_path = r"data\00_GlaAI.tif"
 
