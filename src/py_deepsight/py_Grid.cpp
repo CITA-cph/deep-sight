@@ -43,14 +43,15 @@ void grid(py::module &m)
 	    .def(py::init())
 	    .def("read", &DeepSight::Grid::read)
 	    .def("write", &DeepSight::Grid::write)
-	    .def("from_multipage_tiff", &DeepSight::Grid::from_multipage_tiff)
-	    .def("grid_names", &DeepSight::Grid::grid_names)
+	    .def("fromMultipageTiff", &DeepSight::Grid::from_multipage_tiff)
+	    .def("fromVdb", &DeepSight::Grid::from_vdb)
+	    //.def("grid_names", &DeepSight::Grid::grid_names)
 	    .def("getBoundingBox", &DeepSight::Grid::getBoundingBox)
 	    .def("getValue", &DeepSight::Grid::getValue)
-	    .def("getDense", [](DeepSight::Grid &grid, std::string grid_name, Eigen::Vector3i min, Eigen::Vector3i max)
+	    .def("getDense", [](DeepSight::Grid &grid, Eigen::Vector3i min, Eigen::Vector3i max)
 	    	{
 	    		std::vector<ssize_t> shape {max.x() - min.x() + 1, max.y() - min.y() + 1, max.z() - min.z() + 1};
-	    		std::vector<float> data = grid.getDense(grid_name, min, max);
+	    		std::vector<float> data = grid.getDense(min, max);
 
     		    return py::array_t<float, py::array::c_style | py::array::forcecast>(shape, // shape
                       {shape[2] * shape[1] * sizeof(float), shape[2] * sizeof(float), sizeof(float)},  // strides
