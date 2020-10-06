@@ -335,7 +335,6 @@ namespace DeepSight
 	std::vector<float>  Grid::getValues(std::vector<Eigen::Vector3i> &xyz)
 	{
 		std::vector<float> values;
-		size_t i = 0;
 		typename openvdb_grid::Accessor accessor = m_grid->getAccessor();
 
 		for (auto iter = xyz.begin(); 
@@ -360,7 +359,6 @@ namespace DeepSight
 	std::vector<float> Grid::getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz)
 	{
 		std::vector<float> values;
-		size_t i = 0;
 		typename openvdb_grid::Accessor accessor = m_grid->getAccessor();
 
 		for (auto iter = xyz.begin(); 

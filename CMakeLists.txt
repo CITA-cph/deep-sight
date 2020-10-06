@@ -13,10 +13,7 @@ message(" [INFO] VCPKG CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
 include("${CMAKE_TOOLCHAIN_FILE}")
 
 set(VCPKG_TARGET_TRIPLET "x64-windows")
-
-#======== VCPKG PATHS ========
 set(VCPKG_LIB_DIR "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib")
-
 
 #======== DEEPSIGHT FILES ========
 
@@ -52,6 +49,10 @@ set(DEEPSIGHT_LIBS
 	)
 
 set(DEEPSIGHT_OUTPUT_DIR ${DEEPSIGHT_DIR}/bin)
+
+#======== Set warning level, disable some warnings ========
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -W4 -wd4251 -wd4146 -wd4127")
 
 #======== Add targets ========
 
