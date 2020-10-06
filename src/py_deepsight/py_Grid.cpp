@@ -60,6 +60,9 @@ void grid(py::module &m)
 	    	})
 	    .def("getInterpolatedValue", &DeepSight::Grid::getInterpolatedValue)
 	    .def("getValues", &DeepSight::Grid::getValues)
+	    .def("transform", &DeepSight::Grid::transform)
+	    .def("transform_grid", &DeepSight::Grid::transform_grid)
+	    //.def("transform", (void (DeepSight::Grid::*)(Eigen::Matrix4d)) &DeepSight::Grid::transform)
 	    .def("getInterpolatedValues", &DeepSight::Grid::getInterpolatedValues);
 
 }

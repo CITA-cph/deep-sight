@@ -8,7 +8,10 @@
 #include <openvdb/tree/ValueAccessor.h>
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/tools/Dense.h>
-
+#include <openvdb/tools/GridTransformer.h>
+#include <openvdb/math/Math.h>
+#include <openvdb/math/Mat.h>
+#include <openvdb/math/Mat3.h>
 
 #include <map>
 #include <vector>
@@ -55,6 +58,9 @@ namespace DeepSight
 		std::vector<float> getValues(std::vector<Eigen::Vector3i> &xyz);
 		std::vector<float> getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz);
 		std::tuple<Eigen::Vector3i, Eigen::Vector3i> getBoundingBox();
+		void transform_grid(Eigen::Matrix4d xform);
+		Eigen::Matrix4d transform();
+
 
 		std::string name;
 

@@ -142,6 +142,7 @@ namespace DeepSight
 	        Ptr ds_grid = std::make_shared<Grid>();
 	        ds_grid->m_grid = openvdb::gridPtrCast<openvdb_grid>(baseGrid);
 	        ds_grid->name = nameIter.gridName();
+
 	        grids.push_back(ds_grid);
 	    }
 
@@ -180,117 +181,6 @@ namespace DeepSight
 	    file.write(grids_out);
 	    file.close();
 	}
-
-
-	// void Grid::from_multipage_tiff(std::string path, std::string id, double threshold)
-	// {
-	// 	bool verbose = false;
-
-	// 	if (verbose)
-	// 	{
-	// 		std::cout << "Opening multi-page TIFF '" << path << "'" << std::endl;
-	// 		std::cout << "Threshold: " << threshold << std::endl;
-	// 	}
-
-	//     using ValueT = typename openvdb::FloatGrid::ValueType;
-
- //        openvdb::FloatGrid::Ptr grid = openvdb::FloatGrid::create(/*background value=*/0.0);
-
-	//     openvdb::FloatGrid::Accessor accessor = (*grid).getAccessor();
-
-	//     openvdb::Coord ijk;
-	//     int& i = ijk[0], & j = ijk[1], & k = ijk[2];
-
-	//     TIFF* tif = TIFFOpen(path.c_str(), "r");
-
-	//     if (tif) {
- //            unsigned int width, height, samplesperpixel, bitspersample;
- //            ValueT max_val = 0.0;
-
-	//         do {
-	//             uint32* raster;
-
-	//             // get the size of the tiff
-	//             TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
-	//             TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
-	//             TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
-	//             TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bitspersample);
-
-	//             if (verbose)
-	//             {
-	// 	            std::cout << "frame " << k << std::endl;
-	// 	            std::cout << "    width: " << width << std::endl;
-	// 	            std::cout << "    height: " << height << std::endl;
-	// 	            std::cout << "    samplesperpixel: " << samplesperpixel << std::endl;
-	// 	            std::cout << "    bitspersample: " << bitspersample << std::endl;
-	//             }
-
-	//             unsigned int npixels = width * height; // get the total number of pixels
-
-	//             raster = (uint32*)_TIFFmalloc(npixels * sizeof(uint32)); // allocate temp memory (must use the tiff library malloc)
-	//             if (raster == NULL) // check the raster's memory was allocaed
-	//             {
-	//                 TIFFClose(tif);
-	//                 std::cerr << "Could not allocate memory for raster of TIFF image" << std::endl;
-	//                 return;
-	//             }
-
-	//             // Check the tif read to the raster correctly
-	//             if (!TIFFReadRGBAImage(tif, width, height, raster, 0))
-	//             {
-	//                 TIFFClose(tif);
-	//                 std::cerr << "Could not read raster of TIFF image" << std::endl;
-	//                 return;
-	//             }
-
-	//             // itterate through all the pixels of the tif
-	//             for (i = 0; (unsigned int)i < width; i++)
-	//                 for (j = 0; (unsigned int)j < height; j++)
-	//                 {
-	//                     uint32& TiffPixel = raster[j * width + i]; // read the current pixel of the TIF
-
-	//                     ValueT val = ValueT(((float)(TIFFGetR(TiffPixel) + TIFFGetG(TiffPixel) + TIFFGetB(TiffPixel))) / (255. * 3));
-	//                     max_val = std::max(max_val, val);
-
-	//                     if (val < threshold) 
-	//                     	continue;
-
- //                        accessor.setValue(ijk, val);
-
-	//                 }
-
-	//             _TIFFfree(raster); // release temp memory
-
-	//         	k ++;
-
-	//         } while (TIFFReadDirectory(tif)); // get the next tif
-	//         TIFFClose(tif); // close the tif file
-
-	//         std::cout << "Loaded " << k << " pages (" << width << " , " << height << ")" << std::endl;
-	//         std::cout << "Max value found: " << max_val << std::endl;
-
- //            //grid->setGridClass(openvdb::GRID_LEVEL_SET);
- //            grid->setGridClass(openvdb::GRID_FOG_VOLUME);
- //    		grid->setName(id);
-
-
- //    	    grids[id] = grid;
-	//     }
-	//     else
-	//     {
-	//     	std::cerr << "Failed to load multi-page TIFF" << std::endl;
-	//     }
-	// }
-
-	// std::vector<std::string> Grid::grid_names()
-	// {
-	// 	std::vector<std::string> names;
-	//     for ( auto item : grids )
-	//     {
-	//     	names.push_back(item.first);
-	//     }
-	//     return names;
-	// }
 
 	float Grid::getValue(Eigen::Vector3i xyz)
 	{
@@ -389,4 +279,23 @@ namespace DeepSight
 
 		return std::tuple<Eigen::Vector3i, Eigen::Vector3i>(bbmin, bbmax);
 	}
+
+	Eigen::Matrix4d Grid::transform()
+	{
+		auto mat = m_grid->transform().baseMap()->getAffineMap()->getMat4();
+
+		return Eigen::Matrix4d(mat.asPointer());
+	}
+
+	void Grid::transform_grid(Eigen::Matrix4d xform)
+	{
+		openvdb_grid outGrid;
+		openvdb::Mat4R mat(xform.data());
+		openvdb::tools::GridTransformer transformer(mat);
+		transformer.transformGrid<openvdb::tools::BoxSampler>(*m_grid, outGrid);
+
+		m_grid = std::make_shared<openvdb_grid>(outGrid);
+	}
+
+
 }

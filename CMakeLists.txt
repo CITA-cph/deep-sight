@@ -54,6 +54,11 @@ set(DEEPSIGHT_OUTPUT_DIR ${DEEPSIGHT_DIR}/bin)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -W4 -wd4251 -wd4146 -wd4127")
 
+#======== Set some defines ========
+
+add_compile_definitions(_USE_MATH_DEFINES)
+
+
 #======== Add targets ========
 
 add_subdirectory("src/py_deepsight" "_deepsight")
