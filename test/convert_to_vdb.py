@@ -46,6 +46,14 @@ def main():
     print("Loading {}...".format(file_path))
     grid = deepsight.Grid.read(file_path)
 
+    mat = [
+        [0.001,0,0,0],
+        [0,0.001,0,0],
+        [0,0,0.01,0],
+        [0,0,0,1]]
+
+    grid.set_transform(mat)
+    grid.name = "density"
 
     file_path = filedialog.asksaveasfilename(
         #defaultextension=".vdb",

@@ -280,11 +280,20 @@ namespace DeepSight
 		return std::tuple<Eigen::Vector3i, Eigen::Vector3i>(bbmin, bbmax);
 	}
 
-	Eigen::Matrix4d Grid::transform()
+	Eigen::Matrix4d Grid::get_transform()
 	{
 		auto mat = m_grid->transform().baseMap()->getAffineMap()->getMat4();
 
 		return Eigen::Matrix4d(mat.asPointer());
+	}
+
+	void Grid::set_transform(Eigen::Matrix4d mat)
+	{
+		openvdb::Mat4R omat(mat.data());
+		openvdb::math::Transform::Ptr linearTransform =
+    		openvdb::math::Transform::createLinearTransform(omat);
+
+		m_grid->setTransform(linearTransform);
 	}
 
 	void Grid::transform_grid(Eigen::Matrix4d xform)
