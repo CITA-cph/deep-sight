@@ -40,6 +40,7 @@ namespace DeepSight
 		using Ptr = std::shared_ptr<Grid>;
 
 		static Ptr from_multipage_tiff(const std::string path, double threshold=1.0e-3);
+		static Ptr from_many_tiffs(std::vector<std::string> paths, double threshold=1.0e-3);
 		static std::vector<Ptr> from_vdb(const std::string path);
 		static Ptr read(const std::string path);
 
@@ -62,7 +63,11 @@ namespace DeepSight
 		void set_transform(Eigen::Matrix4d xform);
 		Eigen::Matrix4d get_transform();
 
-		std::string name;
+		std::string get_name();
+		void set_name(std::string name);
+
+		void denseFill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active=true);
+
 
 	protected:
 		static bool has_suffix(const std::string &str, const std::string &suffix);

@@ -52,7 +52,7 @@ def main():
         [0,0,0.01,0],
         [0,0,0,1]]
 
-    grid.set_transform(mat)
+    grid.transform = mat
     grid.name = "density"
 
     file_path = filedialog.asksaveasfilename(

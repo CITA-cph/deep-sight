@@ -70,10 +70,10 @@ def main():
     print("Loading {}...".format(file_path))
     grid = deepsight.Grid.read(file_path)
 
-    bmin, bmax = grid.getBoundingBox()
+    bmin, bmax = grid.get_bounding_box()
     print("x {}-{}\ny {}-{}\nz {}-{}".format(bmin[0], bmax[0], bmin[1], bmax[1], bmin[2], bmax[2]))
 
-    mat = grid.transform()
+    mat = grid.get_transform()
     print(mat)
 
     # Get some interpolated values at various points

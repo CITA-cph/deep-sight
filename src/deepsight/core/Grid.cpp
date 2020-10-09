@@ -121,6 +121,117 @@ namespace DeepSight
 	    }
 	}
 
+	Grid::Ptr Grid::from_many_tiffs(std::vector<std::string> paths, double threshold)
+	{	
+
+		bool verbose = false;
+
+	    using ValueT = typename openvdb_grid::ValueType;
+
+        openvdb_grid::Ptr grid = openvdb_grid::create(/*background value=*/0.0);
+
+	    openvdb_grid::Accessor accessor = (*grid).getAccessor();
+
+	    openvdb::Coord ijk;
+	    int& i = ijk[0], & j = ijk[1], & k = ijk[2];
+
+	    // ======== Compile list of TIFFs to open ========
+	    /*
+	    string directory;
+
+		const size_t last_slash_idx = filename.rfind('\\/');
+		if (std::string::npos != last_slash_idx)
+		{
+		    directory = filename.substr(0, last_slash_idx);
+		}
+
+	    std::vector<std::string> tiff_paths;
+    	for (const auto & entry : std::filesystem::directory_iterator(directory))
+    	{
+
+    		tiff_paths.push_back(entry.path());
+    	}
+    	*/
+
+    	for (int f = 0; f < paths.size(); ++f)
+    	{
+
+		    TIFF* tif = TIFFOpen(paths[f].c_str(), "r");
+
+		    if (tif) {
+	            unsigned int width, height, samplesperpixel, bitspersample;
+	            ValueT max_val = 0.0;
+
+		        do {
+		            uint32* raster;
+
+		            // get the size of the tiff
+		            TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
+		            TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
+		            TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+		            TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bitspersample);
+
+		            unsigned int npixels = width * height; // get the total number of pixels
+
+		            raster = (uint32*)_TIFFmalloc(npixels * sizeof(uint32)); // allocate temp memory (must use the tiff library malloc)
+		            if (raster == NULL) // check the raster's memory was allocaed
+		            {
+		                TIFFClose(tif);
+		                std::cerr << "Could not allocate memory for raster of TIFF image" << std::endl;
+		    			return Grid::Ptr(nullptr);
+		            }
+
+		            // Check the tif read to the raster correctly
+		            if (!TIFFReadRGBAImage(tif, width, height, raster, 0))
+		            {
+		                TIFFClose(tif);
+		                std::cerr << "Could not read raster of TIFF image" << std::endl;
+		    			return Grid::Ptr(nullptr);
+		            }
+
+		            // itterate through all the pixels of the tif
+		            for (i = 0; (unsigned int)i < width; i++)
+		                for (j = 0; (unsigned int)j < height; j++)
+		                {
+		                    uint32& TiffPixel = raster[j * width + i]; // read the current pixel of the TIF
+
+		                    ValueT val = ValueT(((float)(TIFFGetR(TiffPixel) + TIFFGetG(TiffPixel) + TIFFGetB(TiffPixel))) / (255. * 3));
+		                    max_val = std::max(max_val, val);
+
+		                    if (val < threshold) 
+		                    	continue;
+
+	                        accessor.setValue(ijk, val);
+
+		                }
+
+		            _TIFFfree(raster); // release temp memory
+
+		        	k ++;
+
+		        } while (TIFFReadDirectory(tif)); // get the next tif
+		        TIFFClose(tif); // close the tif file
+
+		        std::cout << "Loaded " << k << " pages (" << width << " , " << height << ")" << std::endl;
+		    }
+		    else
+		    {
+		    	std::cerr << "Failed to load TIFF" << std::endl;
+		    	continue;
+		    }
+		}
+
+        grid->setGridClass(openvdb::GRID_FOG_VOLUME);
+		grid->setName("tiff");
+
+		auto ds_grid = std::make_shared<Grid>();
+		ds_grid->m_grid = grid;
+
+		return ds_grid;
+
+	}
+
+
 	std::vector<Grid::Ptr> Grid::from_vdb(const std::string path)
 	{
 		
@@ -141,7 +252,7 @@ namespace DeepSight
 
 	        Ptr ds_grid = std::make_shared<Grid>();
 	        ds_grid->m_grid = openvdb::gridPtrCast<openvdb_grid>(baseGrid);
-	        ds_grid->name = nameIter.gridName();
+	        //ds_grid->set_name(nameIter.gridName());
 
 	        grids.push_back(ds_grid);
 	    }
@@ -168,8 +279,8 @@ namespace DeepSight
 	void Grid::write(const std::string path)
 	{
     	openvdb::io::File file(path);
-    	openvdb::GridPtrVec grids_out;
-    	grids_out.push_back(m_grid);
+    	//openvdb::GridPtrVec grids_out;
+    	//grids_out.push_back(m_grid);
 
 	    // Add the grid pointer to a container.
 	    // openvdb::GridPtrVec grids_out;
@@ -178,8 +289,13 @@ namespace DeepSight
 	    // 	grids_out.push_back(it->second);
 
 	    // Write out the contents of the container.
-	    file.write(grids_out);
+	    //file.write(grids_out);
+	    m_grid->tree().prune();
+	    file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+	    file.write({m_grid});
 	    file.close();
+
+	    //openvdb::io::File(path).write({m_grid});
 	}
 
 	float Grid::getValue(Eigen::Vector3i xyz)
@@ -304,6 +420,25 @@ namespace DeepSight
 		transformer.transformGrid<openvdb::tools::BoxSampler>(*m_grid, outGrid);
 
 		m_grid = std::make_shared<openvdb_grid>(outGrid);
+	}
+
+	void Grid::denseFill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active)
+	{
+		openvdb::math::CoordBBox bb(
+			openvdb::math::Coord(min.data()),
+			openvdb::math::Coord(max.data()));
+
+		m_grid->denseFill(bb, (float)value, active);
+	}
+
+	std::string Grid::get_name()
+	{
+		return m_grid->getName();
+	}
+
+	void Grid::set_name(std::string name)
+	{
+		m_grid->setName(name);
 	}
 
 
