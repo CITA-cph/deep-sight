@@ -30,6 +30,7 @@ import os
 import glob
 import cv2
 
+DEEPSIGHT_DIR = os.getenv('DEEPSIGHT_DIR')
 
 all_loaded_images = []
 
@@ -56,7 +57,7 @@ def find_contour(img, val, col):
     img_c = img.copy()
     contours, hierachy = cv2.findContours (img_tre, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2:]
 
-    for j, c in enumerate(contours): #j == 0 is the biggest outer curve
+    for i, c in enumerate(contours): #j == 0 is the biggest outer curve
             if len(c) > 3:
                 lst = []
                 
@@ -73,7 +74,7 @@ def find_contour(img, val, col):
                     
                     #flipping and mirroring to match voxel volume orientation
                     pt.append(p_z)
-                    pt.append((p_x*-1)+img_stack.shape[0])
+                    pt.append((p_x*-1) + img.shape[0])
                     pt.append(p_y)
 
                     x_a += p_x
@@ -89,7 +90,7 @@ def find_contour(img, val, col):
                     y_a /= pt_len
                     z_a /= pt_len
                     cnt_pt.append(z_a)
-                    cnt_pt.append((x_a*-1)+img_stack.shape[0])
+                    cnt_pt.append((x_a*-1)+img.shape[0])
                     cnt_pt.append(y_a)
 
                     cnt_pt_obj = vedo.Point(pos=cnt_pt, r=8, c=col, alpha=1)
@@ -104,7 +105,7 @@ def find_contour(img, val, col):
 def main():
 
     #set path
-    all_images = r"C:/Users/martin.tamke\OneDrive - KADK/GitHub/deep-sight/test/data/20200505_S05"
+    all_images = os.path.join(DEEPSIGHT_DIR, r"01_DataSets\Wood\20200505_S05")
     #all_images = "C:/Users/sgat\OneDrive - KADK/Sebastian_after_Sync/06_bones_to_flesh/browsing male/(VKH) Anatomical Images (1,000 X 570)/"
     os.chdir(all_images)
     # os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -155,7 +156,8 @@ def main():
     pith_points = []
     for i in range(1,len(all_loaded_images)):
         contours, centers = find_contour(all_loaded_images[i],60, "green")[-2:]
-        pith_points.append(centers[0])
+        if len(centers) > 0:
+            pith_points.append(centers[0])
 
 
 
