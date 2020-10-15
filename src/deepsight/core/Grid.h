@@ -29,35 +29,34 @@ typedef openvdb::FloatGrid openvdb_grid;
 
 namespace DeepSight
 {
+	template<class T>
 	class Grid
 	{
 	public:
 		Grid();
 		~Grid();
 
-		openvdb_grid::Ptr m_grid;	
+		using Ptr = std::shared_ptr<Grid<T>>;
 
-		using Ptr = std::shared_ptr<Grid>;
+		using TreeT = openvdb::tree::Tree< openvdb::tree::RootNode< openvdb::tree::InternalNode< openvdb::tree::InternalNode< openvdb::tree::LeafNode< T, 3 >, 4 >, 5 >>>;
+		using GridT = openvdb::Grid<TreeT>;
+
+		openvdb::SharedPtr<GridT> m_grid;	
 
 		static Ptr from_multipage_tiff(const std::string path, double threshold=1.0e-3);
 		static Ptr from_many_tiffs(std::vector<std::string> paths, double threshold=1.0e-3);
 		static std::vector<Ptr> from_vdb(const std::string path);
 		static Ptr read(const std::string path);
 
-		// std::map<std::string, openvdb::FloatGrid::Ptr> grids;
-
-		// void read(std::string path);
 		void write(const std::string path);
 		void write_as_vdb(const std::string path);
 		void write_as_multipage_tiff(const std::string path);
 
-		// void from_multipage_tiff(std::string path, std::string id, double threshold=1.0e-3);
-
-		float getValue(Eigen::Vector3i xyz);
-		std::vector<float> getDense(Eigen::Vector3i min, Eigen::Vector3i max);
-		float getInterpolatedValue(Eigen::Vector3f xyz);
-		std::vector<float> getValues(std::vector<Eigen::Vector3i> &xyz);
-		std::vector<float> getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz);
+		T getValue(Eigen::Vector3i xyz);
+		std::vector<T> getDense(Eigen::Vector3i min, Eigen::Vector3i max);
+		T getInterpolatedValue(Eigen::Vector3f xyz);
+		std::vector<T> getValues(std::vector<Eigen::Vector3i> &xyz);
+		std::vector<T> getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz);
 		std::tuple<Eigen::Vector3i, Eigen::Vector3i> getBoundingBox();
 		void transform_grid(Eigen::Matrix4d xform);
 		void set_transform(Eigen::Matrix4d xform);
@@ -74,6 +73,20 @@ namespace DeepSight
 
 	};
 
+	typedef Grid<float> FloatGrid;
+	typedef std::shared_ptr<FloatGrid> FloatGridPtr;
+
+	//template void Grid<float>();
+
+	// class MultiResGrid
+	// {
+	// 	public MultiResGrid();
+	// 	public ~MultiResGrid();
+
+	// 	openvdb_grid::Ptr m_grid;	
+
+	// }
+
 	// class MultiGrid
 	// {
 	// public:
@@ -86,5 +99,7 @@ namespace DeepSight
 	// }
 
 }
+
+//#include "Grid.cpp"
 
 #endif

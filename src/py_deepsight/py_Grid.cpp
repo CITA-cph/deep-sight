@@ -39,18 +39,18 @@ inline py::array_t<T> toPyArray(std::vector<T>&& passthrough)
 
 void grid(py::module &m)
 {
-	py::class_<DeepSight::Grid, DeepSight::Grid::Ptr>(m, "Grid")
+	py::class_<DeepSight::FloatGrid, DeepSight::FloatGridPtr>(m, "Grid")
 	    .def(py::init())
-	    .def_property("name", &DeepSight::Grid::get_name, &DeepSight::Grid::set_name)
-	    .def("read", &DeepSight::Grid::read)
-	    .def("write", &DeepSight::Grid::write)
-	    .def("from_multipage_tiff", &DeepSight::Grid::from_multipage_tiff)
-	    .def("from_many_tiffs", &DeepSight::Grid::from_many_tiffs)
-	    .def("from_vdb", &DeepSight::Grid::from_vdb)
+	    .def_property("name", &DeepSight::FloatGrid::get_name, &DeepSight::FloatGrid::set_name)
+	    .def("read", &DeepSight::FloatGrid::read)
+	    .def("write", &DeepSight::FloatGrid::write)
+	    .def("from_multipage_tiff", &DeepSight::FloatGrid::from_multipage_tiff)
+	    .def("from_many_tiffs", &DeepSight::FloatGrid::from_many_tiffs)
+	    .def("from_vdb", &DeepSight::FloatGrid::from_vdb)
 	    //.def("grid_names", &DeepSight::Grid::grid_names)
-	    .def("get_bounding_box", &DeepSight::Grid::getBoundingBox)
-	    .def("get_value", &DeepSight::Grid::getValue)
-	    .def("get_dense", [](DeepSight::Grid &grid, Eigen::Vector3i min, Eigen::Vector3i max)
+	    .def("get_bounding_box", &DeepSight::FloatGrid::getBoundingBox)
+	    .def("get_value", &DeepSight::FloatGrid::getValue)
+	    .def("get_dense", [](DeepSight::FloatGrid &grid, Eigen::Vector3i min, Eigen::Vector3i max)
 	    	{
 	    		std::vector<ssize_t> shape {max.x() - min.x() + 1, max.y() - min.y() + 1, max.z() - min.z() + 1};
 	    		std::vector<float> data = grid.getDense(min, max);
@@ -60,12 +60,12 @@ void grid(py::module &m)
                       data.data()
                       ); 
 	    	})
-	    .def("get_interpolated_value", &DeepSight::Grid::getInterpolatedValue)
-	    .def("get_values", &DeepSight::Grid::getValues)
-	    .def_property("transform", &DeepSight::Grid::get_transform, &DeepSight::Grid::set_transform)
-	    .def("transform_grid", &DeepSight::Grid::transform_grid)
+	    .def("get_interpolated_value", &DeepSight::FloatGrid::getInterpolatedValue)
+	    .def("get_values", &DeepSight::FloatGrid::getValues)
+	    .def_property("transform", &DeepSight::FloatGrid::get_transform, &DeepSight::FloatGrid::set_transform)
+	    .def("transform_grid", &DeepSight::FloatGrid::transform_grid)
 	    //.def("transform", (void (DeepSight::Grid::*)(Eigen::Matrix4d)) &DeepSight::Grid::transform)
-	    .def("get_interpolated_values", &DeepSight::Grid::getInterpolatedValues);
+	    .def("get_interpolated_values", &DeepSight::FloatGrid::getInterpolatedValues);
 
 }
 

@@ -3,23 +3,27 @@
 namespace DeepSight
 {
 
-	Grid::Grid()
+	template<typename T>
+	Grid<T>::Grid()
 	{
 		openvdb::initialize();
 	}
 
-	Grid::~Grid()
+	template<typename T>
+	Grid<T>::~Grid()
 	{
 
 	}
 
-	bool Grid::has_suffix(const std::string &str, const std::string &suffix)
+	template<typename T>
+	bool Grid<T>::has_suffix(const std::string &str, const std::string &suffix)
 	{
 	    return str.size() >= suffix.size() &&
 	           str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 	}
 
-	Grid::Ptr Grid::from_multipage_tiff(const std::string path, double threshold)
+	template<typename T>
+	std::shared_ptr<Grid<T>> Grid<T>::from_multipage_tiff(const std::string path, double threshold)
 	{
 		bool verbose = false;
 
@@ -31,9 +35,9 @@ namespace DeepSight
 
 	    using ValueT = typename openvdb_grid::ValueType;
 
-        openvdb_grid::Ptr grid = openvdb_grid::create(/*background value=*/0.0);
+        GridT::Ptr grid = GridT::create(/*background value=*/0.0);
 
-	    openvdb_grid::Accessor accessor = (*grid).getAccessor();
+	    GridT::Accessor accessor = (*grid).getAccessor();
 
 	    openvdb::Coord ijk;
 	    int& i = ijk[0], & j = ijk[1], & k = ijk[2];
@@ -69,7 +73,7 @@ namespace DeepSight
 	            {
 	                TIFFClose(tif);
 	                std::cerr << "Could not allocate memory for raster of TIFF image" << std::endl;
-	    			return Grid::Ptr(nullptr);
+	    			return std::shared_ptr<Grid<T>>(nullptr);
 	            }
 
 	            // Check the tif read to the raster correctly
@@ -77,7 +81,7 @@ namespace DeepSight
 	            {
 	                TIFFClose(tif);
 	                std::cerr << "Could not read raster of TIFF image" << std::endl;
-	    			return Grid::Ptr(nullptr);
+	    			return std::shared_ptr<Grid<T>>(nullptr);
 	            }
 
 	            // itterate through all the pixels of the tif
@@ -109,7 +113,7 @@ namespace DeepSight
             grid->setGridClass(openvdb::GRID_FOG_VOLUME);
     		grid->setName("tiff");
 
-    		auto ds_grid = std::make_shared<Grid>();
+    		auto ds_grid = std::make_shared<Grid<T>>();
     		ds_grid->m_grid = grid;
 
     		return ds_grid;
@@ -117,20 +121,21 @@ namespace DeepSight
 	    else
 	    {
 	    	std::cerr << "Failed to load multi-page TIFF" << std::endl;
-	    	return Grid::Ptr(nullptr);
+	    	return std::shared_ptr<Grid<T>>(nullptr);
 	    }
 	}
 
-	Grid::Ptr Grid::from_many_tiffs(std::vector<std::string> paths, double threshold)
+	template <typename T>
+	std::shared_ptr<Grid<T>> Grid<T>::from_many_tiffs(std::vector<std::string> paths, double threshold)
 	{	
 
 		bool verbose = false;
 
 	    using ValueT = typename openvdb_grid::ValueType;
 
-        openvdb_grid::Ptr grid = openvdb_grid::create(/*background value=*/0.0);
+        GridT::Ptr grid = openvdb_grid::create(/*background value=*/0.0);
 
-	    openvdb_grid::Accessor accessor = (*grid).getAccessor();
+	    GridT::Accessor accessor = (*grid).getAccessor();
 
 	    openvdb::Coord ijk;
 	    int& i = ijk[0], & j = ijk[1], & k = ijk[2];
@@ -178,7 +183,7 @@ namespace DeepSight
 		            {
 		                TIFFClose(tif);
 		                std::cerr << "Could not allocate memory for raster of TIFF image" << std::endl;
-		    			return Grid::Ptr(nullptr);
+		    			return std::shared_ptr<Grid<T>>(nullptr);
 		            }
 
 		            // Check the tif read to the raster correctly
@@ -186,7 +191,7 @@ namespace DeepSight
 		            {
 		                TIFFClose(tif);
 		                std::cerr << "Could not read raster of TIFF image" << std::endl;
-		    			return Grid::Ptr(nullptr);
+		    			return std::shared_ptr<Grid<T>>(nullptr);
 		            }
 
 		            // itterate through all the pixels of the tif
@@ -224,7 +229,7 @@ namespace DeepSight
         grid->setGridClass(openvdb::GRID_FOG_VOLUME);
 		grid->setName("tiff");
 
-		auto ds_grid = std::make_shared<Grid>();
+		auto ds_grid = std::make_shared<Grid<T>>();
 		ds_grid->m_grid = grid;
 
 		return ds_grid;
@@ -232,26 +237,27 @@ namespace DeepSight
 	}
 
 
-	std::vector<Grid::Ptr> Grid::from_vdb(const std::string path)
+	template <typename T>
+	std::vector<std::shared_ptr<Grid<T>>> Grid<T>::from_vdb(const std::string path)
 	{
 		
     	openvdb::io::File file(path);
     	file.open();
 
     	if (!file.isOpen())
-	    	return std::vector<Grid::Ptr>();
+	    	return std::vector<std::shared_ptr<Grid<T>>>();
 
 	    openvdb::GridBase::Ptr baseGrid;
 
-	    std::vector<Grid::Ptr> grids;
+	    std::vector<std::shared_ptr<Grid<T>>> grids;
 
 	    for (openvdb::io::File::NameIterator nameIter = file.beginName();
 	        nameIter != file.endName(); ++nameIter)
 	    {
 	        baseGrid = file.readGrid(nameIter.gridName());
 
-	        Ptr ds_grid = std::make_shared<Grid>();
-	        ds_grid->m_grid = openvdb::gridPtrCast<openvdb_grid>(baseGrid);
+	        std::shared_ptr<Grid<T>> ds_grid = std::make_shared<Grid<T>>();
+	        ds_grid->m_grid = openvdb::gridPtrCast<GridT>(baseGrid);
 	        //ds_grid->set_name(nameIter.gridName());
 
 	        grids.push_back(ds_grid);
@@ -263,20 +269,22 @@ namespace DeepSight
 	}
 
 
-	Grid::Ptr Grid::read(const std::string path)
+	template <typename T>
+	std::shared_ptr<Grid<T>> Grid<T>::read(const std::string path)
 	{
 		openvdb::initialize();
 
 	    if (has_suffix(path, "vdb"))
-	    	return Grid::from_vdb(path)[0];
+	    	return Grid<T>::from_vdb(path)[0];
 	    else if (has_suffix(path, "tif") || has_suffix(path, "tiff") || has_suffix(path, "TIF") || has_suffix(path, "TIFF"))
-	    	return Grid::from_multipage_tiff(path);
+	    	return Grid<T>::from_multipage_tiff(path);
 
-	    return Grid::Ptr(nullptr);
+	    return std::shared_ptr<Grid<T>>(nullptr);
 	}
 
 
-	void Grid::write(const std::string path)
+	template <typename T>
+	void Grid<T>::write(const std::string path)
 	{
     	openvdb::io::File file(path);
     	//openvdb::GridPtrVec grids_out;
@@ -298,7 +306,8 @@ namespace DeepSight
 	    //openvdb::io::File(path).write({m_grid});
 	}
 
-	float Grid::getValue(Eigen::Vector3i xyz)
+	template <typename T>
+	T Grid<T>::getValue(Eigen::Vector3i xyz)
 	{
 		typename openvdb_grid::Accessor accessor = m_grid->getAccessor();
 		return accessor.getValue(openvdb::math::Coord(
@@ -308,9 +317,10 @@ namespace DeepSight
 			));
 	}
 
-	std::vector<float> Grid::getDense(Eigen::Vector3i min, Eigen::Vector3i max)
+	template <typename T>
+	std::vector<T> Grid<T>::getDense(Eigen::Vector3i min, Eigen::Vector3i max)
 	{
-		openvdb::tools::Dense<float, openvdb::tools::MemoryLayout::LayoutZYX> dense(openvdb::CoordBBox(
+		openvdb::tools::Dense<T, openvdb::tools::MemoryLayout::LayoutZYX> dense(openvdb::CoordBBox(
 		//openvdb::tools::Dense<float> dense(openvdb::CoordBBox(
         openvdb::Coord(min.x(), min.y(), min.z()), 
         openvdb::Coord(max.x(), max.y(), max.z()))
@@ -319,14 +329,15 @@ namespace DeepSight
 		openvdb::tools::copyToDense(*(m_grid), dense, false);
 		//return dense.data();
 
-	    std::vector<float> data;
+	    std::vector<T> data;
 	    data.assign(dense.data(), dense.data() + dense.valueCount());
 
 	    return data;
 	}
 
 
-	float Grid::getInterpolatedValue(Eigen::Vector3f xyz)
+	template <typename T>
+	T Grid<T>::getInterpolatedValue(Eigen::Vector3f xyz)
 	{
 		typename openvdb_grid::Accessor accessor = m_grid->getAccessor();
 		return openvdb::tools::BoxSampler::sample(
@@ -338,9 +349,10 @@ namespace DeepSight
 			));
 	}
 
-	std::vector<float>  Grid::getValues(std::vector<Eigen::Vector3i> &xyz)
+	template <typename T>
+	std::vector<T> Grid<T>::getValues(std::vector<Eigen::Vector3i> &xyz)
 	{
-		std::vector<float> values;
+		std::vector<T> values;
 		typename openvdb_grid::Accessor accessor = m_grid->getAccessor();
 
 		for (auto iter = xyz.begin(); 
@@ -362,9 +374,10 @@ namespace DeepSight
 		return values;
 	}	
 
-	std::vector<float> Grid::getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz)
+	template <typename T>
+	std::vector<T> Grid<T>::getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz)
 	{
-		std::vector<float> values;
+		std::vector<T> values;
 		typename openvdb_grid::Accessor accessor = m_grid->getAccessor();
 
 		for (auto iter = xyz.begin(); 
@@ -385,7 +398,8 @@ namespace DeepSight
 		return values;
 	}
 
-	std::tuple<Eigen::Vector3i, Eigen::Vector3i> Grid::getBoundingBox()
+	template <typename T>
+	std::tuple<Eigen::Vector3i, Eigen::Vector3i> Grid<T>::getBoundingBox()
 	{
 		openvdb::math::CoordBBox bb = m_grid->evalActiveVoxelBoundingBox();
 		Eigen::Vector3i bbmin;
@@ -396,14 +410,16 @@ namespace DeepSight
 		return std::tuple<Eigen::Vector3i, Eigen::Vector3i>(bbmin, bbmax);
 	}
 
-	Eigen::Matrix4d Grid::get_transform()
+	template <typename T>
+	Eigen::Matrix4d Grid<T>::get_transform()
 	{
 		auto mat = m_grid->transform().baseMap()->getAffineMap()->getMat4();
 
 		return Eigen::Matrix4d(mat.asPointer());
 	}
 
-	void Grid::set_transform(Eigen::Matrix4d mat)
+	template <typename T>
+	void Grid<T>::set_transform(Eigen::Matrix4d mat)
 	{
 		openvdb::Mat4R omat(mat.data());
 		openvdb::math::Transform::Ptr linearTransform =
@@ -412,34 +428,38 @@ namespace DeepSight
 		m_grid->setTransform(linearTransform);
 	}
 
-	void Grid::transform_grid(Eigen::Matrix4d xform)
+	template <typename T>
+	void Grid<T>::transform_grid(Eigen::Matrix4d xform)
 	{
-		openvdb_grid outGrid;
+		GridT outGrid;
 		openvdb::Mat4R mat(xform.data());
 		openvdb::tools::GridTransformer transformer(mat);
 		transformer.transformGrid<openvdb::tools::BoxSampler>(*m_grid, outGrid);
 
-		m_grid = std::make_shared<openvdb_grid>(outGrid);
+		m_grid = std::make_shared<GridT>(outGrid);
 	}
 
-	void Grid::denseFill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active)
+	template <typename T>
+	void Grid<T>::denseFill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active)
 	{
 		openvdb::math::CoordBBox bb(
 			openvdb::math::Coord(min.data()),
 			openvdb::math::Coord(max.data()));
 
-		m_grid->denseFill(bb, (float)value, active);
+		m_grid->denseFill(bb, (T)value, active);
 	}
 
-	std::string Grid::get_name()
+	template <typename T>
+	std::string Grid<T>::get_name()
 	{
 		return m_grid->getName();
 	}
 
-	void Grid::set_name(std::string name)
+	template <typename T>
+	void Grid<T>::set_name(std::string name)
 	{
 		m_grid->setName(name);
 	}
 
-
+	template class Grid<float>;
 }
