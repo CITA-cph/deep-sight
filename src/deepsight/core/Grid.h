@@ -57,7 +57,7 @@ namespace DeepSight
 		T getInterpolatedValue(Eigen::Vector3f xyz);
 		std::vector<T> getValues(std::vector<Eigen::Vector3i> &xyz);
 		std::vector<T> getInterpolatedValues(std::vector<Eigen::Vector3f> &xyz);
-		std::tuple<Eigen::Vector3i, Eigen::Vector3i> getBoundingBox();
+		const std::tuple<Eigen::Vector3i, Eigen::Vector3i> getBoundingBox();
 		void transform_grid(Eigen::Matrix4d xform);
 		void set_transform(Eigen::Matrix4d xform);
 		Eigen::Matrix4d get_transform();
@@ -75,29 +75,6 @@ namespace DeepSight
 
 	typedef Grid<float> FloatGrid;
 	typedef std::shared_ptr<FloatGrid> FloatGridPtr;
-
-	//template void Grid<float>();
-
-	// class MultiResGrid
-	// {
-	// 	public MultiResGrid();
-	// 	public ~MultiResGrid();
-
-	// 	openvdb_grid::Ptr m_grid;	
-
-	// }
-
-	// class MultiGrid
-	// {
-	// public:
-	// 	MultiGrid();
-	// 	~MultiGrid();
-
-	// 	using Ptr = std::shared_ptr<MultiGrid>;
-	// 	std::map<std::string, Grid::Ptr> grids;
-
-	// }
-
 }
 
 //#include "Grid.cpp"

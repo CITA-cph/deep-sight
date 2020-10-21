@@ -399,7 +399,7 @@ namespace DeepSight
 	}
 
 	template <typename T>
-	std::tuple<Eigen::Vector3i, Eigen::Vector3i> Grid<T>::getBoundingBox()
+	const std::tuple<Eigen::Vector3i, Eigen::Vector3i> Grid<T>::getBoundingBox()
 	{
 		openvdb::math::CoordBBox bb = m_grid->evalActiveVoxelBoundingBox();
 		Eigen::Vector3i bbmin;

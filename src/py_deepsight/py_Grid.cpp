@@ -48,7 +48,7 @@ void grid(py::module &m)
 	    .def("from_many_tiffs", &DeepSight::FloatGrid::from_many_tiffs)
 	    .def("from_vdb", &DeepSight::FloatGrid::from_vdb)
 	    //.def("grid_names", &DeepSight::Grid::grid_names)
-	    .def("get_bounding_box", &DeepSight::FloatGrid::getBoundingBox)
+	    .def_property_readonly("bounding_box", &DeepSight::FloatGrid::getBoundingBox)
 	    .def("get_value", &DeepSight::FloatGrid::getValue)
 	    .def("get_dense", [](DeepSight::FloatGrid &grid, Eigen::Vector3i min, Eigen::Vector3i max)
 	    	{

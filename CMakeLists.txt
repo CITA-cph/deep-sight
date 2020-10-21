@@ -23,7 +23,6 @@ set(DEEPSIGHT_DEPS_DIR ${DEEPSIGHT_DIR}/dep)
 
 set(DEEPSIGHT_SOURCE_FILES
 	"${DEEPSIGHT_DEPS_DIR}/glad/src/glad.c"
-	#"${DEEPSIGHT_DIR}/src/deepsight/core/Grid-impl.cpp"
 	"${DEEPSIGHT_DIR}/src/deepsight/core/Grid.cpp"
 	"${DEEPSIGHT_DIR}/src/deepsight/core/Window.cpp"
 	)
