@@ -7,8 +7,14 @@
 #include <openvdb/openvdb.h>
 #include <openvdb/tree/ValueAccessor.h>
 #include <openvdb/tools/Interpolation.h>
+#include <openvdb/tools/Filter.h>
 #include <openvdb/tools/Dense.h>
 #include <openvdb/tools/GridTransformer.h>
+#include <openvdb/tools/GridOperators.h>
+#include <openvdb/tools/LevelSetTracker.h>
+
+
+
 #include <openvdb/math/Math.h>
 #include <openvdb/math/Mat.h>
 #include <openvdb/math/Mat3.h>
@@ -43,14 +49,14 @@ namespace DeepSight
 
 		openvdb::SharedPtr<GridT> m_grid;	
 
-		static Ptr from_multipage_tiff(const std::string path, double threshold=1.0e-3);
-		static Ptr from_many_tiffs(std::vector<std::string> paths, double threshold=1.0e-3);
+		static Ptr from_multipage_tiff(const std::string path, double threshold=1.0e-3, unsigned int crop=0);
+		static Ptr from_many_tiffs(std::vector<std::string> paths, double threshold=1.0e-3, unsigned int crop=0);
 		static std::vector<Ptr> from_vdb(const std::string path);
 		static Ptr read(const std::string path);
 
 		void write(const std::string path);
-		void write_as_vdb(const std::string path);
-		void write_as_multipage_tiff(const std::string path);
+		//void write_as_vdb(const std::string path);
+		//void write_as_multipage_tiff(const std::string path);
 
 		T getValue(Eigen::Vector3i xyz);
 		std::vector<T> getDense(Eigen::Vector3i min, Eigen::Vector3i max);
@@ -66,6 +72,16 @@ namespace DeepSight
 		void set_name(std::string name);
 
 		void denseFill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active=true);
+
+		void gradient();
+		Ptr laplacian();
+		Ptr mean_curvature();
+		void normalize();
+		void filter(int width=1, int iterations=1);
+
+		void dilate(int iterations=1);
+		void erode(int iterations=1);
+
 
 
 	protected:

@@ -65,7 +65,14 @@ void grid(py::module &m)
 	    .def_property("transform", &DeepSight::FloatGrid::get_transform, &DeepSight::FloatGrid::set_transform)
 	    .def("transform_grid", &DeepSight::FloatGrid::transform_grid)
 	    //.def("transform", (void (DeepSight::Grid::*)(Eigen::Matrix4d)) &DeepSight::Grid::transform)
-	    .def("get_interpolated_values", &DeepSight::FloatGrid::getInterpolatedValues);
+	    .def("get_interpolated_values", &DeepSight::FloatGrid::getInterpolatedValues)
+	    .def("gradient", &DeepSight::FloatGrid::gradient)
+	    .def("laplacian", &DeepSight::FloatGrid::laplacian)
+	    .def("mean_curvature", &DeepSight::FloatGrid::mean_curvature)
+	    .def("normalize", &DeepSight::FloatGrid::normalize)
+	    .def("filter", &DeepSight::FloatGrid::filter)
+	    .def("dilate", &DeepSight::FloatGrid::dilate)
+	    .def("erode", &DeepSight::FloatGrid::erode);
 
 }
 
