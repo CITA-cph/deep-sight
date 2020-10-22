@@ -95,16 +95,24 @@ def main():
     print("Filtering grid...")
     grid.dilate(FILTER * 2) # We need to dilate the grid by a small amount to prevent edge artefacts
     grid.filter(FILTER, 2) # Blur the grid using a Gaussian kernel of width FILTER
-    plot_image(grid, SLICE) # Display the SLICEth slice of the grid as an image
 
     print("Calculating Laplacian...")
     grid_laplacian = grid.laplacian() # Get the Laplacian of the grid
-    plot_image(grid_laplacian, SLICE) # Display the SLICEth slice of the grid as an image
 
-    print("Calculating mean curvature...")
-    grid_mean_k = grid.mean_curvature() # Get the mean curvature of the grid
-    plot_image(grid_mean_k, SLICE) # Display the SLICEth slice of the grid as an image
+    # Visualize results
+    import pyvista
+    plotter = pyvista.Plotter(shape=(1,1))
 
+    # Show full volume
+    opacity = [1, 0.6, 0, 0.0, 0, 0.0, 1]
+    dense = grid_laplacian.get_dense(grid.bounding_box[0], grid.bounding_box[1])
+
+    plotter.add_volume(dense, cmap="viridis", opacity=opacity, show_scalar_bar=True, shade=False, resolution=(1,1,10))
+
+    # Link and display
+    plotter.link_views()
+    plotter.update_scalar_bar_range(clim=(0,2000))
+    plotter.show()
 
 if __name__ == "__main__":
     main()
