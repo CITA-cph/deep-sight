@@ -73,6 +73,41 @@ void grid(py::module &m)
 	    .def("filter", &DeepSight::FloatGrid::filter)
 	    .def("dilate", &DeepSight::FloatGrid::dilate)
 	    .def("erode", &DeepSight::FloatGrid::erode);
+/*
+	py::class_<DeepSight::VecGrid, DeepSight::VecGridPtr>(m, "VectorGrid")
+	    .def(py::init())
+	    .def_property("name", &DeepSight::VecGrid::get_name, &DeepSight::VecGrid::set_name)
+	    .def("read", &DeepSight::VecGrid::read)
+	    .def("write", &DeepSight::VecGrid::write)
+	    .def("from_multipage_tiff", &DeepSight::VecGrid::from_multipage_tiff)
+	    .def("from_many_tiffs", &DeepSight::VecGrid::from_many_tiffs)
+	    .def("from_vdb", &DeepSight::VecGrid::from_vdb)
+	    //.def("grid_names", &DeepSight::Grid::grid_names)
+	    .def_property_readonly("bounding_box", &DeepSight::VecGrid::getBoundingBox)
+	    .def("get_value", &DeepSight::VecGrid::getValue)
+	    .def("get_dense", [](DeepSight::VecGrid &grid, Eigen::Vector3i min, Eigen::Vector3i max)
+	    	{
+	    		std::vector<ssize_t> shape {max.x() - min.x() + 1, max.y() - min.y() + 1, max.z() - min.z() + 1};
+	    		std::vector<openvdb::math::Vec3<float>> data = grid.getDense(min, max);
 
+    		    return py::array_t<openvdb::math::Vec3<float>, py::array::c_style | py::array::forcecast>(shape, // shape
+                      {shape[2] * shape[1] * sizeof(openvdb::math::Vec3<float>), shape[2] * sizeof(openvdb::math::Vec3<float>), sizeof(openvdb::math::Vec3<float>)},  // strides
+                      data.data()
+                      ); 
+	    	})
+	    .def("get_interpolated_value", &DeepSight::VecGrid::getInterpolatedValue)
+	    .def("get_values", &DeepSight::VecGrid::getValues)
+	    .def_property("transform", &DeepSight::VecGrid::get_transform, &DeepSight::VecGrid::set_transform)
+	    .def("transform_grid", &DeepSight::VecGrid::transform_grid)
+	    //.def("transform", (void (DeepSight::Grid::*)(Eigen::Matrix4d)) &DeepSight::Grid::transform)
+	    .def("get_interpolated_values", &DeepSight::VecGrid::getInterpolatedValues)
+	    .def("gradient", &DeepSight::VecGrid::gradient)
+	    .def("laplacian", &DeepSight::VecGrid::laplacian)
+	    .def("mean_curvature", &DeepSight::VecGrid::mean_curvature)
+	    .def("normalize", &DeepSight::VecGrid::normalize)
+	    .def("filter", &DeepSight::VecGrid::filter)
+	    .def("dilate", &DeepSight::VecGrid::dilate)
+	    .def("erode", &DeepSight::VecGrid::erode);	
+*/    
 }
 

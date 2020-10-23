@@ -54,7 +54,7 @@ namespace DeepSight
 		static std::vector<Ptr> from_vdb(const std::string path);
 		static Ptr read(const std::string path);
 
-		void write(const std::string path);
+		void write(const std::string path, bool float_as_half=false);
 		//void write_as_vdb(const std::string path);
 		//void write_as_multipage_tiff(const std::string path);
 
@@ -91,6 +91,9 @@ namespace DeepSight
 
 	typedef Grid<float> FloatGrid;
 	typedef std::shared_ptr<FloatGrid> FloatGridPtr;
+
+	// typedef Grid<openvdb::math::Vec3<float>> VecGrid;
+	// typedef std::shared_ptr<VecGrid> VecGridPtr;
 }
 
 //#include "Grid.cpp"

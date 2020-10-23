@@ -36,7 +36,7 @@ namespace DeepSight
 
 	    using ValueT = typename openvdb_grid::ValueType;
 
-        GridT::Ptr grid = GridT::create(/*background value=*/0.0);
+        GridT::Ptr grid = GridT::create();
 
 	    GridT::Accessor accessor = (*grid).getAccessor();
 
@@ -296,7 +296,7 @@ namespace DeepSight
 
 
 	template <typename T>
-	void Grid<T>::write(const std::string path)
+	void Grid<T>::write(const std::string path, bool float_as_half)
 	{
     	openvdb::io::File file(path);
     	//openvdb::GridPtrVec grids_out;
@@ -312,6 +312,8 @@ namespace DeepSight
 	    //file.write(grids_out);
 	    m_grid->tree().prune();
 	    file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+	    if (float_as_half)
+	    	m_grid->setSaveFloatAsHalf(true);
 	    file.write({m_grid});
 	    file.close();
 
@@ -537,4 +539,5 @@ namespace DeepSight
 	}
 
 	template class Grid<float>;
+	// template class Grid<openvdb::math::Vec3<float>>;
 }
