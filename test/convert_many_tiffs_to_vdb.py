@@ -48,15 +48,15 @@ def main():
 
 
     # Load grid
-    grid = deepsight.Grid.from_many_tiffs(files, 0.001)
+    grid = deepsight.Grid.from_many_tiffs(files, 30.0/255, 20)
 
     mat = [
-        [1,0,0,0],
-        [0,1,0,0],
-        [0,0,1,0],
+        [0.001,0,0,0],
+        [0,0.001,0,0],
+        [0,0,0.001,0],
         [0,0,0,1]]
 
-    grid.set_transform(mat)
+    grid.transform = mat
     grid.name = "density"
 
     file_path = filedialog.asksaveasfilename(

@@ -23,9 +23,10 @@ namespace DeepSight
 	}
 
 	template<typename T>
-	std::shared_ptr<Grid<T>> Grid<T>::from_multipage_tiff(const std::string path, double threshold)
+	std::shared_ptr<Grid<T>> Grid<T>::from_multipage_tiff(const std::string path, double threshold, unsigned int crop)
 	{
 		bool verbose = false;
+		unsigned int crop_x = crop, crop_y = crop;
 
 		if (verbose)
 		{
@@ -35,7 +36,7 @@ namespace DeepSight
 
 	    using ValueT = typename openvdb_grid::ValueType;
 
-        GridT::Ptr grid = GridT::create(/*background value=*/0.0);
+        GridT::Ptr grid = GridT::create();
 
 	    GridT::Accessor accessor = (*grid).getAccessor();
 
@@ -83,10 +84,14 @@ namespace DeepSight
 	                std::cerr << "Could not read raster of TIFF image" << std::endl;
 	    			return std::shared_ptr<Grid<T>>(nullptr);
 	            }
+	            if (crop_x > width)
+	            	crop_x = 0;
+	            if (crop_y > height)
+	            	crop_y = 0;
 
 	            // itterate through all the pixels of the tif
-	            for (i = 0; (unsigned int)i < width; i++)
-	                for (j = 0; (unsigned int)j < height; j++)
+	            for (i = crop_x; (unsigned int)i < width - crop_x; i++)
+	                for (j = crop_y; (unsigned int)j < height - crop_y; j++)
 	                {
 	                    uint32& TiffPixel = raster[j * width + i]; // read the current pixel of the TIF
 
@@ -126,10 +131,11 @@ namespace DeepSight
 	}
 
 	template <typename T>
-	std::shared_ptr<Grid<T>> Grid<T>::from_many_tiffs(std::vector<std::string> paths, double threshold)
+	std::shared_ptr<Grid<T>> Grid<T>::from_many_tiffs(std::vector<std::string> paths, double threshold, unsigned int crop)
 	{	
 
 		bool verbose = false;
+		unsigned int crop_x = crop, crop_y = crop;
 
 	    using ValueT = typename openvdb_grid::ValueType;
 
@@ -194,9 +200,14 @@ namespace DeepSight
 		    			return std::shared_ptr<Grid<T>>(nullptr);
 		            }
 
+		            if (crop_x > width)
+		            	crop_x = 0;
+		            if (crop_y > height)
+		            	crop_y = 0;
+
 		            // itterate through all the pixels of the tif
-		            for (i = 0; (unsigned int)i < width; i++)
-		                for (j = 0; (unsigned int)j < height; j++)
+		            for (i = crop_x; (unsigned int)i < width - crop_x; i++)
+		                for (j = crop_y; (unsigned int)j < height - crop_y; j++)
 		                {
 		                    uint32& TiffPixel = raster[j * width + i]; // read the current pixel of the TIF
 
@@ -228,6 +239,7 @@ namespace DeepSight
 
         grid->setGridClass(openvdb::GRID_FOG_VOLUME);
 		grid->setName("tiff");
+		grid->tree().prune();
 
 		auto ds_grid = std::make_shared<Grid<T>>();
 		ds_grid->m_grid = grid;
@@ -284,7 +296,7 @@ namespace DeepSight
 
 
 	template <typename T>
-	void Grid<T>::write(const std::string path)
+	void Grid<T>::write(const std::string path, bool float_as_half)
 	{
     	openvdb::io::File file(path);
     	//openvdb::GridPtrVec grids_out;
@@ -300,6 +312,8 @@ namespace DeepSight
 	    //file.write(grids_out);
 	    m_grid->tree().prune();
 	    file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+	    if (float_as_half)
+	    	m_grid->setSaveFloatAsHalf(true);
 	    file.write({m_grid});
 	    file.close();
 
@@ -399,7 +413,7 @@ namespace DeepSight
 	}
 
 	template <typename T>
-	std::tuple<Eigen::Vector3i, Eigen::Vector3i> Grid<T>::getBoundingBox()
+	const std::tuple<Eigen::Vector3i, Eigen::Vector3i> Grid<T>::getBoundingBox()
 	{
 		openvdb::math::CoordBBox bb = m_grid->evalActiveVoxelBoundingBox();
 		Eigen::Vector3i bbmin;
@@ -461,5 +475,69 @@ namespace DeepSight
 		m_grid->setName(name);
 	}
 
+	template <typename T>
+	void Grid<T>::gradient()
+	{
+		openvdb::tools::Gradient<Grid<T>::GridT, openvdb::BoolGrid> tool(*m_grid);
+		tool.process(true);
+
+		
+	}
+
+	template <typename T>
+	std::shared_ptr<Grid<T>> Grid<T>::laplacian()
+	{
+
+		openvdb::tools::Laplacian <Grid<T>::GridT, openvdb::BoolGrid> tool(*m_grid);
+		auto ds_grid = std::make_shared<Grid<T>>();
+		ds_grid->m_grid = tool.process(true);
+
+		return ds_grid;
+	}
+
+	template <typename T>
+	std::shared_ptr<Grid<T>> Grid<T>::mean_curvature()
+	{
+		auto ds_grid = std::make_shared<Grid<T>>();
+		ds_grid->m_grid = openvdb::tools::meanCurvature(*m_grid);
+
+		return ds_grid;
+	}
+
+	template <typename T>
+	void Grid<T>::normalize()
+	{
+
+		return;
+
+		// auto ds_grid = std::make_shared<Grid<T>>();
+		// openvdb::tools::normalize<Grid<T>::GriT>(*m_grid);
+		// ds_grid->m_grid = openvdb::tools::normalize<Grid<T>::GridT>(*m_grid);
+
+		// return ds_grid;
+	}
+
+	template <typename T>
+	void Grid<T>::filter(int width, int iterations)
+	{
+
+		openvdb::tools::Filter <Grid<T>::GridT> tool(*m_grid);
+		auto ds_grid = std::make_shared<Grid<T>>();
+		tool.gaussian(width, iterations);
+	}
+
+	template <typename T>
+	void Grid<T>::dilate(int iterations)
+	{
+		openvdb::tools::dilateVoxels(m_grid->tree(), iterations, openvdb::tools::NearestNeighbors::NN_FACE_EDGE_VERTEX );
+	}	
+
+	template <typename T>
+	void Grid<T>::erode(int iterations)
+	{
+		openvdb::tools::erodeVoxels(m_grid->tree(), iterations, openvdb::tools::NearestNeighbors::NN_FACE_EDGE_VERTEX );
+	}
+
 	template class Grid<float>;
+	// template class Grid<openvdb::math::Vec3<float>>;
 }

@@ -70,10 +70,10 @@ def main():
     print("Loading {}...".format(file_path))
     grid = deepsight.Grid.read(file_path)
 
-    bmin, bmax = grid.get_bounding_box()
+    bmin, bmax = grid.bounding_box
     print("x {}-{}\ny {}-{}\nz {}-{}".format(bmin[0], bmax[0], bmin[1], bmax[1], bmin[2], bmax[2]))
 
-    mat = grid.get_transform()
+    mat = grid.transform
     print(mat)
 
     # Get some interpolated values at various points
@@ -82,7 +82,7 @@ def main():
         [400.5,650.89,200.13],
         [300.0,700.2,200.4]]
 
-    res = grid.getInterpolatedValues(pts)
+    res = grid.get_interpolated_values(pts)
     print("Interpolated values: {}".format(res))    
 
     # Transform the grid with a 4x4 matrix
@@ -97,10 +97,10 @@ def main():
     print("Transforming...")
     grid.transform_grid(xform);
 
-    bmin, bmax = grid.getBoundingBox()
+    bmin, bmax = grid.bounding_box
     print("x {}-{}\ny {}-{}\nz {}-{}".format(bmin[0], bmax[0], bmin[1], bmax[1], bmin[2], bmax[2]))
 
-    res = grid.getInterpolatedValues(pts)
+    res = grid.get_interpolated_values(pts)
     print("Interpolated values: {}".format(res))   
 
 if __name__ == "__main__":
