@@ -44,13 +44,13 @@ def SimplePaths(G, sources, sinks):
             simplePaths.extend(list(asp))
     return simplePaths
 
-def k_degree(G, degree):
+def k_degree(G, val):
 	#kdNodes.append([d[0] for d in dList if d[1] == 5])
 	#esmall = [(u, v) for (u, v, d) in G.edges(data=True) if d['weight'] <= 0.5]
     kdNodes =[]
     dList = list(G.degree(G.nodes))
     for i,d in enumerate(dList):
-        if d[1] == degree:
+        if d[1] == val:
             kdNodes.append(int(d[0]))
     return kdNodes
 
@@ -91,10 +91,11 @@ def main():
 	G = BuildGraph(f_path)
 	#print(G.nodes)
 
-	print(k_degree(G,5))
+	print(k_degree(G,4))
 
 
 if __name__ == "__main__":
+
     main()
 
 
