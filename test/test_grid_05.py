@@ -62,7 +62,7 @@ def main():
     if not grid:
         return
 
-    bmin, bmax = grid.get_bounding_box()
+    bmin, bmax = grid.bounding_box
     dense = grid.get_dense(bmin, bmax)
 
 

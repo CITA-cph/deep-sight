@@ -71,7 +71,7 @@ def main():
     if not file_path.endswith(".vdb"):
         file_path = file_path + ".vdb"
 
-    grid.write(file_path)
+    grid.write(file_path, True)
 
     root.destroy()
 
