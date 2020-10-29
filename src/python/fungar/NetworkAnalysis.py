@@ -91,9 +91,6 @@ def main():
 	G = BuildGraph(f_path)
 	print(G.nodes)
 
-#	deg5_nodes = k_degree(G,5)
-#	print(deg5_nodes)
-
 
 if __name__ == "__main__":
     main()
