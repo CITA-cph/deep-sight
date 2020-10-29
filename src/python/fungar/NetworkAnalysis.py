@@ -48,7 +48,7 @@ def k_degree(G, degree):
 	#kdNodes.append([d[0] for d in dList if d[1] == 5])
 	#esmall = [(u, v) for (u, v, d) in G.edges(data=True) if d['weight'] <= 0.5]
     kdNodes =[]
-    dList = list(G.degree(nodes))
+    dList = list(G.degree(G.nodes))
     for i,d in enumerate(dList):
         if d[1] == degree:
             kdNodes.append(int(d[0]))
@@ -89,7 +89,9 @@ def BuildGraph(f_path):
 def main():
 	f_path = r'C:\Users\phil.ayres\Desktop\glaAI_from_Pdrive\AnalysisResults_glaAI_param_2-2-50_rev1.xlsx'
 	G = BuildGraph(f_path)
-	print(G.nodes)
+	#print(G.nodes)
+
+	print(k_degree(G,5))
 
 
 if __name__ == "__main__":
