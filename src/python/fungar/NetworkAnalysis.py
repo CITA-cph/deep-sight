@@ -44,13 +44,13 @@ def SimplePaths(G, sources, sinks):
             simplePaths.extend(list(asp))
     return simplePaths
 
-def k_degree(G, degree):
+def k_degree(G, val):
 	#kdNodes.append([d[0] for d in dList if d[1] == 5])
 	#esmall = [(u, v) for (u, v, d) in G.edges(data=True) if d['weight'] <= 0.5]
     kdNodes =[]
-    dList = list(G.degree(nodes))
+    dList = list(G.degree(G.nodes))
     for i,d in enumerate(dList):
-        if d[1] == degree:
+        if d[1] == val:
             kdNodes.append(int(d[0]))
     return kdNodes
 
@@ -89,13 +89,13 @@ def BuildGraph(f_path):
 def main():
 	f_path = r'C:\Users\phil.ayres\Desktop\glaAI_from_Pdrive\AnalysisResults_glaAI_param_2-2-50_rev1.xlsx'
 	G = BuildGraph(f_path)
-	print(G.nodes)
+	#print(G.nodes)
 
-#	deg5_nodes = k_degree(G,5)
-#	print(deg5_nodes)
+	print(k_degree(G,4))
 
 
 if __name__ == "__main__":
+
     main()
 
 
