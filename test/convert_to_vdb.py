@@ -52,7 +52,7 @@ def main():
         [0,0,0.01,0],
         [0,0,0,1]]
 
-    grid.set_transform(mat)
+    grid.transform = mat
     grid.name = "density"
 
     file_path = filedialog.asksaveasfilename(
@@ -67,7 +67,7 @@ def main():
     if not file_path.endswith(".vdb"):
         file_path = file_path + ".vdb"
 
-    grid.write(file_path)
+    grid.write(file_path, True)
 
     root.destroy()
 

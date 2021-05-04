@@ -62,8 +62,8 @@ def main():
     if not grid:
         return
 
-    bmin, bmax = grid.getBoundingBox()
-    dense = grid.getDense(bmin, bmax)
+    bmin, bmax = grid.bounding_box
+    dense = grid.get_dense(bmin, bmax)
 
 
     # Create histogram along the Z-axis
