@@ -12,6 +12,13 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+test_grid_gradient_01.py
+
+This script shows how to extract the gradient and Laplacian of a grid.
+
+Author: Tom Svilans
+
 '''
 
 import os
@@ -19,7 +26,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 DEEPSIGHT_DIR = os.getenv('DEEPSIGHT_DIR')
 if DEEPSIGHT_DIR is None:
     DEEPSIGHT_DIR = ""
-
+    
 try:
     import _deepsight as deepsight
 except ImportError:
@@ -28,53 +35,48 @@ except ImportError:
     spec = importlib.util.spec_from_file_location("_deepsight", os.path.abspath("../bin/_deepsight.cp{}{}-win_amd64.pyd".format(sys.version_info.major, sys.version_info.minor)))
     deepsight = importlib.util.module_from_spec(spec)
 
-import numpy, filetype
+import numpy
 
-def main():
+'''
+Plot a slice of a grid
+'''
+
+def load_grid_ui():
     # Pick a file with a file dialog
     from tkinter import Tk, filedialog
 
     root = Tk()
-    directory = filedialog.askdirectory(
-        initialdir = os.getcwd(),
-        title = "Select file")
-
-    if not directory:
-        return
-
-    files = os.listdir(directory)
-
-    files = [os.path.join(directory, f) for f in files if f.lower().endswith('tif') or f.lower().endswith('tiff')]
-    files.sort()
-
-
-    # Load grid
-    grid = deepsight.Grid.from_many_tiffs(files, 30.0/255, 20)
-
-    mat = [
-        [0.001,0,0,0],
-        [0,0.001,0,0],
-        [0,0,0.001,0],
-        [0,0,0,1]]
-
-    grid.transform = mat
-    grid.name = "density"
-
-    file_path = filedialog.asksaveasfilename(
-        #defaultextension=".vdb",
+    file_path = filedialog.askopenfilename(
         initialdir = os.getcwd(),
         title = "Select file",
-        filetypes = [("VDB files (*.vdb)","*.vdb")])
-
+        filetypes = (("VDB files","*.vdb"), ("TIFF files","*.tif, *.tiff")))
+    root.destroy()
     if not file_path:
+        return (None, file_path)
+
+    return (deepsight.Grid.read(file_path), file_path)
+
+
+
+def main():
+
+    grid, filepath = load_grid_ui()
+    if not grid:
         return
 
-    if not file_path.endswith(".vdb"):
-        file_path = file_path + ".vdb"
+    SLICE = 200
+    FILTER = 4
+ 
+    print("Filtering grid...")
+    #grid.dilate(FILTER * 2) # We need to dilate the grid by a small amount to prevent edge artefacts
+    grid.filter(FILTER, 2) # Blur the grid using a Gaussian kernel of width FILTER
 
-    grid.write(file_path, True)
+    basepath = filepath.split('.')[0]
 
-    root.destroy()
+    save_path = basepath + "_filtered_{}.vdb".format(FILTER)
+
+    print("Writing to {}".format(save_path))
+    grid.write(save_path, True)
 
 
 if __name__ == "__main__":
