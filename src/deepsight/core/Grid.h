@@ -13,8 +13,6 @@
 #include <openvdb/tools/GridOperators.h>
 #include <openvdb/tools/LevelSetTracker.h>
 
-
-
 #include <openvdb/math/Math.h>
 #include <openvdb/math/Mat.h>
 #include <openvdb/math/Mat3.h>

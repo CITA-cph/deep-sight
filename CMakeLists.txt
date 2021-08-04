@@ -62,4 +62,4 @@ add_compile_definitions(_USE_MATH_DEFINES)
 #======== Add targets ========
 
 add_subdirectory("src/py_deepsight" "_deepsight")
-add_subdirectory("src/dsTest" "dsTest")
+#add_subdirectory("src/dsTest" "dsTest")

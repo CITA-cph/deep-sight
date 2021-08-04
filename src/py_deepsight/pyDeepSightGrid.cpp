@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include "core/Grid.h"
+#include "pyGrid.h"
+#include "pyutil.h"
 
 namespace py = pybind11;
 
@@ -36,9 +38,13 @@ inline py::array_t<T> toPyArray(std::vector<T>&& passthrough)
 	return passthroughNumpy;	
 }
 
-
+template<typename GridType>
 void grid(py::module &m)
 {
+    using ValueT = typename GridType::ValueType;
+    using GridPtr = typename GridType::Ptr;
+    using Traits = pyutil::GridTraits<GridType>;
+    
 	py::class_<DeepSight::FloatGrid, DeepSight::FloatGridPtr>(m, "Grid")
 	    .def(py::init())
 	    .def_property("name", &DeepSight::FloatGrid::get_name, &DeepSight::FloatGrid::set_name)
