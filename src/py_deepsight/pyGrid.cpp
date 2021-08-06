@@ -47,8 +47,17 @@ void grid(py::module &m)
     const std::string pyGridTypeName = Traits::name();
 
     py::class_<GridType, GridPtr>(m, pyGridTypeName.c_str())
-    	.def(py::init());
-    	//.def(py::init<ValueT>(py::args("background")));    	
+    	.def(py::init())
+    	//.def(py::init<ValueT>("background"))
+    	.def("type", &GridType::type)
+    	.def("valueType", &GridType::valueType)
+    	//.def("isTreeUnique", &GridType::isTreeUnique)
+
+    	.def("clearMetadata", &GridType::clearMetadata)
+    	.def("metaCount", &GridType::metaCount)
+    	.def("str", &GridType::str)
+    	//.def("copy", &GridType::copy)
+    	;	
 
     	/*
     
