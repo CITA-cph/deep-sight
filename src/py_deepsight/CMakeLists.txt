@@ -45,9 +45,10 @@ add_subdirectory(${DEEPSIGHT_DEPS_DIR}/pybind11 ${CMAKE_BINARY_DIR}/build/pybind
 pybind11_add_module(${PROJECT_NAME}
 	${DEEPSIGHT_SOURCE_FILES}
 
-	pyGrid.cpp
-	pyGrid-impl.cpp
+	#pyGrid.cpp
+	#pyGrid-impl.cpp
 	pyDeepSight.cpp
+	pyDeepSightGrid.cpp
 	#pyWindow.cpp
 	)
 

@@ -24,6 +24,7 @@ try:
 except ImportError:
     print("Importing local build.")
     import importlib.util, sys
+    print(sys.version_info)
     spec = importlib.util.spec_from_file_location("_deepsight", os.path.abspath("../bin/_deepsight.cp{}{}-win_amd64.pyd".format(sys.version_info.major, sys.version_info.minor)))
     deepsight = importlib.util.module_from_spec(spec)
 

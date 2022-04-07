@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Svilans"
+  given-names: "Tom"
+  orcid: "https://orcid.org/0000-0002-0357-892X"
+- family-names: "Gatz"
+  given-names: "Sebastian"
+  orcid: "https://orcid.org/0000-0001-5068-9350"
+- family-names: "Ayres"
+  given-names: "Phil"
+  orcid: "https://orcid.org/0000-0002-9266-065X"
+- family-names: "Tamke"
+  given-names: "Martin"
+  orcid: "https://orcid.org/0000-0003-1209-4967"
+title: "DeepSight (Python 3.8, 64-bit)"
+version: 0.02-py38
+date-released: 2020-10-06
+url: "https://github.com/cita-cph/deep-sight"
