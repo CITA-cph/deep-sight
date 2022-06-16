@@ -1,0 +1,57 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# VS folder
+.vs/
+*.user
+
+# NuGet packages
+packages/
+
+# obj files
+bin/
+obj/
+src/RawLam/bin/
+src/RawLam/obj/
+src/deepsight/x64/
+src/pyDeepSight/x64/
+UpgradeLog.htm
+src/openvdb_sandbox/x64
+deep-sight-deprecated/dep
+deep-sight-deprecated/build
+
+# heavy data files
+*.vdb
+*.tif
+*.tiff
+*.mp4

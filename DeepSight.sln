@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deepsight", "src\deepsight\deepsight.vcxproj", "{9E52B1FA-DD78-4F63-97F3-B5873AE151CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSightNet", "src\DeepSightNet\DeepSightNet.csproj", "{70A45ECC-931D-4FEE-833F-442EF9CB54A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawLamb", "src\RawLamb\RawLamb.csproj", "{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openvdb_sandbox", "src\openvdb_sandbox\openvdb_sandbox.vcxproj", "{C0347436-FEE5-4CEF-82BB-5C92BA6853C3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pydeepsight", "src\pyDeepSight\pyDeepSight.vcxproj", "{D644F446-D59A-464D-983C-435FB2A05380}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawLamb.GH", "src\RawLamb.GH\RawLamb.GH.csproj", "{34E0FE2E-4D40-4444-88D0-7BD701941516}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8B62411C-EBCE-40FC-A1E7-6B5C085B1582} = {8B62411C-EBCE-40FC-A1E7-6B5C085B1582}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testDeepSightNet", "src\testDeepSightNet\testDeepSightNet.csproj", "{601372DC-E2B0-41A2-B311-B42E8E952002}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E52B1FA-DD78-4F63-97F3-B5873AE151CB}.Debug|x64.ActiveCfg = Debug|x64
+		{9E52B1FA-DD78-4F63-97F3-B5873AE151CB}.Debug|x64.Build.0 = Debug|x64
+		{9E52B1FA-DD78-4F63-97F3-B5873AE151CB}.Release|x64.ActiveCfg = Release|x64
+		{9E52B1FA-DD78-4F63-97F3-B5873AE151CB}.Release|x64.Build.0 = Release|x64
+		{70A45ECC-931D-4FEE-833F-442EF9CB54A8}.Debug|x64.ActiveCfg = Debug|x64
+		{70A45ECC-931D-4FEE-833F-442EF9CB54A8}.Debug|x64.Build.0 = Debug|x64
+		{70A45ECC-931D-4FEE-833F-442EF9CB54A8}.Release|x64.ActiveCfg = Release|x64
+		{70A45ECC-931D-4FEE-833F-442EF9CB54A8}.Release|x64.Build.0 = Release|x64
+		{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}.Debug|x64.ActiveCfg = Debug|x64
+		{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}.Debug|x64.Build.0 = Debug|x64
+		{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}.Release|x64.ActiveCfg = Release|x64
+		{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}.Release|x64.Build.0 = Release|x64
+		{C0347436-FEE5-4CEF-82BB-5C92BA6853C3}.Debug|x64.ActiveCfg = Debug|x64
+		{C0347436-FEE5-4CEF-82BB-5C92BA6853C3}.Debug|x64.Build.0 = Debug|x64
+		{C0347436-FEE5-4CEF-82BB-5C92BA6853C3}.Release|x64.ActiveCfg = Release|x64
+		{C0347436-FEE5-4CEF-82BB-5C92BA6853C3}.Release|x64.Build.0 = Release|x64
+		{D644F446-D59A-464D-983C-435FB2A05380}.Debug|x64.ActiveCfg = Debug|x64
+		{D644F446-D59A-464D-983C-435FB2A05380}.Debug|x64.Build.0 = Debug|x64
+		{D644F446-D59A-464D-983C-435FB2A05380}.Release|x64.ActiveCfg = Release|x64
+		{D644F446-D59A-464D-983C-435FB2A05380}.Release|x64.Build.0 = Release|x64
+		{34E0FE2E-4D40-4444-88D0-7BD701941516}.Debug|x64.ActiveCfg = Debug|x64
+		{34E0FE2E-4D40-4444-88D0-7BD701941516}.Debug|x64.Build.0 = Debug|x64
+		{34E0FE2E-4D40-4444-88D0-7BD701941516}.Release|x64.ActiveCfg = Release|x64
+		{34E0FE2E-4D40-4444-88D0-7BD701941516}.Release|x64.Build.0 = Release|x64
+		{601372DC-E2B0-41A2-B311-B42E8E952002}.Debug|x64.ActiveCfg = Debug|x64
+		{601372DC-E2B0-41A2-B311-B42E8E952002}.Release|x64.ActiveCfg = Release|x64
+		{601372DC-E2B0-41A2-B311-B42E8E952002}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1C9770B-B894-491B-9EB1-D3BBFA71E373}
+	EndGlobalSection
+EndGlobal

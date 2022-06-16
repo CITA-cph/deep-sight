@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RawLambCommon.Board">
+    <Position X="0.5" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAABAAAEAAAQQAQAgAgIIAAAAAIAAAACAAA=</HashCode>
+      <FileName>Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLambCommon.RhinoExtensions">
+    <Position X="3" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAEAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Extensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLambCommon.Alligator">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAEQAIAAQEAAAAAgAIAAEAQAAgAAAAAAAMEACAAAAA=</HashCode>
+      <FileName>LamellaAllocator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLambCommon.BoardPlacement">
+    <Position X="4.75" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAwAAAACAAAAUAAAAAQACAAAAACAgAAAAAAAAA=</HashCode>
+      <FileName>LamellaAllocator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLambCommon.LamellaPlacement">
+    <Position X="2.5" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gAAgAAAAAAAAAAAEAAAAAAQAADBAAAIEAGIAAAAAAAA=</HashCode>
+      <FileName>LamellaPlacement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLambCommon.Log">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAICIAAAAAAAAAAAAkAAAgRAACAAIAAAAQIAACAAAAA=</HashCode>
+      <FileName>Log.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLamb.N4jGraph" BaseTypeListCollapsed="true">
+    <Position X="6.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAACAUABAAAAAAACAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Graph.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RawLamb.LamellaPerformance">
+    <Position X="3" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAAAAAAAAAAAAAADBAAAAEgQAAAAAAAAA=</HashCode>
+      <FileName>LamellaPerformance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawLamb.LogYard">
+    <Position X="5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>LogYard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="RawLambCommon.Knot">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAQAAAAAAAABAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Knot.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
