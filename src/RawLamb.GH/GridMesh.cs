@@ -68,7 +68,7 @@ namespace RawLamb.GH.Components
         {
             get
             {
-                return null;
+                return Properties.Resources.GridMesh_01;
             }
         }
 

@@ -200,7 +200,7 @@ namespace RawLamb.GH.Components
         {
             get
             {
-                return null;
+                return Properties.Resources.GridDisplay_01;
             }
         }
 

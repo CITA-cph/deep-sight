@@ -107,7 +107,7 @@ namespace RawLamb.GH.Components
         {
             get
             {
-                return null;
+                return Properties.Resources.GridSet_01;
             }
         }
 

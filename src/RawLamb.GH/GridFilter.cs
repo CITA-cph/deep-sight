@@ -74,7 +74,7 @@ namespace RawLamb.GH.Components
         {
             get
             {
-                return null;
+                return Properties.Resources.GridFilter_01;
             }
         }
 

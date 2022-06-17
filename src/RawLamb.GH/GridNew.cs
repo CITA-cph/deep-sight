@@ -72,7 +72,7 @@ namespace RawLamb.GH.Components
         {
             get
             {
-                return null;
+                return Properties.Resources.GridNew_01;
             }
         }
 

@@ -99,6 +99,11 @@
     <Compile Include="GridSample.cs" />
     <Compile Include="GridSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -112,6 +117,39 @@
       <Project>{70a45ecc-931d-4fee-833f-442ef9cb54a8}</Project>
       <Name>DeepSightNet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridDisplay_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridLoad_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridNew_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridSample_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridMesh_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridResample_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridFilter_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridGoo_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridSet_01.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets')" />
