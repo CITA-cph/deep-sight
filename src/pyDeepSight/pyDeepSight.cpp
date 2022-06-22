@@ -20,7 +20,7 @@ namespace py = pybind11;
 
 
 
-PYBIND11_MODULE(pyrawlam, m)
+PYBIND11_MODULE(pydeepsight, m)
 {
 	//py::class_<openvdb::Vec3f>(m, "Vec3f", py::buffer_protocol())
 	//	.def_buffer([](openvdb::Vec3f& v) -> py::buffer_info {
