@@ -32,6 +32,7 @@ namespace RawLamb
             CtLog = null;
             Mesh = null;
             Pith = null;
+
         }
 
         public Log(string name, Grid ctlog) : base()

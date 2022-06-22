@@ -62,6 +62,13 @@ namespace DeepSight
         }
 
         [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_write(IntPtr ptr, string filename, bool half_float);
+        public void Write(string filename, bool float_as_half=false)
+        {
+            Grid_write(Ptr, filename, float_as_half);
+        }
+
+        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.SafeArray)]
         private static extern IntPtr[] Grid_get_some_grids(string filename);
 

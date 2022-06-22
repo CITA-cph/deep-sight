@@ -16,6 +16,7 @@ namespace DeepSight
 		RAWLAM_EXPORT Grid<float>* Grid_duplicate(Grid<float> *ptr);
 		RAWLAM_EXPORT void Grid_Delete(Grid<float>* ptr);
 		RAWLAM_EXPORT Grid<float>* Grid_read(const char* filename);
+		RAWLAM_EXPORT void Grid_write(Grid<float>* ptr, const char* filename, bool half_float);
 
 		RAWLAM_EXPORT void Grid_evaluate(Grid<float>* ptr, int num_coords, float* coords, float* results, int sample_type);
 

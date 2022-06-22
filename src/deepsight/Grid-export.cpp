@@ -25,6 +25,11 @@ namespace DeepSight
 		return new Grid<float>(*Grid<float>::read(filename));
 	}
 
+	void Grid_write(Grid<float>* ptr, const char* filename, bool half_float)
+	{
+		ptr->write(filename, half_float);
+	}
+
 	SAFEARRAY* Grid_get_some_grids(const char* filename)
 	{
 		std::vector<std::shared_ptr<Grid<float>>> grid_vec = Grid<float>::from_vdb(filename);
