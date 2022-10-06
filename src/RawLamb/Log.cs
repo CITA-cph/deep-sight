@@ -56,14 +56,26 @@ namespace RawLamb
             Knots = new List<Knot>();
 
 
-            for (int i = 0; i < ilog.Knots.Length; i += 6)
+            for (int i = 0; i < ilog.Knots.Length; i += 11)
             {
+                var buf = ilog.Knots;
+
                 var knot = new Knot();
+                knot.Index = (int)buf[i];
                 var line = new Line(
-                    new Point3d(ilog.Knots[i], ilog.Knots[i + 1], ilog.Knots[i + 2]),
-                    new Point3d(ilog.Knots[i + 3], ilog.Knots[i + 4], ilog.Knots[i + 5]));
+                    new Point3d(
+                        buf[i + 1], 
+                        buf[i + 2], 
+                        buf[i + 3]),
+                    new Point3d(
+                        buf[i + 4], 
+                        buf[i + 5], 
+                        buf[i + 6]));
                 knot.Axis = line;
                 knot.Length = line.Length;
+                knot.DeadKnotRadius = ilog.Knots[i + 7];
+                knot.Radius = ilog.Knots[i + 8];
+                knot.Volume = ilog.Knots[i + 10];
                 Knots.Add(knot);
             }
         }

@@ -11,32 +11,41 @@ namespace RawLam
 		n_pith = ilog->pith.size();
 		n_knots = ilog->knots.size();
 
+		unsigned int knot_size = 11;
 
 		pith = new float[n_pith * 2];
-		knots = new float[n_knots * 6];
+		knots = new float[n_knots * knot_size];
 
 		//std::copy(std::begin(ilog->pith), std::end(ilog->pith), pith);
-
-		for (int i = 0; i < ilog->pith.size(); ++i)
+		size_t ii = 0;
+		for (size_t i = 0; i < ilog->pith.size(); ++i)
 		{
+			ii = i * 2;
 			Eigen::Vector2f v = ilog->pith[i];
 
-			pith[i * 2] = v.x();
-			pith[i * 2 + 1] = v.y();
+			pith[ii] = v.x();
+			pith[ii + 1] = v.y();
 			//*pith[i * 3 + 2] = v.z();
 		}
 
-		for (int i = 0; i < ilog->knots.size(); ++i)
+		for (size_t i = 0; i < ilog->knots.size(); ++i)
 		{
+			ii = i * knot_size;
 			knot k = ilog->knots[i];
 
-			knots[i * 6] = k.start.x();
-			knots[i * 6 + 1] = k.start.y();
-			knots[i * 6 + 2] = k.start.z();
+			knots[ii + 0] = (float)k.index;
+			knots[ii + 1] = k.start.x();
+			knots[ii + 2] = k.start.y();
+			knots[ii + 3] = k.start.z();
 
-			knots[i * 6 + 3] = k.end.x();
-			knots[i * 6 + 4] = k.end.y();
-			knots[i * 6 + 5] = k.end.z();
+			knots[ii + 4] = k.end.x();
+			knots[ii + 5] = k.end.y();
+			knots[ii + 6] = k.end.z();
+
+			knots[ii + 7] = k.dead_knot_border;
+			knots[ii + 8] = k.radius;
+			knots[ii + 9] = k.length;
+			knots[ii + 10] = k.volume;
 		}
 
 	}

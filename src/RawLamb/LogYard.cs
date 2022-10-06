@@ -222,6 +222,7 @@ namespace RawLamb
                         var knots = new List<Knot>();
 
                         double z = 0;
+                        int index = 0;
                         foreach (var line in knot_lines)
                         {
                             var tok = line.Split();
@@ -240,9 +241,10 @@ namespace RawLamb
                             var length = double.Parse(tok[9]);
                             var volume = double.Parse(tok[10]);
 
-                            var knot = new Knot(new Line(start, end), radius, length, volume);
+                            var knot = new Knot(index, new Line(start, end), dead_border, radius, length, volume);
 
                             knots.Add(knot);
+                            index++;
                         }
                         log.Knots = knots;
                         //Knots[name] = knots;

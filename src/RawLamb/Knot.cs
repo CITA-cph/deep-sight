@@ -13,13 +13,17 @@ namespace RawLamb
         public double Radius;
         public double Length;
         public double Volume;
+        public int Index;
+        public double DeadKnotRadius;
 
-        public Knot(Line axis, double radius, double length, double volume)
+        public Knot(int index, Line axis, double dead_knot_radius, double radius, double length, double volume)
         {
             Axis = axis;
             Radius = radius;
             Length = length;
             Volume = volume;
+            Index = index;
+            DeadKnotRadius = dead_knot_radius;
         }
     }
 }

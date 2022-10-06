@@ -56,8 +56,8 @@ namespace DeepSight
             Pith = new float[n_pith * 2];
             Marshal.Copy(pith, Pith, 0, n_pith * 2);
 
-            Knots = new float[n_knots * 6];
-            Marshal.Copy(knots, Knots, 0, n_knots * 6);
+            Knots = new float[n_knots * 11];
+            Marshal.Copy(knots, Knots, 0, n_knots * 11);
 
             InfoLog_free(ref pith);
             InfoLog_free(ref knots);
