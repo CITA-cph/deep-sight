@@ -135,6 +135,16 @@ namespace DeepSight
             set { Grid_set_value(Ptr, x, y, z, value); }
         }
 
+        public float this[float x, float y, float z]
+        {
+            get { 
+                var results = new float[1]; 
+                Grid_get_values_ws(Ptr, 1, new float[] { x, y, z }, results, 1); 
+                return results[0]; 
+            }
+            set { Grid_set_values_ws(Ptr, 1, new float[] { x, y, z }, new float[] { value }); }
+        }
+
         [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_set_name(IntPtr ptr, string name);
         [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
