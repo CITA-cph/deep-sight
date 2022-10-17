@@ -48,6 +48,7 @@
     <Compile Include="InfoLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuadMesh.cs" />
+    <Compile Include="RLGeom.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeepSightNetDiagram.cd" />

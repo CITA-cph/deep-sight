@@ -28,6 +28,7 @@ namespace DeepSight
     public partial class API
     {
         public const string DeepSightApiPath = @"deepsight.dll";
+        public const string RawLamGeomApiPath = @"rlgeom.dll";
 
         // Temporary, for debugging
         public static string AssemblyDirectory
