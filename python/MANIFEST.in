@@ -1,0 +1,4 @@
+#graft bin
+#include bin/*.dll bin/*.pyd
+graft deepsight
+include deepsight/*.dll deepsight/*.pyd

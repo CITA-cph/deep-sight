@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+# [project]
+# name = "deepsight"
+# version = "0.0.3"
+# authors = [
+#   { name="Tom Svilans", email="tsvi@kglakademi.dk" },
+# ]
+# description = "Deep Sight toolkit for volumetric modelling."
+# readme = "README.md"
+# requires-python = ">=3.10"
+# classifiers = [
+#     "Programming Language :: Python :: 3",
+#     "License :: OSI Approved :: MIT License",
+#     "Operating System :: Microsoft :: Windows",
+# ]
+# dependencies = [
+#     "numpy",
+# ]
+# dynamic = ["version"]
+
+# [project.urls]
+# "Homepage" = "https://github.com/cita-cph/deep-sight"
+# "Bug Tracker" = "https://github.com/cita-cph/deep-sight/issues"
+
+# [tool.setuptools.packages.find]
+# where = ["bin", "deepsight"]
+# include = ["deepsight*"] 
+# exclude = ["tests*"]
+
+# #[tool.setuptools]
+# #packages = ["deepsight"]
+
+# [tool.setuptools.package-data]
+# bin = ["*.dll", "*.pyd"]
