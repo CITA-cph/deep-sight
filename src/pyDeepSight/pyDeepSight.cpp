@@ -20,7 +20,7 @@ namespace py = pybind11;
 
 
 
-PYBIND11_MODULE(pydeepsight, m)
+PYBIND11_MODULE(_deepsight, m)
 {
 	//py::class_<openvdb::Vec3f>(m, "Vec3f", py::buffer_protocol())
 	//	.def_buffer([](openvdb::Vec3f& v) -> py::buffer_info {
@@ -34,7 +34,7 @@ PYBIND11_MODULE(pydeepsight, m)
 	//	);
 	//});
 
-	m.doc() = "pydeepsight";
+	m.doc() = "_deepsight";
 	grid<double>(m, "DoubleGrid");
 	grid<float>(m, "FloatGrid");
 	grid<int>(m, "IntGrid");

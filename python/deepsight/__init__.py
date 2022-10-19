@@ -1,3 +1,3 @@
 VERSION="0.3.1"
 
-from .pydeepsight import *
+from ._deepsight import *
