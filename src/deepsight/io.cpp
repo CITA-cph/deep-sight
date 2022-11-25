@@ -4,9 +4,9 @@
 namespace DeepSight
 {
 	//template<typename T>
-	Grid<float>::Ptr load_scalar_tiff(const std::string path, double threshold, unsigned int crop)
+	Grid<float>::Ptr load_scalar_tiff(const std::string path, double threshold, unsigned int crop, bool verbose)
 	{
-		bool verbose = false;
+		//bool verbose = false;
 		unsigned int crop_x = crop, crop_y = crop;
 
 		if (!verbose)
@@ -75,8 +75,8 @@ namespace DeepSight
 						crop_y = 0;
 
 					// itterate through all the pixels of the tif
-					for (i = crop_x; (unsigned int)i < width - crop_x; i++)
-						for (int true_j = crop_y; (unsigned int)true_j < height - crop_y; true_j++)
+					for (i = 0; (unsigned int)i < width; i++)
+						for (j = 0; (unsigned int)j < height; j++)
 						{
 							uint32_t& TiffPixel = raster[j * width + i]; // read the current pixel of the TIF
 
@@ -86,7 +86,7 @@ namespace DeepSight
 							if (val < threshold)
 								continue;
 
-							j = height-true_j - 1;
+							//j = height-true_j - 1;
 
 							accessor.setValue(ijk, val);
 

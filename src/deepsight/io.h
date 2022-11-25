@@ -36,7 +36,7 @@
 namespace DeepSight
 {
 	//template <typename T>
-	Grid<float>::Ptr load_scalar_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
+	Grid<float>::Ptr load_scalar_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0, bool verbose = false);
 	//std::shared_ptr<Grid<openvdb::Vec3f>> load_vector_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
 
 	Grid<openvdb::Vec3f>::Ptr load_vector_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
