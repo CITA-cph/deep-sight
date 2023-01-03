@@ -32,9 +32,9 @@
 
 //typedef openvdb::FloatGrid openvdb_grid;
 
+
 namespace DeepSight
 {
-
 	template<typename T>
 	class Grid
 	{

@@ -5,8 +5,14 @@
 #include "Mesh.h"
 #include <tuple>
 
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#define _VERSION XSTR(_DEEPSIGHT_VERSION)
+#pragma message ("deepsight v" _VERSION)
+
 namespace DeepSight
 {
+	const char* VERSION = _VERSION;
 
 #ifdef __cplusplus
 	extern "C" {

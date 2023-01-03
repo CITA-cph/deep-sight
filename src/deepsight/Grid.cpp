@@ -2,6 +2,8 @@
 
 namespace DeepSight
 {
+
+
 	template<typename T>
 	Grid<T>::Grid()
 	{

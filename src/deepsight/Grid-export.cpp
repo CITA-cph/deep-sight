@@ -2,6 +2,11 @@
 
 namespace DeepSight
 {
+	const char* get_version()
+	{
+		return VERSION;
+	}
+
 	Grid<float>* Grid_Create()
 	{
 

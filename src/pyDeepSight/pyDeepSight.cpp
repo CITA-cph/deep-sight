@@ -1,11 +1,10 @@
 #define _USE_MATH_DEFINES
 #define NOMINMAX
 
-#define DEEPSIGHT_VERSION 0.4
 #define XSTR(x) STR(x)
 #define STR(x) #x
-#define _VERSION XSTR(DEEPSIGHT_VERSION)
-#pragma message ("DEEPSIGHT_VERSION: " _VERSION)
+#define _VERSION XSTR(_DEEPSIGHT_VERSION)
+#pragma message ("pydeepsight v" _VERSION)
 
 #include <cmath>
 #include <ctime>    

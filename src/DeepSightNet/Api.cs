@@ -42,5 +42,14 @@ namespace DeepSight
                 return Path.GetDirectoryName(path);
             }
         }
+
+        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern string get_version();
+        public static string ApiVersion
+        {
+            get { return get_version(); }
+        }
+
+
     }
 }

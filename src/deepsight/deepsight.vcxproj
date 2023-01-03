@@ -73,7 +73,8 @@
       <Version>$(DEEPSIGHT_VERSION)</Version>
     </Link>
     <PreBuildEvent>
-      <Command>set %25DEEPSIGHT_VERSION=0.4.1</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -99,8 +100,8 @@
       <Version>"$(DEEPSIGHT_VERSION)"</Version>
     </Link>
     <PreBuildEvent>
-      <Command>set %25DEEPSIGHT_VERSION=0.4.1
-echo Deep Sight version %25DEEPSIGHT_VERSION%</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
