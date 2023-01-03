@@ -45,6 +45,7 @@ src/RawLam/bin/
 src/RawLam/obj/
 src/deepsight/x64/
 src/pyDeepSight/x64/
+src/build_all/x64/
 UpgradeLog.htm
 src/openvdb_sandbox/x64
 deep-sight-deprecated/dep
@@ -55,3 +56,17 @@ deep-sight-deprecated/build
 *.tif
 *.tiff
 *.mp4
+
+# other files/folders
+deep-sight-deprecated/exhibit/demo/frames/
+deep-sight-deprecated/exhibit/demo/video/
+python/build/
+python/deepsight.egg-info/
+python/deepsight/__pycache__/
+python/deepsight/_deepsight.cp310-win_amd64.exp
+python/deepsight/_deepsight.cp310-win_amd64.pdb
+python/deepsight/_deepsight.cp310-win_amd64.pyd
+python/dist/
+python/install.bat
+releases/
+tmp/
