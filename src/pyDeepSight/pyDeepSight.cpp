@@ -1,5 +1,12 @@
 #define _USE_MATH_DEFINES
 #define NOMINMAX
+
+#define DEEPSIGHT_VERSION 0.4
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#define _VERSION XSTR(DEEPSIGHT_VERSION)
+#pragma message ("DEEPSIGHT_VERSION: " _VERSION)
+
 #include <cmath>
 #include <ctime>    
 
@@ -19,7 +26,6 @@
 namespace py = pybind11;
 
 
-
 PYBIND11_MODULE(_deepsight, m)
 {
 	//py::class_<openvdb::Vec3f>(m, "Vec3f", py::buffer_protocol())
@@ -35,6 +41,8 @@ PYBIND11_MODULE(_deepsight, m)
 	//});
 
 	m.doc() = "_deepsight";
+	m.attr("VERSION") = py::cast(_VERSION);
+
 	grid<double>(m, "DoubleGrid");
 	grid<float>(m, "FloatGrid");
 	grid<int>(m, "IntGrid");

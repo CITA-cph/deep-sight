@@ -14,12 +14,16 @@ namespace RawLamb
     {
         public Guid Id;
         public string Name;
+
+        [Obsolete("Deprecated. Use Grids instead", false)]
         public Grid CtLog;
+
         public Mesh Mesh;
         public Plane Plane;
         public List<Knot> Knots;
         public Polyline Pith;
         public BoundingBox BoundingBox;
+        public Dictionary<string, Grid> Grids;
 
         public List<Board> Boards;
 
@@ -32,7 +36,7 @@ namespace RawLamb
             CtLog = null;
             Mesh = null;
             Pith = null;
-
+            Grids = new Dictionary<string, Grid>();
         }
 
         public Log(string name, Grid ctlog) : base()
@@ -80,6 +84,7 @@ namespace RawLamb
             }
         }
 
+        [Obsolete("Not used any more")]
         public static Log LoadCtLog(string path, Transform xform, bool create_mesh=false, double resample_resolution = 30.0, double mesh_isovalue=0.7)
         {
             if (!System.IO.File.Exists(path))
@@ -119,6 +124,10 @@ namespace RawLamb
             {
                 Boards[i].Transform(xform);
             }
+            foreach(var key in Grids.Keys)
+            {
+                Grids[key].Transform(xform);
+            }
         }
 
         public Log Duplicate()
@@ -134,6 +143,10 @@ namespace RawLamb
             for (int i = 0; i < Knots.Count; ++i)
             {
                 log.Knots.Add(Knots[i]);
+            }
+            foreach (var key in Grids.Keys)
+            {
+                log.Grids[key] = Grids[key].Duplicate();
             }
 
             return log;

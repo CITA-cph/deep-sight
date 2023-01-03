@@ -93,6 +93,8 @@ void grid(py::module& m, std::string class_name)
 		.def("filter", &GridType::filter)
 		.def("dilate", &GridType::dilate)
 		.def("erode", &GridType::erode);
+		//.def("__iter__", [](const GridType::active_voxels & s) { return py::make_iterator(s.begin(), s.end()); },
+					//py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
 }
 
 

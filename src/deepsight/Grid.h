@@ -12,6 +12,7 @@
 #include <openvdb/tools/GridTransformer.h>
 #include <openvdb/tools/GridOperators.h>
 #include <openvdb/tools/LevelSetTracker.h>
+#include <openvdb/tools/RayIntersector.h>
 
 #include <openvdb/math/Math.h>
 #include <openvdb/math/Mat.h>
@@ -107,8 +108,6 @@ namespace DeepSight
 		Ptr duplicate();
 
 		Grid<T>* resample(float scale);
-
-
 
 	protected:
 		static bool has_suffix(const std::string& str, const std::string& suffix);

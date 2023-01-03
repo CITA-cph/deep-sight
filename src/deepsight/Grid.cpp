@@ -332,7 +332,7 @@ namespace DeepSight
 	template<typename T>
 	std::vector<Eigen::Vector3i> Grid<T>::get_active_voxels()
 	{
-		std::vector<Eigen::Vector3i> values(m_grid->activeVoxelCount());
+		std::vector<Eigen::Vector3i> values;
 
 		for (typename GridT::ValueOnCIter iter = m_grid->cbeginValueOn(); iter.test(); ++iter)
 		{

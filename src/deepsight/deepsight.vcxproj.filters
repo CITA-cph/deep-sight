@@ -79,6 +79,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="RawLamApiDiagram.cd" />
+    <None Include="deepsightDiagram.cd" />
   </ItemGroup>
 </Project>

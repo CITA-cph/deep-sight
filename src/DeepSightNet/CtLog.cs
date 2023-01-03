@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 
 namespace DeepSight
 {
+    [Obsolete("Not used anymore.", false)]
     public class CtLog : IDisposable
     {
         public IntPtr Ptr;

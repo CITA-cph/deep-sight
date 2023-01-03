@@ -29,6 +29,7 @@ namespace DeepSight
     {
         public const string DeepSightApiPath = @"deepsight.dll";
         public const string RawLamGeomApiPath = @"rlgeom.dll";
+        public const string DeepSightVersion = "0.4";
 
         // Temporary, for debugging
         public static string AssemblyDirectory

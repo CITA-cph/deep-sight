@@ -1,4 +1,6 @@
-﻿/*
+﻿#if NEO4J
+
+/*
  * RawLamb
  * Copyright 2022 Tom Svilans
  * 
@@ -104,3 +106,4 @@ namespace RawLamb.GH
         #endregion
     }
 }
+#endif

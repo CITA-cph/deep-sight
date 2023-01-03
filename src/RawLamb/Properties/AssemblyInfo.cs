@@ -15,4 +15,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("8b62411c-ebce-40fc-a1e7-6b5c085b1582")]
 
-[assembly: AssemblyVersion("1.0.*")] 
+[assembly: AssemblyVersion(DeepSight.API.DeepSightVersion + ".*")]
