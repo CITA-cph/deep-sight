@@ -45,6 +45,7 @@ namespace RawLamb.GH.Components
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
             pManager.AddPointParameter("Sample points", "SP", "Coordinates to set in the grid.", GH_ParamAccess.list);
             pManager.AddNumberParameter("Sample values", "SV", "Values to set at the coordinates in the grid.", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Grid space", "GS", "Coordinates in grid-space (true) or world-space (false).", GH_ParamAccess.item, false);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -81,14 +82,29 @@ namespace RawLamb.GH.Components
 
             debug.Add(string.Format("{0} : Got other inputs.", stopwatch.ElapsedMilliseconds));
 
+            bool gridspace = false;
+            DA.GetData(3, ref gridspace);
+
+            if (!gridspace)
+            {
+                Transform imat;
+                Transform mat = temp_grid.Transform.ToRhinoTransform();
+                mat.TryGetInverse(out imat);
+
+                for (int i = 0; i < points.Count; ++i)
+                {
+                    points[i] = (GH_Point)points[i].Transform(imat);
+                }
+            }
+
             var fpoints = new float[points.Count * 3];
             for (int i = 0; i < points.Count; i++)
             {
-                fpoints[i * 3] = (float)points[i].Value.X;
-                fpoints[i * 3 + 1] = (float)points[i].Value.Y;
-                fpoints[i * 3 + 2] = (float)points[i].Value.Z;
-
+                fpoints[i * 3] = (float)Math.Floor(points[i].Value.X + 0.5);
+                fpoints[i * 3 + 1] = (float)Math.Floor(points[i].Value.Y + 0.5);
+                fpoints[i * 3 + 2] = (float)Math.Floor(points[i].Value.Z + 0.5);
             }
+
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
             temp_grid.SetValuesWS(fpoints, values.Select(x => (float)x.Value).ToArray());

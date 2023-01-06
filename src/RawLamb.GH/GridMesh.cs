@@ -60,8 +60,11 @@ namespace RawLamb.GH.Components
             else
                 return;
 
+            Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
+            rhino_mesh.Normals.ComputeNormals();
+
             DA.GetData(1, ref m_threshold);
-            DA.SetData(0, temp_grid.ToMesh((float)m_threshold).ToRhinoMesh());
+            DA.SetData(0, rhino_mesh);
         }
 
         protected override System.Drawing.Bitmap Icon

@@ -122,7 +122,6 @@ namespace DeepSight
 	void Grid_bounding_box(Grid<float>* ptr, int* min, int* max)
 	{
 		std::tuple<Eigen::Vector3i, Eigen::Vector3i> bb = ptr->bounding_box();
-		//openvdb::CoordBBox bb = ptr->bounding_box();
 
 		Eigen::Vector3i bbmin = std::get<0>(bb);
 		Eigen::Vector3i bbmax = std::get<1>(bb);
