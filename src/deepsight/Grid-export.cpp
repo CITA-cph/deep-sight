@@ -18,7 +18,6 @@ namespace DeepSight
 		return new Grid<float>(*ptr->duplicate());
 	}
 
-
 	void Grid_Delete(Grid<float>* ptr)
 	{
 		delete ptr;
@@ -244,7 +243,7 @@ namespace DeepSight
 		for (size_t i = 0; i < n; ++i)
 		{
 			state_vec[i] = states[i] > 0;
-			xyz_vec[i] = Eigen::Vector3i(xyz[i * 3]);
+			xyz_vec[i] = Eigen::Vector3i(xyz[i * 3], xyz[i * 3 +1], xyz[i * 3 + 2]);
 		}
 
 		ptr->set_active_state(xyz_vec, state_vec);

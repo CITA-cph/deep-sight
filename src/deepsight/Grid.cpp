@@ -338,6 +338,7 @@ namespace DeepSight
 
 		for (typename GridT::ValueOnCIter iter = m_grid->cbeginValueOn(); iter.test(); ++iter)
 		{
+			
 			if (iter.isVoxelValue())
 			{
 				values.push_back(Eigen::Vector3i(iter.getCoord().data()));
@@ -443,10 +444,10 @@ namespace DeepSight
 			++iter.first, ++iter.second)
 		{
 			accessor.setActiveState(
-				openvdb::math::Coord(
-					(int)(*iter.first).x(),
-					(int)(*iter.first).y(),
-					(int)(*iter.first).z()
+				openvdb::math::Coord((*iter.first).data()
+					//(int)(*iter.first).x(),
+					//(int)(*iter.first).y(),
+					//(int)(*iter.first).z()
 				), *iter.second
 			);
 		}
