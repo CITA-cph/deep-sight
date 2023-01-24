@@ -204,6 +204,7 @@ namespace DeepSight
 		memcpy(buffer, active.data(), ulSize);
 	}
 
+/* ******************************************************* */
 	void Grid_erode(Grid<float>* ptr, int iterations)
 	{
 		ptr->erode(iterations);
@@ -248,6 +249,45 @@ namespace DeepSight
 
 		ptr->set_active_state(xyz_vec, state_vec);
 	}
+
+/* ******************************************************* */
+
+	void Grid_difference(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::csgDifference(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+	void Grid_union(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::csgUnion(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+	void Grid_intersection(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::csgIntersection(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+	void Grid_max(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::compMax(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+	void Grid_min(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::compMin(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+	void Grid_sum(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::compSum(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+	void Grid_mul(Grid<float>* ptr0, Grid<float>* ptr1)
+	{
+		openvdb::tools::compMul(*(ptr0->m_grid), *(ptr1->m_grid));
+	}
+
+/* ******************************************************* */
 
 	/* ################# VEC3 GRID ##################### */
 

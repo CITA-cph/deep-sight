@@ -76,7 +76,7 @@ namespace DeepSight
         [return: MarshalAs(UnmanagedType.SafeArray)]
         private static extern IntPtr[] Grid_get_some_grids(string filename);
 
-        public List<Grid> ReadMultiple(string filename)
+        public static List<Grid> ReadMultiple(string filename)
         {
             var ptrs = Grid_get_some_grids(filename);
             var grids = new List<Grid>();
@@ -86,6 +86,49 @@ namespace DeepSight
             }
 
             return grids;
+        }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_difference(IntPtr ptr0, IntPtr ptr1);
+        public static void Difference(Grid grid0, Grid grid1)
+        {
+            Grid_difference(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_union(IntPtr ptr0, IntPtr ptr1);
+        public static void Union(Grid grid0, Grid grid1)
+        {
+            Grid_union(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_intersection(IntPtr ptr0, IntPtr ptr1);
+        public static void Intersection(Grid grid0, Grid grid1)
+        {
+            Grid_intersection(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_max(IntPtr ptr0, IntPtr ptr1);
+        public static void Maximum(Grid grid0, Grid grid1)
+        {
+            Grid_max(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_min(IntPtr ptr0, IntPtr ptr1);
+        public static void Minimum(Grid grid0, Grid grid1)
+        {
+            Grid_min(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_sum(IntPtr ptr0, IntPtr ptr1);
+        public static void Sum(Grid grid0, Grid grid1)
+        {
+            Grid_sum(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_mul(IntPtr ptr0, IntPtr ptr1);
+        public static void Multiply(Grid grid0, Grid grid1)
+        {
+            Grid_mul(grid0.Ptr, grid1.Ptr);
         }
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]

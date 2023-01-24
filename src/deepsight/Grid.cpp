@@ -410,7 +410,6 @@ namespace DeepSight
 	{
 		typename GridT::Accessor accessor = m_grid->getAccessor();
 		return accessor.isValueOn(openvdb::math::Coord(xyz.data()));
-
 	}
 
 	template <typename T>

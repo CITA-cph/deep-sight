@@ -2,6 +2,7 @@
 #define GRID_EXPORT_H
 
 #include "Grid.h"
+#include <openvdb/tools/Composite.h>
 #include "Mesh.h"
 #include <tuple>
 
@@ -54,6 +55,13 @@ namespace DeepSight
 		RAWLAM_EXPORT void Grid_set_active_state(Grid<float>* ptr, int* xyz, bool state);
 		RAWLAM_EXPORT void Grid_set_active_state_many(Grid<float>* ptr, int n, int* xyz, int* states);
 
+		RAWLAM_EXPORT void Grid_difference(Grid<float>* ptr0, Grid<float>* ptr1);
+		RAWLAM_EXPORT void Grid_union(Grid<float>* ptr0, Grid<float>* ptr1);
+		RAWLAM_EXPORT void Grid_intersection(Grid<float>* ptr0, Grid<float>* ptr1);
+		RAWLAM_EXPORT void Grid_max(Grid<float>* ptr0, Grid<float>* ptr1);
+		RAWLAM_EXPORT void Grid_min(Grid<float>* ptr0, Grid<float>* ptr1);
+		RAWLAM_EXPORT void Grid_sum(Grid<float>* ptr0, Grid<float>* ptr1);
+		RAWLAM_EXPORT void Grid_mul(Grid<float>* ptr0, Grid<float>* ptr1);
 
 		// Vec3Grid
 		RAWLAM_EXPORT Grid<openvdb::Vec3f>* Vec3Grid_Create();
