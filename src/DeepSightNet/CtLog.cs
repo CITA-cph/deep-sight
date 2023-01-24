@@ -32,7 +32,7 @@ namespace DeepSight
         public IntPtr Ptr;
         private bool m_valid;
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr CtLog_Create();
         public CtLog()
         {
@@ -50,14 +50,14 @@ namespace DeepSight
             Console.WriteLine("Deleting CtLog at {0}", Ptr.ToString());
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_readVDB(IntPtr ptr, string filename);
         public void ReadVdb(string filename)
         {
             CtLog_readVDB(Ptr, filename);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_evaluate(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
         public float[] Evaluate(float[] coords, int sample_type)
         {
@@ -70,21 +70,21 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_offset(IntPtr ptr, float amount);
         public void Offset(float amount)
         {
             CtLog_offset(Ptr, amount);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_filter(IntPtr ptr, int width, int iterations, int type);
         public void Filter(int width, int iterations, int type)
         {
             CtLog_filter(Ptr, width, iterations, type);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_bounding_box(IntPtr ptr, float[] min, float[] max);
         public void BoundingBox(out float[] min, out float[] max)
         {
@@ -93,9 +93,9 @@ namespace DeepSight
             CtLog_bounding_box(Ptr, min, max);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_get_transform(IntPtr ptr, float[] mat);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_set_transform(IntPtr ptr, float[] mat);
 
         public float[] Transform { 
@@ -113,7 +113,7 @@ namespace DeepSight
             }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_to_mesh(IntPtr ptr, IntPtr mesh_ptr, float isovalue);
         public QuadMesh ToMesh(float isovalue)
         {
@@ -123,14 +123,14 @@ namespace DeepSight
             return qm;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr CtLog_resample(IntPtr ptr, float scale);
         public CtLog Resample(double scale)
         {
             return new CtLog(CtLog_resample(Ptr, (float)scale));
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern int CtLog_debug_grid_counter();
 
         public static int DebugGridCounter
@@ -165,7 +165,7 @@ namespace DeepSight
             Dispose(true);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void CtLog_Delete(IntPtr ptr);
 
         /// <summary>

@@ -406,6 +406,55 @@ namespace DeepSight
 	}
 
 	template <typename T>
+	bool Grid<T>::get_active_state(Eigen::Vector3i xyz)
+	{
+		typename GridT::Accessor accessor = m_grid->getAccessor();
+		return accessor.isValueOn(openvdb::math::Coord(xyz.data()));
+
+	}
+
+	template <typename T>
+	std::vector<bool> Grid<T>::get_active_state(std::vector<Eigen::Vector3i>& xyz)
+	{
+		std::vector<bool> states;
+		typename GridT::Accessor accessor = m_grid->getAccessor();
+
+		for (auto iter = xyz.begin(); iter != xyz.end(); ++iter)
+		{
+			states.push_back(accessor.isValueOn(openvdb::math::Coord((* iter).data())));
+		}
+
+		return states;
+	}
+
+	template <typename T>
+	void Grid<T>::set_active_state(Eigen::Vector3i xyz, bool state)
+	{
+		typename GridT::Accessor accessor = m_grid->getAccessor();
+		accessor.setActiveState(
+			openvdb::math::Coord(xyz.data()), state);
+	}
+
+	template <typename T>
+	void Grid<T>::set_active_state(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states)
+	{
+		typename GridT::Accessor accessor = m_grid->getAccessor();
+		for (auto iter = std::make_pair(xyz.cbegin(), states.cbegin());
+			iter.first != xyz.end() && iter.second != states.end();
+			++iter.first, ++iter.second)
+		{
+			accessor.setActiveState(
+				openvdb::math::Coord(
+					(int)(*iter.first).x(),
+					(int)(*iter.first).y(),
+					(int)(*iter.first).z()
+				), *iter.second
+			);
+		}
+
+	}
+
+	template <typename T>
 	std::vector<T> Grid<T>::get_interpolated_values(std::vector<Eigen::Vector3f>& xyz, unsigned int sample_type)
 	{
 		auto accessor = m_grid->getConstAccessor();
@@ -512,7 +561,7 @@ namespace DeepSight
 	}
 
 	template <typename T>
-	void Grid<T>::dense_fill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active)
+	void Grid<T>::dense_fill(Eigen::Vector3i min, Eigen::Vector3i max, T value, bool active)
 	{
 		openvdb::math::CoordBBox bb(
 			openvdb::math::Coord(min.data()),
@@ -654,6 +703,54 @@ namespace DeepSight
 
 	}
 
+// TODO: Finish this
+#ifdef MESH2VOLUME
+	void Grid<float>::from_mesh(float isovalue, int num_verts, Eigen::Vector3f* verts, int num_faces, Eigen::Vector4i* faces)
+	{
+		openvdb::tools::VolumeToMesh mesher(isovalue);
+		float exteriorBandWidth = 3.0f, interiorBandWidth = 3.0f;
+		
+		openvdb::tools::QuadAndTriangleDataAdapter<Eigen::Vector3f, Eigen::Vector4i> mesh(verts, num_verts, faces, num_faces);
+		Grid<float>::Ptr grid = openvdb::tools::meshToVolume<float, openvdb::tools::QuadAndTriangleDataAdapter<Eigen::Vector3f, Eigen::Vector4i>>(mesh, m_grid->transform(), exteriorBandWidth, interiorBandWidth, 0);
+		
+		mesher(*m_grid);
+
+		openvdb::Coord ijk;
+
+		//verts.clear();
+		//verts.resize(mesher.pointListSize());
+
+		for (size_t i = 0, N = mesher.pointListSize(); i < N; ++i)
+		{
+			const openvdb::Vec3s& vert = mesher.pointList()[i];
+			//Eigen::Vector3f v3(vert.asPointer());
+			//verts.push_back(Eigen::Vector3f(v3));
+
+			verts.push_back(Eigen::Vector3f((float)vert.x(), (float)vert.y(), (float)vert.z()));
+		}
+
+		// Copy primitives
+		openvdb::tools::PolygonPoolList& polygonPoolList = mesher.polygonPoolList();
+
+		size_t numQuads = 0;
+		for (size_t n = 0, N = mesher.polygonPoolListSize(); n < N; ++n) {
+			numQuads += polygonPoolList[n].numQuads();
+		}
+
+		for (size_t i = 0, N = mesher.polygonPoolListSize(); i < N; ++i) {
+			const openvdb::tools::PolygonPool& polygons = polygonPoolList[i];
+			for (size_t j = 0, I = polygons.numQuads(); j < I; ++j) {
+				const openvdb::Vec4I& quad = polygons.quad(j);
+				//Eigen::Vector4i v4(quad.asPointer());
+
+				//faces.push_back(v4);
+
+				faces.push_back(Eigen::Vector4i((int)quad.x(), (int)quad.y(), (int)quad.z(), (int)quad.w()));
+			}
+		}
+
+	}
+#endif
 	template <typename T>
 	Grid<T>* Grid<T>::resample(float scale)
 	{
@@ -693,6 +790,7 @@ namespace DeepSight
 	template class Grid<int>;
 	//template class Grid<bool>;
 	template class Grid<openvdb::Vec3f>;
+	template class Grid < openvdb::Vec4f>;
 	//template class Grid<openvdb::Vec3d>;
 
 }

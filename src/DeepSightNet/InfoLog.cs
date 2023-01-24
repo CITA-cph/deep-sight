@@ -27,10 +27,10 @@ namespace DeepSight
         public float[] Pith = null;
         public float[] Knots = null;
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr InfoLog_Load(string filepath, out int n_pith, out IntPtr pith, out int n_knots, out IntPtr knots);
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void InfoLog_free(ref IntPtr ptr);
         public InfoLog()
         {

@@ -31,20 +31,20 @@ namespace DeepSight
         public IntPtr Ptr;
         private bool m_valid;
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr QuadMesh_Create();
         public QuadMesh()
         {
             Ptr = QuadMesh_Create();
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern int QuadMesh_num_vertices(IntPtr ptr);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern int QuadMesh_num_faces(IntPtr ptr);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void QuadMesh_get_vertices(IntPtr ptr, float[] data);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void QuadMesh_get_faces(IntPtr ptr, int[] data);
 
         public float[] Vertices
@@ -91,7 +91,7 @@ namespace DeepSight
             Dispose(true);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void QuadMesh_Delete(IntPtr ptr);
 
         /// <summary>

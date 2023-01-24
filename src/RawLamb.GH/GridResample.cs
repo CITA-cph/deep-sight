@@ -18,13 +18,8 @@
 
 using System;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 
-using DeepSight;
-using RawLamb;
-using System.Collections.Generic;
-
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
 
     public class Cmpt_GridResample : GH_Component
@@ -32,7 +27,7 @@ namespace RawLamb.GH.Components
         public Cmpt_GridResample()
           : base("GridResample", "GRes",
               "Resample a grid to a new cell size.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

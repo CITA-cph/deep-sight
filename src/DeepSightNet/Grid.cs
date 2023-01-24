@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -30,7 +31,7 @@ namespace DeepSight
 
     public class Grid : GridBase, IDisposable
     {
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Grid_Create();
         public Grid()
         {
@@ -42,7 +43,7 @@ namespace DeepSight
             Ptr = ptr;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Grid_duplicate(IntPtr ptr);
         public Grid Duplicate()
         {
@@ -56,7 +57,7 @@ namespace DeepSight
             Console.WriteLine("Deleting Grid at {0}", Ptr.ToString());
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Grid_read(string filename);
         public static Grid Read(string filename)
         {
@@ -64,14 +65,14 @@ namespace DeepSight
             return new Grid(ptr);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_write(IntPtr ptr, string filename, bool half_float);
         public void Write(string filename, bool float_as_half=false)
         {
             Grid_write(Ptr, filename, float_as_half);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.SafeArray)]
         private static extern IntPtr[] Grid_get_some_grids(string filename);
 
@@ -87,7 +88,28 @@ namespace DeepSight
             return grids;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        //[return: MarshalAs(UnmanagedType.ByValArray)]
+        private static extern void Grid_get_active_values(IntPtr ptr, int[] buffer);
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern ulong Grid_get_active_values_size(IntPtr ptr);
+        public int[] ActiveValues()
+        {
+            var size = Grid_get_active_values_size(Ptr);
+            var buffer = new int[size];
+            Grid_get_active_values(Ptr, buffer);
+            return buffer;
+
+        }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_erode(IntPtr ptr, int iterations);
+        public void Erode(int iterations=1)
+        {
+            Grid_erode(Ptr, iterations);
+        }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_evaluate(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
         public float[] Evaluate(float[] coords, int sample_type)
         {
@@ -100,7 +122,7 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_get_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
         public float[] GetValuesWS(float[] coords, int sample_type)
         {
@@ -113,7 +135,7 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_set_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] values);
         public float[] SetValuesWS(float[] coords, float[] values)
         {
@@ -126,9 +148,9 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_set_value(IntPtr ptr, int x, int y, int z, float v);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern float Grid_get_value(IntPtr ptr, int x, int y, int z);
 
         public float this[int x, int y, int z]
@@ -147,9 +169,42 @@ namespace DeepSight
             set { Grid_set_values_ws(Ptr, 1, new float[] { x, y, z }, new float[] { value }); }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool Grid_get_active_state(IntPtr ptr, int[] xyz);
+        public bool GetActiveState(int x, int y, int z)
+        {
+            return Grid_get_active_state(Ptr, new int[] { x, y, z });
+        }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_set_active_state(IntPtr ptr, int[] xyz, int state);
+        public void SetActiveState(int x, int y, int z, bool state)
+        {
+            Grid_set_active_state(Ptr, new int[] { x, y, z }, state ? 1 : 0);
+        }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool Grid_get_active_state_many(IntPtr ptr, int N, int[] xyz, int[] states);
+        public bool[] GetActiveState(int[] xyz)
+        {
+            var states = new int[xyz.Length];
+            Grid_get_active_state_many(Ptr, xyz.Length, xyz, states);
+            return states.Select(x =>  x > 0).ToArray();
+        }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_set_active_state_many(IntPtr ptr, int N, int[] xyz, int[] state);
+        public void SetActiveState(int[] xyz, bool[] states)
+        {
+            int N = Math.Min(xyz.Length, states.Length);
+            Grid_set_active_state_many(Ptr, N, xyz, states.Select(x => x ? 1 : 0).ToArray());
+        }
+
+
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_set_name(IntPtr ptr, string name);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.LPStr)]
         private static extern string Grid_get_name(IntPtr ptr);
 
@@ -165,21 +220,21 @@ namespace DeepSight
             }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_offset(IntPtr ptr, float amount);
         public void Offset(float amount)
         {
             Grid_offset(Ptr, amount);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_filter(IntPtr ptr, int width, int iterations, int type);
         public void Filter(int width, int iterations, int type)
         {
             Grid_filter(Ptr, width, iterations, type);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_bounding_box(IntPtr ptr, int[] min, int[] max);
         public void BoundingBox(out int[] min, out int[] max)
         {
@@ -188,9 +243,9 @@ namespace DeepSight
             Grid_bounding_box(Ptr, min, max);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_get_transform(IntPtr ptr, float[] mat);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_set_transform(IntPtr ptr, float[] mat);
 
         public float[] Transform
@@ -208,7 +263,7 @@ namespace DeepSight
             }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_to_mesh(IntPtr ptr, IntPtr mesh_ptr, float isovalue);
         public QuadMesh ToMesh(float isovalue)
         {
@@ -218,14 +273,14 @@ namespace DeepSight
             return qm;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Grid_resample(IntPtr ptr, float scale);
         public Grid Resample(double scale)
         {
             return new Grid(Grid_resample(Ptr, (float)scale));
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Grid_get_dense(IntPtr ptr, int[] min, int[] max, float[] results);
         public float[] GetDenseGrid(int[] min, int[] max)
         {
@@ -234,6 +289,18 @@ namespace DeepSight
             Grid_get_dense(Ptr, min, max, results);
             return results;
         }
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_get_neighbours(IntPtr ptr, int[] coords, float[] neighbours);
+
+        public float[] GetNeighbours(int x, int y, int z)
+        {
+            float[] neighbours = new float[27];
+            Grid_get_neighbours(Ptr, new int[] { x, y, z }, neighbours);
+
+            return neighbours;
+        }
+
 
         /// <summary>
         /// validity property
@@ -262,7 +329,7 @@ namespace DeepSight
             return string.Format("Grid ({0})", Name);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Grid_Delete(IntPtr ptr);
 
         /// <summary>

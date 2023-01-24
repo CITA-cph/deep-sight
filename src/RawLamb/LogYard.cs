@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using RawLamb;
 
 using Rhino.Geometry;
 using DeepSight;
+using DeepSight.RhinoCommon;
 
 namespace RawLamb
 {

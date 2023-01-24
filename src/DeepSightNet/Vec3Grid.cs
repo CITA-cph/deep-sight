@@ -25,7 +25,7 @@ namespace DeepSight
 
     public class Vec3Grid : GridBase, IDisposable
     {
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Vec3Grid_Create();
         public Vec3Grid()
         {
@@ -37,7 +37,7 @@ namespace DeepSight
             Ptr = ptr;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Vec3Grid_duplicate(IntPtr ptr);
         public Vec3Grid Duplicate()
         {
@@ -51,7 +51,7 @@ namespace DeepSight
             Console.WriteLine("Deleting Vec3Grid at {0}", Ptr.ToString());
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Vec3Grid_read(string filename);
         public static Vec3Grid Read(string filename)
         {
@@ -59,14 +59,14 @@ namespace DeepSight
             return new Vec3Grid(ptr);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_write(IntPtr ptr, string filename, bool half_float);
         public void Write(string filename, bool float_as_half = false)
         {
             Vec3Grid_write(Ptr, filename, float_as_half);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.SafeArray)]
         private static extern IntPtr[] Vec3Grid_get_some_grids(string filename);
 
@@ -82,7 +82,7 @@ namespace DeepSight
             return grids;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_evaluate(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
         public float[] Evaluate(float[] coords, int sample_type)
         {
@@ -95,7 +95,7 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_get_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
         public float[] GetValuesWS(float[] coords, int sample_type)
         {
@@ -108,7 +108,7 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_set_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] values);
         public float[] SetValuesWS(float[] coords, float[] values)
         {
@@ -121,9 +121,9 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_set_value(IntPtr ptr, int x, int y, int z, float v);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern float Vec3Grid_get_value(IntPtr ptr, int x, int y, int z);
 
         public float this[int x, int y, int z]
@@ -143,9 +143,9 @@ namespace DeepSight
             set { Vec3Grid_set_values_ws(Ptr, 1, new float[] { x, y, z }, new float[] { value }); }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_set_name(IntPtr ptr, string name);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.LPStr)]
         private static extern string Vec3Grid_get_name(IntPtr ptr);
 
@@ -161,21 +161,21 @@ namespace DeepSight
             }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_offset(IntPtr ptr, float amount);
         public void Offset(float amount)
         {
             Vec3Grid_offset(Ptr, amount);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_filter(IntPtr ptr, int width, int iterations, int type);
         public void Filter(int width, int iterations, int type)
         {
             Vec3Grid_filter(Ptr, width, iterations, type);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_bounding_box(IntPtr ptr, int[] min, int[] max);
         public void BoundingBox(out int[] min, out int[] max)
         {
@@ -184,9 +184,9 @@ namespace DeepSight
             Vec3Grid_bounding_box(Ptr, min, max);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_get_transform(IntPtr ptr, float[] mat);
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_set_transform(IntPtr ptr, float[] mat);
 
         public float[] Transform
@@ -204,14 +204,14 @@ namespace DeepSight
             }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Vec3Grid_resample(IntPtr ptr, float scale);
         public Vec3Grid Resample(double scale)
         {
             return new Vec3Grid(Vec3Grid_resample(Ptr, (float)scale));
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr Vec3Grid_get_dense(IntPtr ptr, int[] min, int[] max, float[] results);
         public float[] GetDenseGrid(int[] min, int[] max)
         {
@@ -248,7 +248,7 @@ namespace DeepSight
             return string.Format("Vec3Grid ({0})", Name);
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Vec3Grid_Delete(IntPtr ptr);
 
         /// <summary>

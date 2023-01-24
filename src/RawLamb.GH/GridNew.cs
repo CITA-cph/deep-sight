@@ -17,18 +17,11 @@
  */
 
 using System;
-using System.Linq;
 using System.Diagnostics;
 
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
 
-using DeepSight;
-using RawLamb;
-using System.Collections.Generic;
-
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
 
     public class Cmpt_GridCreate : GH_Component
@@ -36,7 +29,7 @@ namespace RawLamb.GH.Components
         public Cmpt_GridCreate()
           : base("GridCreate", "GNew",
               "Create empty grid.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

@@ -19,9 +19,7 @@
 using System;
 using Grasshopper.Kernel;
 
-using DeepSight;
-
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
 
     public class Cmpt_GridFilter : GH_Component
@@ -29,7 +27,7 @@ namespace RawLamb.GH.Components
         public Cmpt_GridFilter()
           : base("GridFilter", "GFil",
               "Filter a grid.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

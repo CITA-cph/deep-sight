@@ -19,19 +19,17 @@
 using System;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
-
-using DeepSight;
-using RawLamb;
+using DeepSight.RhinoCommon;
 using System.Collections.Generic;
 
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
     public class Cmpt_GridMesh : GH_Component
     {
         public Cmpt_GridMesh()
           : base("GridMesh", "GMesh",
               "Get the isomesh of a grid.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 
@@ -59,6 +57,8 @@ namespace RawLamb.GH.Components
                 temp_grid = (m_grid as GH_Grid).Value;
             else
                 return;
+
+            DA.GetData(1, ref m_threshold);
 
             Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
             rhino_mesh.Normals.ComputeNormals();

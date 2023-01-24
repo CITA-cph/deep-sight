@@ -35,10 +35,9 @@ using Grasshopper.Kernel.Types;
 
 using Rhino.Geometry;
 
-using DeepSight;
-using RawLamb;
+using DeepSight.RhinoCommon;
 
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
 
     public class Cmpt_GridDisplay : GH_Component
@@ -46,7 +45,7 @@ namespace RawLamb.GH.Components
         public Cmpt_GridDisplay()
           : base("GridDisplay", "GDis",
               "Visualize a grid as a pointcloud.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
             //Attributes = new ButtonRefreshComponentAttributes(this);
         }
@@ -136,12 +135,17 @@ namespace RawLamb.GH.Components
             if (!DA.GetDataList(2, steps))
                 steps = new List<int>() { 2, 2, 2 };
 
+            for (int i = steps.Count; i <= 3; ++i)
+                steps.Add(1);
+
             GridTransform = Grid.Transform.ToRhinoTransform();
 
             if (Values == null)
             {
-                Grid.BoundingBox(out Min, out Max);
-                Values = Grid.GetDenseGrid(Min, Max);
+                Min = new int[] { 0, 0, 0 };
+                Max = new int[] { 0, 0, 0 };
+                //Grid.BoundingBox(out Min, out Max);
+                //Values = Grid.GetDenseGrid(Min, Max);
             }
 
             var size = new int[]{
@@ -152,6 +156,20 @@ namespace RawLamb.GH.Components
 
             Cloud = new PointCloud();
 
+            var active = Grid.ActiveValues();
+
+            for (int i = 0; i < active.Length; i += 3)
+            {
+                if (Math.Abs(active[i]) % steps[0] != 0 || Math.Abs(active[i + 1]) % steps[1] != 0 || Math.Abs(active[i + 2]) % steps[2] != 0)
+                    continue;
+                var pt = new Point3d(active[i], active[i + 1], active[i + 2]);
+                var value = Grid[active[i], active[i + 1], active[i + 2]];
+                if (value < 0.01) continue;
+                var grey = Math.Max(0, Math.Min(255, (int)(value * 255)));
+
+                Cloud.Add(pt, System.Drawing.Color.FromArgb((int)(grey * Alpha), grey, grey, grey));
+            }
+            /*
             int counter = 0;
             int num_pts = 0;
 
@@ -185,11 +203,12 @@ namespace RawLamb.GH.Components
                     }
                 }
             }
-
+            */
             var debug = new List<string>();
-            debug.Add(string.Format("Points: {0}", num_pts));
-            debug.Add(string.Format("Values: {0}", Values.Length));
-            debug.Add(string.Format("Size {0} {1} {2}", size[0], size[1], size[2]));
+            //debug.Add(string.Format("Points: {0}", num_pts));
+            //debug.Add(string.Format("Values: {0}", Values.Length));
+            //debug.Add(string.Format("Size {0} {1} {2}", size[0], size[1], size[2]));
+
 
             Cloud.Transform(GridTransform);
 

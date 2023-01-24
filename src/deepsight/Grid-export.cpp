@@ -188,6 +188,67 @@ namespace DeepSight
 		//lsr.intersectsWS(openvdb::math::Ray())
 	}
 
+	unsigned long Grid_get_active_values_size(Grid<float>* ptr)
+	{
+		return ptr->get_active_voxels().size() * 3;
+	}
+
+	void Grid_get_active_values(Grid<float>* ptr, int* buffer)
+	{
+		auto active = ptr->get_active_voxels();
+
+		ULONG ulSize = active.size() * sizeof(Eigen::Vector3i);
+		//int* pszReturn = NULL;
+
+		//pszReturn = (int*)::CoTaskMemAlloc(ulSize);
+		memcpy(buffer, active.data(), ulSize);
+	}
+
+	void Grid_erode(Grid<float>* ptr, int iterations)
+	{
+		ptr->erode(iterations);
+	}
+
+	void Grid_get_neighbours(Grid<float>* ptr, int* coords, float* neighbours)
+	{
+		auto vals = ptr->get_neighbourhood(Eigen::Vector3i(coords));
+		memcpy(neighbours, vals.data(), sizeof(float) * 27);
+	}
+
+	bool Grid_get_active_state(Grid<float>* ptr, int* xyz)
+	{
+		return ptr->get_active_state(Eigen::Vector3i(xyz));
+	}
+
+	void Grid_get_active_state_many(Grid<float>* ptr, int n, int* xyz, int* states)
+	{
+		std::vector<Eigen::Vector3i> xyz_vec(n);
+		for (size_t i = 0; i < n; ++i)
+			xyz_vec[i] = Eigen::Vector3i(xyz[i * 3]);
+
+		auto res = ptr->get_active_state(xyz_vec);
+		for (size_t i = 0; i < n; ++i)
+			states[i] = res[i] ? 1 : 0;
+	}
+
+	void Grid_set_active_state(Grid<float>* ptr, int* xyz, bool state)
+	{
+		ptr->set_active_state(Eigen::Vector3i(xyz), state);
+	}
+
+	void Grid_set_active_state_many(Grid<float>* ptr, int n, int* xyz, int* states)
+	{
+		std::vector<bool> state_vec(n);
+		std::vector<Eigen::Vector3i> xyz_vec(n);
+		for (size_t i = 0; i < n; ++i)
+		{
+			state_vec[i] = states[i] > 0;
+			xyz_vec[i] = Eigen::Vector3i(xyz[i * 3]);
+		}
+
+		ptr->set_active_state(xyz_vec, state_vec);
+	}
+
 	/* ################# VEC3 GRID ##################### */
 
 	Grid<openvdb::Vec3f>* Vec3Grid_Create()

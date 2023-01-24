@@ -26,10 +26,9 @@ using System.Drawing;
 using GH_IO.Serialization;
 using GH_IO;
 
-using DeepSight;
-using RawLamb;
+using DeepSight.RhinoCommon;
 
-namespace RawLamb.GH
+namespace DeepSight.GH
 {
     public class GH_Grid : GH_GeometricGoo<Grid>
     {

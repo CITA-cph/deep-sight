@@ -19,16 +19,15 @@
 using System;
 using System.Linq;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
-using DeepSight;
-using RawLamb;
-using System.Collections.Generic;
+using DeepSight.RhinoCommon;
 
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
 
     public class Cmpt_GridSet: GH_Component
@@ -36,7 +35,7 @@ namespace RawLamb.GH.Components
         public Cmpt_GridSet()
           : base("GridSet", "GSet",
               "Set grid values.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

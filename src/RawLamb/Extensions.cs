@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 using Rhino.Geometry;
 using DeepSight;
 
-namespace RawLamb
+namespace DeepSight.RhinoCommon
 {
     public static class RhinoExtensions
     {

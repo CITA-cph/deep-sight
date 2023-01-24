@@ -71,6 +71,12 @@ namespace DeepSight
 		void set_value(Eigen::Vector3i xyz, T value);
 		void set_values(std::vector<Eigen::Vector3i>& xyz, std::vector<T> values);
 
+		bool get_active_state(Eigen::Vector3i xyz);
+		std::vector<bool> get_active_state(std::vector<Eigen::Vector3i>& xyz);
+
+		void set_active_state(Eigen::Vector3i xyz, bool state);
+		void set_active_state(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states);
+
 
 		std::vector<T> get_dense(Eigen::Vector3i min, Eigen::Vector3i max);
 		std::vector<Eigen::Vector3i> get_active_voxels();
@@ -92,7 +98,7 @@ namespace DeepSight
 		std::string get_name();
 		void set_name(std::string name);
 
-		void dense_fill(Eigen::Vector3i min, Eigen::Vector3i max, double value, bool active = true);
+		void dense_fill(Eigen::Vector3i min, Eigen::Vector3i max, T value, bool active = true);
 
 		void gradient();
 		Ptr laplacian();
@@ -104,6 +110,7 @@ namespace DeepSight
 		void erode(int iterations = 1);
 
 		void to_mesh(T isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces);
+		void from_mesh(T isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces);
 
 		Ptr duplicate();
 

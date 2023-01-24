@@ -19,16 +19,14 @@
 using System;
 using Grasshopper.Kernel;
 
-using DeepSight;
-
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
     public class Cmpt_GridLoad : GH_Component
     {
         public Cmpt_GridLoad()
           : base("GridLoad", "GLoad",
-              "Load a grid.",
-              "RawLamb", "Grid")
+              "Load a grid.", 
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

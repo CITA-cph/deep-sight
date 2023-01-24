@@ -17,19 +17,19 @@
  */
 
 using System;
-using Grasshopper.Kernel;
-
-using DeepSight;
 using System.Collections.Generic;
 
-namespace RawLamb.GH.Components
+using Grasshopper.Kernel;
+
+
+namespace DeepSight.GH.Components
 {
     public class Cmpt_GridSave : GH_Component
     {
         public Cmpt_GridSave()
           : base("GridSave", "GSave",
               "Save a grid to disk.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

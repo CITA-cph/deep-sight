@@ -19,16 +19,13 @@
 using System;
 using System.Linq;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
 
-using DeepSight;
-using RawLamb;
-using System.Collections.Generic;
 
-namespace RawLamb.GH.Components
+namespace DeepSight.GH.Components
 {
 
     public class Cmpt_GridSample : GH_Component
@@ -36,7 +33,7 @@ namespace RawLamb.GH.Components
         public Cmpt_GridSample()
           : base("GridSample", "GSmp",
               "Query a point in the grid.",
-              "RawLamb", "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 

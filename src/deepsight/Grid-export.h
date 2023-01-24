@@ -44,6 +44,16 @@ namespace DeepSight
 		RAWLAM_EXPORT Grid<float>* Grid_resample(Grid<float>* ptr, float scale);
 		RAWLAM_EXPORT void Grid_get_dense(Grid<float>* ptr, int* min, int* max, float* results);
 		RAWLAM_EXPORT SAFEARRAY* Grid_get_some_grids(const char* filename);
+		RAWLAM_EXPORT unsigned long Grid_get_active_values_size(Grid<float>* ptr);
+		RAWLAM_EXPORT void Grid_get_active_values(Grid<float>* ptr, int* buffer);
+		RAWLAM_EXPORT void Grid_erode(Grid<float>* ptr, int iterations);
+		RAWLAM_EXPORT void Grid_get_neighbours(Grid<float>* ptr, int* coords, float* neighbours);
+
+		RAWLAM_EXPORT bool Grid_get_active_state(Grid<float>* ptr, int* xyz);
+		RAWLAM_EXPORT void Grid_get_active_state_many(Grid<float>* ptr, int n, int* xyz, int* states);
+		RAWLAM_EXPORT void Grid_set_active_state(Grid<float>* ptr, int* xyz, bool state);
+		RAWLAM_EXPORT void Grid_set_active_state_many(Grid<float>* ptr, int n, int* xyz, int* states);
+
 
 		// Vec3Grid
 		RAWLAM_EXPORT Grid<openvdb::Vec3f>* Vec3Grid_Create();

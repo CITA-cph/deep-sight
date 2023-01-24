@@ -9,7 +9,7 @@ namespace DeepSight
 {
     public class RLGeom
     {
-        [DllImport(API.RawLamGeomApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.RawLamGeomApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void RawLam_create_board_STEP(float[] board_plane, float[] board_dims, int num_knots, float[] knot_data, string output_path);
         public static void ExportBoard2Step(float[] board_plane, float[] board_dims, int num_knots, float[] knot_data, string output_path)
         {

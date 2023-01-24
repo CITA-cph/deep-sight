@@ -10,8 +10,8 @@
     <ProjectGuid>{34E0FE2E-4D40-4444-88D0-7BD701941516}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RawLamb.GH</RootNamespace>
-    <AssemblyName>RawLamb.GH</AssemblyName>
+    <RootNamespace>DeepSight.GH</RootNamespace>
+    <AssemblyName>DeepSight.GH</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api.cs" />
     <Compile Include="Graph Goo.cs" />
     <Compile Include="GraphCommand.cs" />
     <Compile Include="GraphCreate.cs" />

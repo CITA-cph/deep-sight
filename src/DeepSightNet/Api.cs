@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 namespace DeepSight
 {
 
-    public partial class API
+    public partial class Api
     {
         public const string DeepSightApiPath = @"deepsight.dll";
         public const string RawLamGeomApiPath = @"rlgeom.dll";
@@ -43,9 +43,9 @@ namespace DeepSight
             }
         }
 
-        [DllImport(API.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern string get_version();
-        public static string ApiVersion
+        public static string Version
         {
             get { return get_version(); }
         }
