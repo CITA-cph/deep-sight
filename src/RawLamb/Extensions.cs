@@ -29,6 +29,14 @@ namespace DeepSight.RhinoCommon
 {
     public static class RhinoExtensions
     {
+        public static Grid ToVolume(this Mesh mesh, Transform xform, float isovalue=0.5f, float exteriorBandWidth = 3.0f, float interiorBandWidth = 3.0f)
+        {
+            var verts = mesh.Vertices.ToFloatArray();
+            var tris = mesh.Faces.ToIntArray(true);
+
+            return Grid.FromMesh(verts, tris, xform.ToFloatArray(false), isovalue, exteriorBandWidth, interiorBandWidth);
+
+        }
         public static Transform ToRhinoTransform(this IList<float> val)
         {
             if (val.Count != 16) throw new ArgumentException("ToTransform(this float[] val): Transform needs exactly 16 values.");

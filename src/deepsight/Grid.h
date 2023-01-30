@@ -47,23 +47,16 @@ namespace DeepSight
 		using ValueT = typename GridT::ValueType;
 
 		Grid();
-		//Grid(GridT* grid);
+		Grid(T background);
 		~Grid();
 
-
 		openvdb::SharedPtr<GridT> m_grid;
-		//typename GridT::Accessor m_accessor;
 
-		//static Ptr from_multipage_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
-		//static Ptr from_many_tiffs(std::vector<std::string> paths, double threshold = 1.0e-3, unsigned int crop = 0);
 		static std::vector<Ptr> from_vdb(const std::string path);
 		static Ptr read(const std::string filename, double threshold = 1.0e-3, unsigned int crop = 0);
 
 		void write(const std::string path, bool float_as_half = false);
 		static void write_many(const std::string path, std::vector<Grid<T>> grids, bool float_as_half);
-
-		//void write_as_vdb(const std::string path);
-		//void write_as_multipage_tiff(const std::string path);
 
 		T get_value(Eigen::Vector3i xyz);
 		std::vector<T> get_values(std::vector<Eigen::Vector3i>& xyz);
@@ -77,16 +70,13 @@ namespace DeepSight
 		void set_active_state(Eigen::Vector3i xyz, bool state);
 		void set_active_state(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states);
 
-
 		std::vector<T> get_dense(Eigen::Vector3i min, Eigen::Vector3i max);
 		std::vector<Eigen::Vector3i> get_active_voxels();
 
 		T get_interpolated_value(Eigen::Vector3f xyz);
 		std::vector<T> get_interpolated_values(std::vector<Eigen::Vector3f>& xyz, unsigned int sample_type = 1);
 
-
 		Eigen::Matrix<T, 27, 1> get_neighbourhood(Eigen::Vector3i xyz);
-
 
 		void prune(T value);
 
@@ -109,8 +99,8 @@ namespace DeepSight
 		void dilate(int iterations = 1);
 		void erode(int iterations = 1);
 
-		void to_mesh(T isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces);
-		void from_mesh(T isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces);
+		void to_mesh(float isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces);
+		//void from_mesh(float isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces);
 
 		Ptr duplicate();
 
@@ -121,20 +111,8 @@ namespace DeepSight
 
 	};
 
-	//typedef Grid<float> FloatGrid;
-	//typedef std::shared_ptr<FloatGrid> FloatGridPtr;
-
-	//template <typename T,
-	//	typename = std::enable_if_t<std::is_arithmetic<T>::value = true>>
-	//	Grid<T> read_from_tiff(std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
-
-
-	// typedef Grid<openvdb::math::Vec3<float>> VecGrid;
-	// typedef std::shared_ptr<VecGrid> VecGridPtr;
+	Grid<float>::Ptr from_mesh(std::vector<openvdb::Vec3f> verts, std::vector <openvdb::Vec4I> faces, openvdb::math::Transform xform, float isovalue, float exteriorBandWidth, float interiorBandWidth);
 
 }
-
-
-//#include "Grid.cpp"
 
 #endif

@@ -17,36 +17,41 @@
  */
 
 using System;
+using System.Collections.Generic;
+
 using Grasshopper.Kernel;
+using DeepSight.RhinoCommon;
+
 
 namespace DeepSight.GH.Components
 {
-
-    public class Cmpt_GridResample : GH_Component
+    public class Cmpt_GridInspect : GH_Component
     {
-        public Cmpt_GridResample()
-          : base("GridResample", "GRes",
-              "Resample a grid to a new cell size.",
+        public Cmpt_GridInspect()
+          : base("GridInspect", "GInsp",
+              "See a grid's properties.",
               DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 
+
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Size", "S", "New cell size.", GH_ParamAccess.item, 5);
+            pManager.AddGenericParameter("Grid", "G", "Grid to inspect.", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Resampled grid.", GH_ParamAccess.item);
+            pManager.AddTransformParameter("Transform", "T", "The transformation matrix of the grid.", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+
+
             object m_grid = null;
             Grid temp_grid = null;
-            double m_size = 0.15;
 
             DA.GetData(0, ref m_grid);
             if (m_grid is Grid)
@@ -56,25 +61,22 @@ namespace DeepSight.GH.Components
             else
                 return;
 
-            DA.GetData(1, ref m_size);
+            var xform = temp_grid.Transform.ToRhinoTransform();
 
-            var ngrid = temp_grid.Duplicate();
-            var new_grid = ngrid.Resample(m_size);
-
-            DA.SetData(0, new GH_Grid(new_grid));
+            DA.SetData("Transform", xform);
         }
 
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                return Properties.Resources.GridResample_01;
+                return Properties.Resources.GridDisplay_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("0bf9ba62-b6af-4667-aed1-cfd8179eb911"); }
+            get { return new Guid("b191c02a-5156-49bb-8797-79068fdafd79"); }
         }
     }
 }

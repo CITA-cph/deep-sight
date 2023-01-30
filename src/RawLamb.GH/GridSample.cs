@@ -90,7 +90,7 @@ namespace DeepSight.GH.Components
             }
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
-            var values = temp_grid.Evaluate(floats, mode);
+            var values = temp_grid.GetValuesWS(floats, mode);
 
             debug.Add(string.Format("{0} : Finished sampling grid.", stopwatch.ElapsedMilliseconds));
 

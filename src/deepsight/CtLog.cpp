@@ -1,3 +1,5 @@
+#ifdef OBSOLETE
+
 #include "CtLog.h"
 #include "openvdb/openvdb.h"
 
@@ -294,5 +296,4 @@ namespace DeepSight
 
 }
 
-
-
+#endif

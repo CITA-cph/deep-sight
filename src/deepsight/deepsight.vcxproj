@@ -90,6 +90,7 @@
       <AdditionalIncludeDirectories>C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
       <AdditionalOptions>-W4 -wd4251 -wd4146 -wd4127 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -105,27 +106,33 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Composite_ext.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="CtLog.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Grid-export-common.h" />
     <ClInclude Include="Grid-export.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="InfoLog-export.h" />
     <ClInclude Include="InfoLog.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ParticleList.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Composite_ext.cpp" />
     <ClCompile Include="CtLog.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Grid-export-common.cpp" />
     <ClCompile Include="Grid-export.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="InfoLog-export.cpp" />
     <ClCompile Include="InfoLog.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ParticleList.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

@@ -24,47 +24,49 @@ using System.Collections.Generic;
 
 namespace DeepSight.GH.Components
 {
-    public class Cmpt_GridMesh : GH_Component
+    public class Cmpt_GridFromMesh : GH_Component
     {
-        public Cmpt_GridMesh()
-          : base("Grid2Mesh", "G2M",
-              "Get the isomesh of a grid.",
+        public Cmpt_GridFromMesh()
+          : base("Mesh2Grid", "M2G",
+              "Convert a mesh to a level-set grid.",
               DeepSight.GH.Api.ComponentCategory, "Grid")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Isovalue", "I", "Isovalue for meshing.", GH_ParamAccess.item, 0.15);
+            pManager.AddGenericParameter("Mesh", "M", "Mesh to convert to grid.", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Isovalue", "I", "Isovalue for level-set.", GH_ParamAccess.item, 0.0);
+            pManager.AddNumberParameter("Voxel size", "S", "Size of voxels.", GH_ParamAccess.item, 5.0);
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Mesh", "M", "Isomesh of grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            object m_grid = null;
-            Grid temp_grid = null;
-            double m_threshold = 0.15;
+            Mesh mesh = null;
 
-            DA.GetData(0, ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
-            else
-                return;
+            DA.GetData("Mesh", ref mesh);
+            if (mesh == null) return;
 
-            DA.GetData(1, ref m_threshold);
+            double iso = 0.0, voxel_size = 5.0;
+            DA.GetData("Isovalue", ref iso);
+            DA.GetData("Voxel size", ref voxel_size);
 
-            Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
-            rhino_mesh.Normals.ComputeNormals();
+            Transform inv, xform = Transform.Scale(Point3d.Origin, voxel_size);
+            xform.TryGetInverse(out inv);
 
-            DA.GetData(1, ref m_threshold);
-            DA.SetData(0, rhino_mesh);
+            mesh.Transform(inv);
+
+            var grid = mesh.ToVolume(xform, (float)iso, 3.0f, 3.0f);
+            //grid.SdfToFog();
+
+            DA.SetData("Grid", new GH_Grid(grid));
         }
 
         protected override System.Drawing.Bitmap Icon
@@ -77,7 +79,7 @@ namespace DeepSight.GH.Components
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("90a8da23-75a6-4ebc-a83c-405bb725b5cf"); }
+            get { return new Guid("749cfad2-57cf-4539-9ccc-9981df5ed813"); }
         }
     }
 }

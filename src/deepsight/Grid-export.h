@@ -18,6 +18,7 @@ namespace DeepSight
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
 		// FloatGrid
 		RAWLAM_EXPORT Grid<float>* Grid_Create();
 		RAWLAM_EXPORT Grid<float>* Grid_duplicate(Grid<float> *ptr);

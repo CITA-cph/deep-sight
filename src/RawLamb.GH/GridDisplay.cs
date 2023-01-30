@@ -156,7 +156,7 @@ namespace DeepSight.GH.Components
 
             Cloud = new PointCloud();
 
-            var active = Grid.ActiveValues();
+            var active = Grid.ActiveVoxels();
 
             for (int i = 0; i < active.Length; i += 3)
             {
@@ -169,50 +169,8 @@ namespace DeepSight.GH.Components
 
                 Cloud.Add(pt, System.Drawing.Color.FromArgb((int)(grey * Alpha), grey, grey, grey));
             }
-            /*
-            int counter = 0;
-            int num_pts = 0;
-
-            int step_x = steps[0], step_y = steps[1], step_z = steps[2];
-
-            for (int x = 0; x < size[0]; x += step_x)
-            {
-                if (num_pts > MaxPoints) break;
-                for (int y = 0; y < size[1]; y += step_y)
-                {
-                    if (num_pts > MaxPoints) break;
-
-                    for (int z = 0; z < size[2]; z += step_z)
-                    {
-                        if (num_pts > MaxPoints) break;
-                        counter = (x * size[2] * size[1]) + (y * size[2]) + z;
-
-                        if (counter >= Values.Length)
-                        {
-                            num_pts = MaxPoints + 1;
-                            //throw new Exception("Shit! Fuck!");
-                            break;
-                        }
-
-                        if (Values[counter] < m_threshold) continue;
-
-                        var grey = Math.Min(255, (int)(Values[counter] * 255));
-                        Cloud.Add(new Point3d(x + Min[0], y + Min[1], z + Min[2]),
-                          System.Drawing.Color.FromArgb((int)(grey * Alpha), grey, grey, grey));
-                        num_pts++;
-                    }
-                }
-            }
-            */
-            var debug = new List<string>();
-            //debug.Add(string.Format("Points: {0}", num_pts));
-            //debug.Add(string.Format("Values: {0}", Values.Length));
-            //debug.Add(string.Format("Size {0} {1} {2}", size[0], size[1], size[2]));
-
 
             Cloud.Transform(GridTransform);
-
-            DA.SetDataList(0, debug);
         }
 
         protected override System.Drawing.Bitmap Icon

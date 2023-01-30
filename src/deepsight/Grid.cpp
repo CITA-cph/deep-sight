@@ -3,12 +3,19 @@
 namespace DeepSight
 {
 
-
 	template<typename T>
 	Grid<T>::Grid()
 	{
 		openvdb::initialize();
-		m_grid = GridT::create();
+		m_grid = GridT::create(openvdb::zeroVal<T>());
+		//m_accessor = m_grid->getAccessor();
+	}
+
+	template<typename T>
+	Grid<T>::Grid(T background)
+	{
+		openvdb::initialize();
+		m_grid = GridT::create(background);
 		//m_accessor = m_grid->getAccessor();
 	}
 
@@ -42,110 +49,6 @@ namespace DeepSight
 		return str.size() >= suffix.size() &&
 			str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 	}
-
-	/*
-	template <typename T>
-	std::shared_ptr<Grid<T>> Grid<T>::from_many_tiffs(std::vector<std::string> paths, double threshold, unsigned int crop)
-	{
-
-		bool verbose = false;
-		unsigned int crop_x = crop, crop_y = crop;
-
-		typename GridT::Ptr grid = GridT::create(0.0);
-
-		typename GridT::Accessor accessor = (*grid).getAccessor();
-
-		openvdb::Coord ijk;
-		int& i = ijk[0], & j = ijk[1], & k = ijk[2];
-
-		// ======== Compile list of TIFFs to open ========
-		
-
-		for (int f = 0; f < paths.size(); ++f)
-		{
-
-			TIFF* tif = TIFFOpen(paths[f].c_str(), "r");
-
-			if (tif) {
-				unsigned int width, height, samplesperpixel, bitspersample;
-				ValueT max_val = 0.0;
-
-				do {
-					uint32_t* raster;
-
-					// get the size of the tiff
-					TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
-					TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
-					TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
-					TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bitspersample);
-
-					unsigned int npixels = width * height; // get the total number of pixels
-
-					raster = (uint32_t*)_TIFFmalloc(npixels * sizeof(uint32_t)); // allocate temp memory (must use the tiff library malloc)
-					if (raster == NULL) // check the raster's memory was allocaed
-					{
-						TIFFClose(tif);
-						std::cerr << "Could not allocate memory for raster of TIFF image" << std::endl;
-						return std::shared_ptr<Grid<T>>(nullptr);
-					}
-
-					// Check the tif read to the raster correctly
-					if (!TIFFReadRGBAImage(tif, width, height, raster, 0))
-					{
-						TIFFClose(tif);
-						std::cerr << "Could not read raster of TIFF image" << std::endl;
-						return std::shared_ptr<Grid<T>>(nullptr);
-					}
-
-					if (crop_x > width)
-						crop_x = 0;
-					if (crop_y > height)
-						crop_y = 0;
-
-					// itterate through all the pixels of the tif
-					for (i = crop_x; (unsigned int)i < width - crop_x; i++)
-						for (j = crop_y; (unsigned int)j < height - crop_y; j++)
-						{
-							uint32_t& TiffPixel = raster[j * width + i]; // read the current pixel of the TIF
-
-							ValueT val = ValueT(((float)(TIFFGetR(TiffPixel) + TIFFGetG(TiffPixel) + TIFFGetB(TiffPixel))) / (255. * 3));
-							max_val = std::max(max_val, val);
-
-							if (val < threshold)
-								continue;
-
-							accessor.setValue(ijk, val);
-
-						}
-
-					_TIFFfree(raster); // release temp memory
-
-					k++;
-
-				} while (TIFFReadDirectory(tif)); // get the next tif
-				TIFFClose(tif); // close the tif file
-
-				std::cout << "Loaded " << k << " pages (" << width << " , " << height << ")" << std::endl;
-			}
-			else
-			{
-				std::cerr << "Failed to load TIFF" << std::endl;
-				continue;
-			}
-		}
-
-		grid->setGridClass(openvdb::GRID_FOG_VOLUME);
-		grid->setName("tiff");
-		grid->tree().prune();
-
-		auto ds_grid = std::make_shared<Grid<T>>();
-		ds_grid->m_grid = grid;
-
-		return ds_grid;
-
-	}
-	*/
-	
 
 	template <typename T>
 	std::vector<std::shared_ptr<Grid<T>>> Grid<T>::from_vdb(const std::string path)
@@ -274,41 +177,41 @@ namespace DeepSight
 		int x = xyz[0], y = xyz[1], z = xyz[2];
 		Eigen::Matrix<T, 27, 1> neighbourhood;
 
-		neighbourhood[0] = accessor.getValue(openvdb::Coord(x - 1, y - 1, z - 1));
-		neighbourhood[1] = accessor.getValue(openvdb::Coord(x, y - 1, z - 1));
-		neighbourhood[2] = accessor.getValue(openvdb::Coord(x + 1, y - 1, z - 1));
+		neighbourhood[0] = accessor.getValue(openvdb::Coord(x - 1,	y - 1,	z - 1));
+		neighbourhood[1] = accessor.getValue(openvdb::Coord(x,		y - 1,	z - 1));
+		neighbourhood[2] = accessor.getValue(openvdb::Coord(x + 1,	y - 1,	z - 1));
 
-		neighbourhood[3] = accessor.getValue(openvdb::Coord(x - 1, y, z - 1));
-		neighbourhood[4] = accessor.getValue(openvdb::Coord(x, y, z - 1));
-		neighbourhood[5] = accessor.getValue(openvdb::Coord(x + 1, y, z - 1));
+		neighbourhood[3] = accessor.getValue(openvdb::Coord(x - 1,	y,	z - 1));
+		neighbourhood[4] = accessor.getValue(openvdb::Coord(x,		y,	z - 1));
+		neighbourhood[5] = accessor.getValue(openvdb::Coord(x + 1,	y,	z - 1));
 
-		neighbourhood[6] = accessor.getValue(openvdb::Coord(x - 1, y + 1, z - 1));
-		neighbourhood[7] = accessor.getValue(openvdb::Coord(x, y + 1, z - 1));
-		neighbourhood[8] = accessor.getValue(openvdb::Coord(x + 1, y + 1, z - 1));
+		neighbourhood[6] = accessor.getValue(openvdb::Coord(x - 1,	y + 1,	z - 1));
+		neighbourhood[7] = accessor.getValue(openvdb::Coord(x,		y + 1,	z - 1));
+		neighbourhood[8] = accessor.getValue(openvdb::Coord(x + 1,	y + 1,	z - 1));
 
-		neighbourhood[9] = accessor.getValue(openvdb::Coord(x - 1, y - 1, z));
-		neighbourhood[10] = accessor.getValue(openvdb::Coord(x, y - 1, z));
-		neighbourhood[11] = accessor.getValue(openvdb::Coord(x + 1, y - 1, z));
+		neighbourhood[9] = accessor.getValue(openvdb::Coord(x - 1,	y - 1,	z));
+		neighbourhood[10] = accessor.getValue(openvdb::Coord(x,		y - 1,	z));
+		neighbourhood[11] = accessor.getValue(openvdb::Coord(x + 1,	y - 1,	z));
 
-		neighbourhood[12] = accessor.getValue(openvdb::Coord(x - 1, y, z));
-		neighbourhood[13] = accessor.getValue(openvdb::Coord(x, y, z));
-		neighbourhood[14] = accessor.getValue(openvdb::Coord(x + 1, y, z));
+		neighbourhood[12] = accessor.getValue(openvdb::Coord(x - 1,		y,	z));
+		neighbourhood[13] = accessor.getValue(openvdb::Coord(x,			y,	z));
+		neighbourhood[14] = accessor.getValue(openvdb::Coord(x + 1,		y,	z));
 
-		neighbourhood[15] = accessor.getValue(openvdb::Coord(x - 1, y + 1, z));
-		neighbourhood[16] = accessor.getValue(openvdb::Coord(x, y + 1, z));
-		neighbourhood[17] = accessor.getValue(openvdb::Coord(x + 1, y + 1, z));
+		neighbourhood[15] = accessor.getValue(openvdb::Coord(x - 1,		y + 1,	z));
+		neighbourhood[16] = accessor.getValue(openvdb::Coord(x,			y + 1,	z));
+		neighbourhood[17] = accessor.getValue(openvdb::Coord(x + 1,		y + 1,	z));
 
-		neighbourhood[18] = accessor.getValue(openvdb::Coord(x - 1, y - 1, z + 1));
-		neighbourhood[19] = accessor.getValue(openvdb::Coord(x, y - 1, z + 1));
-		neighbourhood[20] = accessor.getValue(openvdb::Coord(x + 1, y - 1, z + 1));
+		neighbourhood[18] = accessor.getValue(openvdb::Coord(x - 1,		y - 1,	z + 1));
+		neighbourhood[19] = accessor.getValue(openvdb::Coord(x,			y - 1,	z + 1));
+		neighbourhood[20] = accessor.getValue(openvdb::Coord(x + 1,		y - 1,	z + 1));
 
-		neighbourhood[21] = accessor.getValue(openvdb::Coord(x - 1, y, z + 1));
-		neighbourhood[22] = accessor.getValue(openvdb::Coord(x, y, z + 1));
-		neighbourhood[23] = accessor.getValue(openvdb::Coord(x + 1, y, z + 1));
+		neighbourhood[21] = accessor.getValue(openvdb::Coord(x - 1,		y,	z + 1));
+		neighbourhood[22] = accessor.getValue(openvdb::Coord(x,			y,	z + 1));
+		neighbourhood[23] = accessor.getValue(openvdb::Coord(x + 1,		y,	z + 1));
 
-		neighbourhood[24] = accessor.getValue(openvdb::Coord(x - 1, y + 1, z + 1));
-		neighbourhood[25] = accessor.getValue(openvdb::Coord(x, y + 1, z + 1));
-		neighbourhood[26] = accessor.getValue(openvdb::Coord(x + 1, y + 1, z + 1));
+		neighbourhood[24] = accessor.getValue(openvdb::Coord(x - 1,		y + 1,	z + 1));
+		neighbourhood[25] = accessor.getValue(openvdb::Coord(x,			y + 1,	z + 1));
+		neighbourhood[26] = accessor.getValue(openvdb::Coord(x + 1,		y + 1,	z + 1));
 
 		return neighbourhood;
 	}
@@ -669,15 +572,9 @@ namespace DeepSight
 
 		openvdb::Coord ijk;
 
-		//verts.clear();
-		//verts.resize(mesher.pointListSize());
-
 		for (size_t i = 0, N = mesher.pointListSize(); i < N; ++i)
 		{
 			const openvdb::Vec3s& vert = mesher.pointList()[i];
-			//Eigen::Vector3f v3(vert.asPointer());
-			//verts.push_back(Eigen::Vector3f(v3));
-
 			verts.push_back(Eigen::Vector3f((float)vert.x(), (float)vert.y(), (float)vert.z()));
 		}
 
@@ -693,39 +590,22 @@ namespace DeepSight
 			const openvdb::tools::PolygonPool& polygons = polygonPoolList[i];
 			for (size_t j = 0, I = polygons.numQuads(); j < I; ++j) {
 				const openvdb::Vec4I& quad = polygons.quad(j);
-				//Eigen::Vector4i v4(quad.asPointer());
-
-				//faces.push_back(v4);
 
 				faces.push_back(Eigen::Vector4i((int)quad.x(), (int)quad.y(), (int)quad.z(), (int)quad.w()));
 			}
 		}
-
 	}
 
-// TODO: Finish this
-#ifdef MESH2VOLUME
-	void Grid<float>::from_mesh(float isovalue, int num_verts, Eigen::Vector3f* verts, int num_faces, Eigen::Vector4i* faces)
+	void Grid<double>::to_mesh(float isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces)
 	{
 		openvdb::tools::VolumeToMesh mesher(isovalue);
-		float exteriorBandWidth = 3.0f, interiorBandWidth = 3.0f;
-		
-		openvdb::tools::QuadAndTriangleDataAdapter<Eigen::Vector3f, Eigen::Vector4i> mesh(verts, num_verts, faces, num_faces);
-		Grid<float>::Ptr grid = openvdb::tools::meshToVolume<float, openvdb::tools::QuadAndTriangleDataAdapter<Eigen::Vector3f, Eigen::Vector4i>>(mesh, m_grid->transform(), exteriorBandWidth, interiorBandWidth, 0);
-		
 		mesher(*m_grid);
 
 		openvdb::Coord ijk;
 
-		//verts.clear();
-		//verts.resize(mesher.pointListSize());
-
 		for (size_t i = 0, N = mesher.pointListSize(); i < N; ++i)
 		{
 			const openvdb::Vec3s& vert = mesher.pointList()[i];
-			//Eigen::Vector3f v3(vert.asPointer());
-			//verts.push_back(Eigen::Vector3f(v3));
-
 			verts.push_back(Eigen::Vector3f((float)vert.x(), (float)vert.y(), (float)vert.z()));
 		}
 
@@ -741,20 +621,47 @@ namespace DeepSight
 			const openvdb::tools::PolygonPool& polygons = polygonPoolList[i];
 			for (size_t j = 0, I = polygons.numQuads(); j < I; ++j) {
 				const openvdb::Vec4I& quad = polygons.quad(j);
-				//Eigen::Vector4i v4(quad.asPointer());
-
-				//faces.push_back(v4);
 
 				faces.push_back(Eigen::Vector4i((int)quad.x(), (int)quad.y(), (int)quad.z(), (int)quad.w()));
 			}
 		}
-
 	}
-#endif
+
+	void Grid<int>::to_mesh(float isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces)
+	{
+		openvdb::tools::VolumeToMesh mesher(isovalue);
+		mesher(*m_grid);
+
+		openvdb::Coord ijk;
+
+		for (size_t i = 0, N = mesher.pointListSize(); i < N; ++i)
+		{
+			const openvdb::Vec3s& vert = mesher.pointList()[i];
+			verts.push_back(Eigen::Vector3f((float)vert.x(), (float)vert.y(), (float)vert.z()));
+		}
+
+		// Copy primitives
+		openvdb::tools::PolygonPoolList& polygonPoolList = mesher.polygonPoolList();
+
+		size_t numQuads = 0;
+		for (size_t n = 0, N = mesher.polygonPoolListSize(); n < N; ++n) {
+			numQuads += polygonPoolList[n].numQuads();
+		}
+
+		for (size_t i = 0, N = mesher.polygonPoolListSize(); i < N; ++i) {
+			const openvdb::tools::PolygonPool& polygons = polygonPoolList[i];
+			for (size_t j = 0, I = polygons.numQuads(); j < I; ++j) {
+				const openvdb::Vec4I& quad = polygons.quad(j);
+
+				faces.push_back(Eigen::Vector4i((int)quad.x(), (int)quad.y(), (int)quad.z(), (int)quad.w()));
+			}
+		}
+	}
+
 	template <typename T>
 	Grid<T>* Grid<T>::resample(float scale)
 	{
-		typename GridT::Ptr target = GridT::create();
+		typename GridT::Ptr target = GridT::create(m_grid->background());
 
 		target->setTransform(
 			openvdb::math::Transform::createLinearTransform(scale));
@@ -776,21 +683,35 @@ namespace DeepSight
 		//target->tree().prune();
 
 		openvdb::tools::resampleToMatch<openvdb::tools::QuadraticSampler>(*m_grid, *target);
-
-		Grid<T>* new_grid = new Grid<T>();
+		
+		Grid<T>* new_grid = new Grid<T>(m_grid->background());
 		new_grid->m_grid = target;
 
 		return new_grid;
 
 	}
 
+	Grid<float>::Ptr from_mesh(std::vector<openvdb::Vec3f> verts, std::vector <openvdb::Vec4I> faces, openvdb::math::Transform xform, float isovalue, float exteriorBandWidth, float interiorBandWidth)
+	{
+		openvdb::tools::VolumeToMesh mesher(isovalue);
+		using MeshType = openvdb::tools::QuadAndTriangleDataAdapter<openvdb::Vec3f, openvdb::Vec4I>;
+		MeshType mesh(verts, faces);
+
+		openvdb::FloatGrid::Ptr new_grid = openvdb::tools::meshToVolume<openvdb::FloatGrid, MeshType>
+			(mesh, xform, exteriorBandWidth, interiorBandWidth);
+
+		Grid<float>::Ptr grid = std::make_shared<Grid<float>>();
+		grid->m_grid = std::shared_ptr<openvdb::FloatGrid>(new_grid->deepCopy());
+
+		return grid;
+	}
 
 	template class Grid<double>;
 	template class Grid<float>;
 	template class Grid<int>;
 	//template class Grid<bool>;
 	template class Grid<openvdb::Vec3f>;
-	template class Grid < openvdb::Vec4f>;
+	template class Grid <openvdb::Vec4f>;
 	//template class Grid<openvdb::Vec3d>;
 
 }

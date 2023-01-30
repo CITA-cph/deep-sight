@@ -69,12 +69,18 @@
     <Compile Include="Graph Goo.cs" />
     <Compile Include="GraphCommand.cs" />
     <Compile Include="GraphCreate.cs" />
+    <Compile Include="GridActive.cs" />
+    <Compile Include="GridCombine.cs" />
     <Compile Include="GridDisplay.cs" />
     <Compile Include="GridFilter.cs" />
+    <Compile Include="GridInspect.cs" />
     <Compile Include="GridGoo.cs" />
     <Compile Include="GridLoad.cs" />
+    <Compile Include="GridFromMesh.cs" />
+    <Compile Include="GridFromCurve.cs" />
     <Compile Include="GridMesh.cs" />
     <Compile Include="GridNew.cs" />
+    <Compile Include="GridConvert.cs" />
     <Compile Include="GridResample.cs" />
     <Compile Include="GridSample.cs" />
     <Compile Include="GridSave.cs" />
@@ -85,6 +91,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Weathering\GridExposure.cs" />
+    <Compile Include="Weathering\GridMaterial.cs" />
+    <Compile Include="Weathering\GridToolpath.cs" />
+    <Compile Include="Weathering\GridErode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

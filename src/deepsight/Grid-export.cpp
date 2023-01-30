@@ -7,10 +7,10 @@ namespace DeepSight
 		return VERSION;
 	}
 
-	Grid<float>* Grid_Create()
+	Grid<float>* Grid_Create(float background)
 	{
 
-		return new Grid<float>();
+		return new Grid<float>(background);
 	}
 
 	Grid<float>* Grid_duplicate(Grid<float>* ptr)
@@ -293,7 +293,7 @@ namespace DeepSight
 	Grid<openvdb::Vec3f>* Vec3Grid_Create()
 	{
 
-		return new Grid<openvdb::Vec3f>();
+		return new Grid<openvdb::Vec3f>(openvdb::Vec3f(0,0,0));
 	}
 
 	Grid<openvdb::Vec3f>* Vec3Grid_duplicate(Grid<openvdb::Vec3f>* ptr)
