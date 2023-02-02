@@ -233,6 +233,7 @@ void TypeName##Grid_max(Grid<Type>* ptr0, Grid<Type>* ptr1) {	openvdb::tools::co
 void TypeName##Grid_min(Grid<Type>* ptr0, Grid<Type>* ptr1) {	openvdb::tools::compMin(*(ptr0->m_grid), *(ptr1->m_grid)); } \
 void TypeName##Grid_sum(Grid<Type>* ptr0, Grid<Type>* ptr1) { openvdb::tools::compSum(*(ptr0->m_grid), *(ptr1->m_grid)); } \
 void TypeName##Grid_diff(Grid<Type>* ptr0, Grid<Type>* ptr1) { DeepSight::compDiff(*(ptr0->m_grid), *(ptr1->m_grid)); } \
+void TypeName##Grid_ifzero(Grid<Type>* ptr0, Grid<Type>* ptr1) { DeepSight::compIfZero(*(ptr0->m_grid), *(ptr1->m_grid)); } \
 void TypeName##Grid_mul(Grid<Type>* ptr0, Grid<Type>* ptr1) { openvdb::tools::compMul(*(ptr0->m_grid), *(ptr1->m_grid)); } \
 
 namespace DeepSight

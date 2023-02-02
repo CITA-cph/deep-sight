@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
+    <Compile Include="ErosionSolver.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Knot.cs" />
     <Compile Include="LamellaPerformance.cs" />

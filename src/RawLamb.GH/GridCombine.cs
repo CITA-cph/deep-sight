@@ -40,7 +40,7 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid 1", "G1", "First grid to combine.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid 2", "G2", "Second grid to inspect.", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0 = min, 1 = max, 2 = sum, 3 = mult, 4 = diff.", GH_ParamAccess.item, 1);
+            pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0 = min, 1 = max, 2 = sum, 3 = mult, 4 = diff, 5 = if zero.", GH_ParamAccess.item, 1);
             pManager[2].Optional = true;
         }
 
@@ -84,9 +84,6 @@ namespace DeepSight.GH.Components
 
             switch(mode)
             {
-                case 0:
-                    Grid.Minimum(ngrid0, ngrid1);
-                    break;
                 case 1:
                     Grid.Maximum(ngrid0, ngrid1);
                     break;
@@ -98,6 +95,9 @@ namespace DeepSight.GH.Components
                     break;
                 case 4:
                     Grid.Diff(ngrid0, ngrid1);
+                    break;
+                case 5:
+                    Grid.IfZero(ngrid0, ngrid1);
                     break;
                 default:
                     Grid.Minimum(ngrid0, ngrid1);

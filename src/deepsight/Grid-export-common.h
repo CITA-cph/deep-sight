@@ -53,6 +53,7 @@ _declspec(dllexport) void TypeName##Grid_max			(Grid<Type>* ptr0, Grid<Type>* pt
 _declspec(dllexport) void TypeName##Grid_min			(Grid<Type>* ptr0, Grid<Type>* ptr1); \
 _declspec(dllexport) void TypeName##Grid_sum			(Grid<Type>* ptr0, Grid<Type>* ptr1); \
 _declspec(dllexport) void TypeName##Grid_diff			(Grid<Type>* ptr0, Grid<Type>* ptr1); \
+_declspec(dllexport) void TypeName##Grid_ifzero			(Grid<Type>* ptr0, Grid<Type>* ptr1); \
 _declspec(dllexport) void TypeName##Grid_mul			(Grid<Type>* ptr0, Grid<Type>* ptr1); \
 
 namespace DeepSight

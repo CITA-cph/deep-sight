@@ -18,6 +18,8 @@ namespace DeepSight
 	void compDiff(GridOrTreeT& aTree, GridOrTreeT& bTree);
 #else
 	void compDiff(openvdb::FloatGrid& aTree, openvdb::FloatGrid& bTree);
+	void compIfZero(openvdb::FloatGrid& aTree, openvdb::FloatGrid& bTree);
+
 #endif
 }
 

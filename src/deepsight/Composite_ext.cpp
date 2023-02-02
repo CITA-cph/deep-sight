@@ -33,6 +33,21 @@ namespace DeepSight
 
 		Adapter::tree(aTree).combineExtended(Adapter::tree(bTree), Local::op, /*prune=*/false);
 	}
+
+	void compIfZero(openvdb::FloatGrid& aTree, openvdb::FloatGrid& bTree)
+	{
+		using Adapter = openvdb::TreeAdapter<openvdb::FloatGrid>;
+		using TreeT = typename Adapter::TreeType;
+		struct Local
+		{
+			static inline void op(openvdb::CombineArgs<typename TreeT::ValueType>& args) {
+				args.setResult(args.a() > openvdb::zeroVal<TreeT::ValueType>() ? args.a() : args.b());
+			}
+
+		};
+
+		Adapter::tree(aTree).combineExtended(Adapter::tree(bTree), Local::op, /*prune=*/false);
+	}
 #endif
 }
 

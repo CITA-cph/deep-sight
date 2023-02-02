@@ -126,30 +126,66 @@ namespace DeepSight
         }
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_max(IntPtr ptr0, IntPtr ptr1);
+        /// <summary>
+        /// Combines cells from two grids by using the maximum value per cell.
+        /// </summary>
+        /// <param name="grid0">First grid.</param>
+        /// <param name="grid1">Second grid.</param>
         public static void Maximum(Grid grid0, Grid grid1)
         {
             FloatGrid_max(grid0.Ptr, grid1.Ptr);
         }
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_min(IntPtr ptr0, IntPtr ptr1);
+        /// <summary>
+        /// Combines cells from two grids by using the minimum value per cell.
+        /// </summary>
+        /// <param name="grid0">First grid.</param>
+        /// <param name="grid1">Second grid.</param>
         public static void Minimum(Grid grid0, Grid grid1)
         {
             FloatGrid_min(grid0.Ptr, grid1.Ptr);
         }
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_sum(IntPtr ptr0, IntPtr ptr1);
+        /// <summary>
+        /// Combines cells from two grids by summing the cell values.
+        /// </summary>
+        /// <param name="grid0">First grid.</param>
+        /// <param name="grid1">Second grid.</param>
         public static void Sum(Grid grid0, Grid grid1)
         {
             FloatGrid_sum(grid0.Ptr, grid1.Ptr);
         }
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_diff(IntPtr ptr0, IntPtr ptr1);
+        /// <summary>
+        /// Combines cells from two grids by subtracting the second grid values from the first.
+        /// </summary>
+        /// <param name="grid0">First grid.</param>
+        /// <param name="grid1">Second grid.</param>
         public static void Diff(Grid grid0, Grid grid1)
         {
             FloatGrid_diff(grid0.Ptr, grid1.Ptr);
         }
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_ifzero(IntPtr ptr0, IntPtr ptr1);
+        /// <summary>
+        /// Combines cells from two grids if the first grid cell value is <= 0.
+        /// </summary>
+        /// <param name="grid0">First grid.</param>
+        /// <param name="grid1">Second grid.</param>
+        public static void IfZero(Grid grid0, Grid grid1)
+        {
+            FloatGrid_ifzero(grid0.Ptr, grid1.Ptr);
+        }
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_mul(IntPtr ptr0, IntPtr ptr1);
+        /// <summary>
+        /// Combines cells from two grids by multiplying the cell values.
+        /// </summary>
+        /// <param name="grid0">First grid.</param>
+        /// <param name="grid1">Second grid.</param>
         public static void Multiply(Grid grid0, Grid grid1)
         {
             FloatGrid_mul(grid0.Ptr, grid1.Ptr);
@@ -157,6 +193,16 @@ namespace DeepSight
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr FloatGrid_from_mesh(int num_verts, float[] verts, int num_faces, int[] faces, float[] xform, float isovalue, float exteriorBandWidth, float interiorBandWidth);
+        /// <summary>
+        /// Create a level-set grid from a mesh.
+        /// </summary>
+        /// <param name="vertices">Array of flattened vertex data.</param>
+        /// <param name="tris">Array of flattened triangle index data.</param>
+        /// <param name="xform">Flattened 4x4 transformation matrix.</param>
+        /// <param name="isovalue">Isovalue.</param>
+        /// <param name="exteriorBandWidth">Width of the exterior level-set band in voxels.</param>
+        /// <param name="interiorBandWidth">Width of the interior level-set band in voxels.</param>
+        /// <returns></returns>
         public static Grid FromMesh(float[] vertices, int[] tris, float[] xform, float isovalue = 0.5f, float exteriorBandWidth = 0.5f, float interiorBandWidth = 0.5f)
         {
             return new Grid(FloatGrid_from_mesh(vertices.Length / 3, vertices, tris.Length / 3, tris, xform, isovalue, exteriorBandWidth, interiorBandWidth));

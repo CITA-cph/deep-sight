@@ -71,7 +71,7 @@ namespace DeepSight.GH.Components
             for (int i = 0; i < curves.Count; i++)
             {
                 var crv = curves[i];
-                double[] tt = crv.DivideByLength(thickness, true);
+                double[] tt = crv.DivideByLength(voxel_size, true);
                 points.AddRange(tt.Select(x => crv.PointAt(x)));
             }
 
