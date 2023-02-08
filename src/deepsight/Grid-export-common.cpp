@@ -291,6 +291,24 @@ namespace DeepSight
 		ptr->m_grid->pruneGrid(tolerance);
 	}
 
+	void Grid_write(const char* filepath, int num_grids, Grid<float>** grids, int save_float_as_half)
+	{
+		openvdb::io::File file(filepath);
+		openvdb::GridPtrVec grids_out;
+		for (int i = 0; i < num_grids; ++i)
+		{
+			auto grid = grids[i]->m_grid;
+			grid->tree().prune();
+			grid->setSaveFloatAsHalf(save_float_as_half != 0);
+
+			grids_out.push_back(grid);
+		}
+		file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+
+		file.write(grids_out);
+		file.close();
+	};
+
 	//EXPORT_COMMON_C(Int, int)
 
 	//EXPORT_COMMON_C(Double, double)

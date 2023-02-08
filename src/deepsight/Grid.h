@@ -51,12 +51,15 @@ namespace DeepSight
 		~Grid();
 
 		openvdb::SharedPtr<GridT> m_grid;
+		//GridT* m_grid;
 
 		static std::vector<Ptr> from_vdb(const std::string path);
 		static Ptr read(const std::string filename, double threshold = 1.0e-3, unsigned int crop = 0);
 
 		void write(const std::string path, bool float_as_half = false);
-		static void write_many(const std::string path, std::vector<Grid<T>> grids, bool float_as_half);
+
+		static void write(const std::string path, std::vector<Grid*> grids, bool float_as_half = false);
+		//static void write_many(const std::string path, std::vector<Grid<T>> grids, bool float_as_half);
 
 		T get_value(Eigen::Vector3i xyz);
 		std::vector<T> get_values(std::vector<Eigen::Vector3i>& xyz);

@@ -8,7 +8,6 @@ namespace DeepSight
 	{
 		openvdb::initialize();
 		m_grid = GridT::create(openvdb::zeroVal<T>());
-		//m_accessor = m_grid->getAccessor();
 	}
 
 	template<typename T>
@@ -16,7 +15,6 @@ namespace DeepSight
 	{
 		openvdb::initialize();
 		m_grid = GridT::create(background);
-		//m_accessor = m_grid->getAccessor();
 	}
 
 	//template<typename T>
@@ -30,7 +28,6 @@ namespace DeepSight
 	template<typename T>
 	std::shared_ptr<Grid<T>> Grid<T>::duplicate()
 	{
-		//auto grid = std::make_shared<Grid<T>>(m_grid->deepCopy());
 		typename Grid<T>::Ptr grid = std::make_shared<Grid<T>>();
 		grid->m_grid = std::shared_ptr<GridT>(m_grid->deepCopy());
 
@@ -40,7 +37,6 @@ namespace DeepSight
 	template<typename T>
 	Grid<T>::~Grid()
 	{
-
 	}
 
 	template<typename T>
@@ -71,6 +67,7 @@ namespace DeepSight
 
 			std::shared_ptr<Grid<T>> ds_grid = std::make_shared<Grid<T>>();
 			ds_grid->m_grid = openvdb::gridPtrCast<GridT>(baseGrid);
+
 			//ds_grid->set_name(nameIter.gridName());
 
 			grids.push_back(ds_grid);
@@ -118,6 +115,26 @@ namespace DeepSight
 	}
 
 	template <typename T>
+	void Grid<T>::write(const std::string path, std::vector<Grid<T>*> grids, bool float_as_half)
+	{
+		openvdb::io::File file(path);
+		openvdb::GridPtrVec grids_out;
+
+		for (auto grid: grids)
+		{
+			grid->m_grid->tree().prune();
+			grid->m_grid->setSaveFloatAsHalf(float_as_half);
+			grids_out.push_back(grid->m_grid);
+		}
+
+		file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+
+		file.write(grids_out);
+		file.close();
+	}
+
+/*
+	template <typename T>
 	void Grid<T>::write_many(const std::string path, std::vector<Grid<T>> grids, bool float_as_half)
 	{
 		openvdb::io::File file(path);
@@ -146,7 +163,7 @@ namespace DeepSight
 
 		//openvdb::io::File(path).write({m_grid});
 	}
-
+	*/
 	template <typename T>
 	T Grid<T>::get_value(Eigen::Vector3i xyz)
 	{
@@ -241,7 +258,6 @@ namespace DeepSight
 
 		for (typename GridT::ValueOnCIter iter = m_grid->cbeginValueOn(); iter.test(); ++iter)
 		{
-			
 			if (iter.isVoxelValue())
 			{
 				values.push_back(Eigen::Vector3i(iter.getCoord().data()));

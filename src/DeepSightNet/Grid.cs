@@ -39,8 +39,155 @@ namespace DeepSight
 
     public partial class Grid : GridBase, IDisposable
     {
+        #region Api calls
+
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr FloatGrid_create(float background);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr FloatGrid_duplicate(IntPtr ptr);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr FloatGrid_read(string filename);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_write(IntPtr ptr, string filename, bool half_float);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Grid_write(string filepath, int num_grids, IntPtr[] grids, int save_float_as_half);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.SafeArray)]
+        private static extern IntPtr[] FloatGrid_get_some_grids(string filename);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr FloatGrid_from_points(int num_points, float[] points, float radius, float voxel_size);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_difference(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_union(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_intersection(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_max(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_min(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_sum(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_diff(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_ifzero(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr FloatGrid_from_mesh(int num_verts, float[] verts, int num_faces, int[] faces, float[] xform, float isovalue, float exteriorBandWidth, float interiorBandWidth);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_get_active_values(IntPtr ptr, int[] buffer);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern ulong FloatGrid_get_active_values_size(IntPtr ptr);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_mul(IntPtr ptr0, IntPtr ptr1);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_erode(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_evaluate(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_get_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] values);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_get_values(IntPtr ptr, int num_coords, int[] coords, float[] results);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_value(IntPtr ptr, int x, int y, int z, float v);
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern float FloatGrid_get_value(IntPtr ptr, int x, int y, int z);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_values(IntPtr ptr, int num_coords, int[] coords, float[] values);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool FloatGrid_get_active_state(IntPtr ptr, int[] xyz);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_active_state(IntPtr ptr, int[] xyz, int state);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool FloatGrid_get_active_state_many(IntPtr ptr, int N, int[] xyz, int[] states);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_active_state_many(IntPtr ptr, int N, int[] xyz, int[] state);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_name(IntPtr ptr, string name);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        private static extern string FloatGrid_get_name(IntPtr ptr);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
+        private static extern string FloatGrid_get_type(IntPtr ptr);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_grid_class(IntPtr ptr, int gclass);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int FloatGrid_get_grid_class(IntPtr ptr);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_offset(IntPtr ptr, float amount);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_filter(IntPtr ptr, int width, int iterations, int type);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_bounding_box(IntPtr ptr, int[] min, int[] max);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_get_transform(IntPtr ptr, float[] mat);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_set_transform(IntPtr ptr, float[] mat);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_to_mesh(IntPtr ptr, IntPtr mesh_ptr, float isovalue);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr FloatGrid_resample(IntPtr ptr, float scale);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr FloatGrid_get_dense(IntPtr ptr, int[] min, int[] max, float[] results);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_get_neighbours(IntPtr ptr, int[] coords, float[] neighbours);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_sdf_to_fog(IntPtr ptr, float cutoff);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_prune(IntPtr ptr, float tolerance);
+
+        #endregion
+
+        #region Constructors/Destructors
+
         public Grid(float background=0.0f)
         {
             Ptr = FloatGrid_create(background);
@@ -51,8 +198,6 @@ namespace DeepSight
             Ptr = ptr;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr FloatGrid_duplicate(IntPtr ptr);
         public Grid Duplicate()
         {
             var duplicate_ptr = FloatGrid_duplicate(Ptr);
@@ -65,24 +210,25 @@ namespace DeepSight
             Console.WriteLine("Deleting Grid at {0}", Ptr.ToString());
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr FloatGrid_read(string filename);
+        #endregion
+
+        #region Read/Write
+
         public static Grid Read(string filename)
         {
             var ptr = FloatGrid_read(filename);
             return new Grid(ptr);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_write(IntPtr ptr, string filename, bool half_float);
         public void Write(string filename, bool float_as_half=false)
         {
             FloatGrid_write(Ptr, filename, float_as_half);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.SafeArray)]
-        private static extern IntPtr[] FloatGrid_get_some_grids(string filename);
+        public static void Write(string filename, Grid[] grids, bool float_as_half = false)
+        {
+            Grid_write(filename, grids.Length, grids.Select(x => x.Ptr).ToArray(), float_as_half ? 1 : 0);
+        }
 
         public static List<Grid> ReadMultiple(string filename)
         {
@@ -96,8 +242,8 @@ namespace DeepSight
             return grids;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr FloatGrid_from_points(int num_points, float[] points, float radius, float voxel_size);
+        #endregion
+
         public static Grid FromPoints(float[] coords, float radius, float voxel_size)
         {
             return new Grid(FloatGrid_from_points(coords.Length / 3, coords, radius, voxel_size));
@@ -105,27 +251,23 @@ namespace DeepSight
 
         // #############################
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_difference(IntPtr ptr0, IntPtr ptr1);
+
         public static void Difference(Grid grid0, Grid grid1)
         {
             FloatGrid_difference(grid0.Ptr, grid1.Ptr);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_union(IntPtr ptr0, IntPtr ptr1);
+
         public static void Union(Grid grid0, Grid grid1)
         {
             FloatGrid_union(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_intersection(IntPtr ptr0, IntPtr ptr1);
+
         public static void Intersection(Grid grid0, Grid grid1)
         {
             FloatGrid_intersection(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_max(IntPtr ptr0, IntPtr ptr1);
+
         /// <summary>
         /// Combines cells from two grids by using the maximum value per cell.
         /// </summary>
@@ -135,8 +277,7 @@ namespace DeepSight
         {
             FloatGrid_max(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_min(IntPtr ptr0, IntPtr ptr1);
+
         /// <summary>
         /// Combines cells from two grids by using the minimum value per cell.
         /// </summary>
@@ -146,8 +287,7 @@ namespace DeepSight
         {
             FloatGrid_min(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_sum(IntPtr ptr0, IntPtr ptr1);
+
         /// <summary>
         /// Combines cells from two grids by summing the cell values.
         /// </summary>
@@ -157,8 +297,7 @@ namespace DeepSight
         {
             FloatGrid_sum(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_diff(IntPtr ptr0, IntPtr ptr1);
+
         /// <summary>
         /// Combines cells from two grids by subtracting the second grid values from the first.
         /// </summary>
@@ -168,8 +307,7 @@ namespace DeepSight
         {
             FloatGrid_diff(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_ifzero(IntPtr ptr0, IntPtr ptr1);
+
         /// <summary>
         /// Combines cells from two grids if the first grid cell value is <= 0.
         /// </summary>
@@ -179,9 +317,7 @@ namespace DeepSight
         {
             FloatGrid_ifzero(grid0.Ptr, grid1.Ptr);
         }
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_mul(IntPtr ptr0, IntPtr ptr1);
-        /// <summary>
+       /// <summary>
         /// Combines cells from two grids by multiplying the cell values.
         /// </summary>
         /// <param name="grid0">First grid.</param>
@@ -191,8 +327,6 @@ namespace DeepSight
             FloatGrid_mul(grid0.Ptr, grid1.Ptr);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr FloatGrid_from_mesh(int num_verts, float[] verts, int num_faces, int[] faces, float[] xform, float isovalue, float exteriorBandWidth, float interiorBandWidth);
         /// <summary>
         /// Create a level-set grid from a mesh.
         /// </summary>
@@ -208,10 +342,6 @@ namespace DeepSight
             return new Grid(FloatGrid_from_mesh(vertices.Length / 3, vertices, tris.Length / 3, tris, xform, isovalue, exteriorBandWidth, interiorBandWidth));
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_get_active_values(IntPtr ptr, int[] buffer);
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern ulong FloatGrid_get_active_values_size(IntPtr ptr);
         public int[] ActiveVoxels()
         {
             var size = FloatGrid_get_active_values_size(Ptr);
@@ -221,15 +351,11 @@ namespace DeepSight
 
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_erode(IntPtr ptr, int iterations);
-        private void ErodeDeprec(int iterations = 1)
+       private void ErodeDeprec(int iterations = 1)
         {
             FloatGrid_erode(Ptr, iterations);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_evaluate(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
         public float[] Evaluate(float[] coords, int sample_type)
         {
             int N = coords.Length / 3;
@@ -241,9 +367,7 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_get_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] results, int sample_type);
-        public float[] GetValuesWS(float[] coords, int sample_type)
+       public float[] GetValuesWS(float[] coords, int sample_type)
         {
             int N = coords.Length / 3;
             float[] values = new float[N];
@@ -254,8 +378,6 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_values_ws(IntPtr ptr, int num_coords, float[] coords, float[] values);
         public float[] SetValuesWS(float[] coords, float[] values)
         {
             if (coords.Length != values.Length * 3) throw new ArgumentException("Coordinate and value array lengths don't match.");
@@ -267,8 +389,6 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_get_values(IntPtr ptr, int num_coords, int[] coords, float[] results);
         public float[] GetValues(int[] coords)
         {
             int N = coords.Length / 3;
@@ -280,8 +400,6 @@ namespace DeepSight
             return values;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_values(IntPtr ptr, int num_coords, int[] coords, float[] values);
         public float[] SetValues(int[] coords, float[] values)
         {
             if (coords.Length != values.Length * 3) throw new ArgumentException("Coordinate and value array lengths don't match.");
@@ -292,11 +410,6 @@ namespace DeepSight
 
             return values;
         }
-
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_value(IntPtr ptr, int x, int y, int z, float v);
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern float FloatGrid_get_value(IntPtr ptr, int x, int y, int z);
 
         public float this[int x, int y, int z]
         {
@@ -314,44 +427,28 @@ namespace DeepSight
             set { FloatGrid_set_values_ws(Ptr, 1, new float[] { x, y, z }, new float[] { value }); }
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool FloatGrid_get_active_state(IntPtr ptr, int[] xyz);
         public bool GetActiveState(int x, int y, int z)
         {
             return FloatGrid_get_active_state(Ptr, new int[] { x, y, z });
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_active_state(IntPtr ptr, int[] xyz, int state);
-        public void SetActiveState(int x, int y, int z, bool state)
+       public void SetActiveState(int x, int y, int z, bool state)
         {
             FloatGrid_set_active_state(Ptr, new int[] { x, y, z }, state ? 1 : 0);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool FloatGrid_get_active_state_many(IntPtr ptr, int N, int[] xyz, int[] states);
-        public bool[] GetActiveState(int[] xyz)
+       public bool[] GetActiveState(int[] xyz)
         {
             var states = new int[xyz.Length];
             FloatGrid_get_active_state_many(Ptr, xyz.Length, xyz, states);
             return states.Select(x =>  x > 0).ToArray();
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_active_state_many(IntPtr ptr, int N, int[] xyz, int[] state);
-        public void SetActiveState(int[] xyz, bool[] states)
+       public void SetActiveState(int[] xyz, bool[] states)
         {
             int N = Math.Min(xyz.Length/3, states.Length);
             FloatGrid_set_active_state_many(Ptr, N, xyz, states.Select(x => x ? 1 : 0).ToArray());
         }
-
-
-
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_name(IntPtr ptr, string name);
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        private static extern string FloatGrid_get_name(IntPtr ptr);
 
         public string Name
         {
@@ -365,9 +462,6 @@ namespace DeepSight
             }
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        private static extern string FloatGrid_get_type(IntPtr ptr);
         public string GridType
         {
             get
@@ -375,11 +469,6 @@ namespace DeepSight
                 return FloatGrid_get_type(Ptr);
             }
         }
-
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_grid_class(IntPtr ptr, int gclass);
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int FloatGrid_get_grid_class(IntPtr ptr);
 
         public GridClass Class
         {
@@ -393,33 +482,22 @@ namespace DeepSight
             }
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_offset(IntPtr ptr, float amount);
         public void Offset(float amount)
         {
             FloatGrid_offset(Ptr, amount);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_filter(IntPtr ptr, int width, int iterations, int type);
         public void Filter(int width, int iterations, int type)
         {
             FloatGrid_filter(Ptr, width, iterations, type);
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_bounding_box(IntPtr ptr, int[] min, int[] max);
         public void BoundingBox(out int[] min, out int[] max)
         {
             min = new int[3];
             max = new int[3];
             FloatGrid_bounding_box(Ptr, min, max);
         }
-
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_get_transform(IntPtr ptr, float[] mat);
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_set_transform(IntPtr ptr, float[] mat);
 
         public float[] Transform
         {
@@ -436,9 +514,7 @@ namespace DeepSight
             }
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_to_mesh(IntPtr ptr, IntPtr mesh_ptr, float isovalue);
-        public QuadMesh ToMesh(float isovalue)
+       public QuadMesh ToMesh(float isovalue)
         {
             var qm = new QuadMesh();
             FloatGrid_to_mesh(Ptr, qm.Ptr, isovalue);
@@ -446,15 +522,11 @@ namespace DeepSight
             return qm;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr FloatGrid_resample(IntPtr ptr, float scale);
         public Grid Resample(double scale)
         {
             return new Grid(FloatGrid_resample(Ptr, (float)scale));
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr FloatGrid_get_dense(IntPtr ptr, int[] min, int[] max, float[] results);
         public float[] GetDenseGrid(int[] min, int[] max)
         {
             int Nx = max[0] - min[0] + 1, Ny = max[1] - min[1] + 1, Nz = max[2] - min[2] + 1;
@@ -462,9 +534,6 @@ namespace DeepSight
             FloatGrid_get_dense(Ptr, min, max, results);
             return results;
         }
-
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_get_neighbours(IntPtr ptr, int[] coords, float[] neighbours);
 
         public float[] GetNeighbours(int x, int y, int z)
         {
@@ -474,16 +543,12 @@ namespace DeepSight
             return neighbours;
         }
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_sdf_to_fog(IntPtr ptr, float cutoff);
-        public void SdfToFog(float cutoff = float.MaxValue)
+       public void SdfToFog(float cutoff = float.MaxValue)
         {
             FloatGrid_sdf_to_fog(Ptr, cutoff);
         }
 
 
-        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FloatGrid_prune(IntPtr ptr, float tolerance);
         public void Prune(float tolerance=0.0f)
         {
             FloatGrid_prune(Ptr, tolerance);

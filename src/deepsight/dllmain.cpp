@@ -18,3 +18,19 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#define _VERSION XSTR(_DEEPSIGHT_VERSION)
+
+#pragma message ("deepsight v" _VERSION)
+
+namespace DeepSight
+{
+    const char* VERSION = _VERSION;
+
+    const char* get_version()
+    {
+        return VERSION;
+    }
+}
+

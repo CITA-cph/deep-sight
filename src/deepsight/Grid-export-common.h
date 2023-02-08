@@ -69,10 +69,11 @@ extern "C" {
 	//EXPORT_COMMON_H(Double, double)
 	//EXPORT_SCALAR_H(Double, double)
 
-	_declspec(dllexport) Grid<float>* FloatGrid_from_mesh(int num_verts, float* verts, int num_faces, int* faces, float* transform, float isovalue, float exteriorBandWidth, float interiorBandWidth);
-	_declspec(dllexport) Grid<float>* FloatGrid_from_points(int num_points, float* points, float radius, float voxelsize);
-	_declspec(dllexport) void FloatGrid_sdf_to_fog(Grid<float>* ptr, float cutoffDistance);
-	_declspec(dllexport) void FloatGrid_prune(Grid<float>* ptr, float tolerance);
+	DEEPSIGHT_EXPORT Grid<float>* FloatGrid_from_mesh(int num_verts, float* verts, int num_faces, int* faces, float* transform, float isovalue, float exteriorBandWidth, float interiorBandWidth);
+	DEEPSIGHT_EXPORT Grid<float>* FloatGrid_from_points(int num_points, float* points, float radius, float voxelsize);
+	DEEPSIGHT_EXPORT void FloatGrid_sdf_to_fog(Grid<float>* ptr, float cutoffDistance);
+	DEEPSIGHT_EXPORT void FloatGrid_prune(Grid<float>* ptr, float tolerance);
+	DEEPSIGHT_EXPORT void Grid_write(const char* filepath, int num_grids, Grid<float>** grids, int save_float_as_half);
 
 #ifdef __cplusplus
 	}

@@ -1,3 +1,5 @@
+#ifdef OBSOLETE
+
 #include "Grid-export.h"
 
 namespace DeepSight
@@ -463,3 +465,4 @@ namespace DeepSight
 }
 
 
+#endif

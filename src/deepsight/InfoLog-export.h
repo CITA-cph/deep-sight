@@ -15,8 +15,8 @@ namespace RawLam
 extern "C" {
 #endif
 
-	RAWLAM_EXPORT void InfoLog_Load(const char* filepath, int& n_pith, float*& pith, int& n_knots, float*& knots);
-	RAWLAM_EXPORT void InfoLog_free(float*& ptr);
+	DEEPSIGHT_EXPORT void InfoLog_Load(const char* filepath, int& n_pith, float*& pith, int& n_knots, float*& knots);
+	DEEPSIGHT_EXPORT void InfoLog_free(float*& ptr);
 
 #ifdef __cplusplus
 }

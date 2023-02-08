@@ -16,7 +16,6 @@ namespace RawLam
 		pith = new float[n_pith * 2];
 		knots = new float[n_knots * knot_size];
 
-		//std::copy(std::begin(ilog->pith), std::end(ilog->pith), pith);
 		size_t ii = 0;
 		for (size_t i = 0; i < ilog->pith.size(); ++i)
 		{
@@ -25,7 +24,6 @@ namespace RawLam
 
 			pith[ii] = v.x();
 			pith[ii + 1] = v.y();
-			//*pith[i * 3 + 2] = v.z();
 		}
 
 		for (size_t i = 0; i < ilog->knots.size(); ++i)

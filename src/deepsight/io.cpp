@@ -103,7 +103,7 @@ namespace DeepSight
 				std::cout << "Max value found: " << max_val << std::endl;
 
 				grid->setGridClass(openvdb::GRID_FOG_VOLUME);
-				grid->setName("tiff");
+				grid->setName("density");
 				grid->pruneGrid(threshold);
 
 				auto ds_grid = std::make_shared<Grid<ValueT>>();

@@ -50,18 +50,18 @@ namespace DeepSight
 
 		int debug_grid_counter = 0;
 
-		RAWLAM_EXPORT CtLog* CtLog_Create();
-		RAWLAM_EXPORT void CtLog_Delete(CtLog* ptr);
-		RAWLAM_EXPORT void CtLog_readVDB(CtLog* ptr, const char* filename);
-		RAWLAM_EXPORT void CtLog_evaluate(CtLog* ptr, int num_coords, float* coords, ValueT* results, int sample_type);
-		RAWLAM_EXPORT void CtLog_filter(CtLog* ptr, int width, int iterations, int type);
-		RAWLAM_EXPORT void CtLog_offset(CtLog* ptr, ValueT amount);
-		RAWLAM_EXPORT void CtLog_bounding_box(CtLog* ptr, float* min, float* max);
-		RAWLAM_EXPORT void CtLog_set_transform(CtLog* ptr, float* mat);
-		RAWLAM_EXPORT void CtLog_get_transform(CtLog* ptr, float* mat);
-		RAWLAM_EXPORT void CtLog_to_mesh(CtLog* ptr, DeepSight::QuadMesh* mesh_ptr, float isovalue);
-		RAWLAM_EXPORT CtLog* CtLog_resample(CtLog* ptr, float scale);
-		RAWLAM_EXPORT int CtLog_debug_grid_counter();
+		DEEPSIGHT_EXPORT CtLog* CtLog_Create();
+		DEEPSIGHT_EXPORT void CtLog_Delete(CtLog* ptr);
+		DEEPSIGHT_EXPORT void CtLog_readVDB(CtLog* ptr, const char* filename);
+		DEEPSIGHT_EXPORT void CtLog_evaluate(CtLog* ptr, int num_coords, float* coords, ValueT* results, int sample_type);
+		DEEPSIGHT_EXPORT void CtLog_filter(CtLog* ptr, int width, int iterations, int type);
+		DEEPSIGHT_EXPORT void CtLog_offset(CtLog* ptr, ValueT amount);
+		DEEPSIGHT_EXPORT void CtLog_bounding_box(CtLog* ptr, float* min, float* max);
+		DEEPSIGHT_EXPORT void CtLog_set_transform(CtLog* ptr, float* mat);
+		DEEPSIGHT_EXPORT void CtLog_get_transform(CtLog* ptr, float* mat);
+		DEEPSIGHT_EXPORT void CtLog_to_mesh(CtLog* ptr, DeepSight::QuadMesh* mesh_ptr, float isovalue);
+		DEEPSIGHT_EXPORT CtLog* CtLog_resample(CtLog* ptr, float scale);
+		DEEPSIGHT_EXPORT int CtLog_debug_grid_counter();
 
 #ifdef __cplusplus
 	}
