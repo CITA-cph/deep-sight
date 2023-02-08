@@ -113,6 +113,7 @@
     <ClInclude Include="Grid-export-common.h" />
     <ClInclude Include="Grid-export.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="GridBase.h" />
     <ClInclude Include="InfoLog-export.h" />
     <ClInclude Include="InfoLog.h" />
     <ClInclude Include="io.h" />
@@ -128,6 +129,7 @@
     <ClCompile Include="Grid-export-common.cpp" />
     <ClCompile Include="Grid-export.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="GridBase.cpp" />
     <ClCompile Include="InfoLog-export.cpp" />
     <ClCompile Include="InfoLog.cpp" />
     <ClCompile Include="io.cpp" />
