@@ -77,7 +77,7 @@ namespace DeepSight
 		return (int)m_grid->getGridClass();
 	}
 
-	void GridBase::get_grid_class(int c)
+	void GridBase::set_grid_class(int c)
 	{
 		m_grid->setGridClass((openvdb::GridClass)c);
 	}
