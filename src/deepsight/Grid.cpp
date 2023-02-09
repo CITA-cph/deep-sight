@@ -615,7 +615,7 @@ namespace DeepSight
 	void Grid<double>::to_mesh(float isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& faces)
 	{
 		openvdb::tools::VolumeToMesh mesher(isovalue);
-		mesher(*m_grid);
+		mesher(* m_grid);
 
 		openvdb::Coord ijk;
 

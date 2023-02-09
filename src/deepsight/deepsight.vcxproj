@@ -108,28 +108,33 @@
   <ItemGroup>
     <ClInclude Include="Composite_ext.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="ConvertAPI.h" />
     <ClInclude Include="CtLog.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Grid-export-common.h" />
     <ClInclude Include="Grid-export.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GridBase.h" />
+    <ClInclude Include="GridBaseAPI.h" />
     <ClInclude Include="InfoLog-export.h" />
     <ClInclude Include="InfoLog.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ParticleList.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Tools.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Composite_ext.cpp" />
+    <ClCompile Include="ConvertAPI.cpp" />
     <ClCompile Include="CtLog.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Grid-export-common.cpp" />
     <ClCompile Include="Grid-export.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GridBase.cpp" />
+    <ClCompile Include="GridBaseAPI.cpp" />
     <ClCompile Include="InfoLog-export.cpp" />
     <ClCompile Include="InfoLog.cpp" />
     <ClCompile Include="io.cpp" />
@@ -139,6 +144,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="deepsightDiagram.cd" />

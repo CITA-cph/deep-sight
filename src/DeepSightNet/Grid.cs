@@ -23,23 +23,12 @@ using System.Runtime.InteropServices;
 
 namespace DeepSight
 {
-    public abstract class GridBase
-    {
-        public IntPtr Ptr { get; protected set; }
-        protected bool m_valid;
-    }
 
-    public enum GridClass
-    {
-        GRID_UNKNOWN,
-        GRID_LEVEL_SET,
-        GRID_FOG_VOLUME,
-        GRID_STAGGERED
-    }
+#if OBSOLETE
 
     public partial class Grid : GridBase, IDisposable
     {
-        #region Api calls
+#region Api calls
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr FloatGrid_create(float background);
@@ -184,9 +173,9 @@ namespace DeepSight
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_prune(IntPtr ptr, float tolerance);
 
-        #endregion
+#endregion
 
-        #region Constructors/Destructors
+#region Constructors/Destructors
 
         public Grid(float background=0.0f)
         {
@@ -210,9 +199,9 @@ namespace DeepSight
             Console.WriteLine("Deleting Grid at {0}", Ptr.ToString());
         }
 
-        #endregion
+#endregion
 
-        #region Read/Write
+#region Read/Write
 
         public static Grid Read(string filename)
         {
@@ -242,7 +231,7 @@ namespace DeepSight
             return grids;
         }
 
-        #endregion
+#endregion
 
         public static Grid FromPoints(float[] coords, float radius, float voxel_size)
         {
@@ -680,4 +669,5 @@ namespace DeepSight
         }
 
     }
+#endif
 }

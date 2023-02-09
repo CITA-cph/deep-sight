@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DeepSight;
+using Grid = DeepSight.FloatGrid;
 
 namespace testDeepSightNet
 {
@@ -12,7 +13,7 @@ namespace testDeepSightNet
     {
         public static Grid MakeBoxGrid(int[] min, int[] max)
         {
-            var grid = new Grid(1f);
+            var grid = new Grid();
 
             for (int i = min[0]; i < max[0]; ++i)
                 for (int j = min[1]; j < max[1]; ++j)
@@ -24,24 +25,54 @@ namespace testDeepSightNet
 
         public static void TestCSG()
         {
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestCSG");
+            Console.WriteLine();
+
             var grid0 = MakeBoxGrid(new int[] { 0, 0, 0 }, new int[] { 20, 20, 20 });
             var grid1 = MakeBoxGrid(new int[] { 10, 10, 10 }, new int[] { 30, 30, 30 });
 
-            Console.WriteLine("grid0 type: {0}", grid0.Class.ToString());
-            Console.WriteLine("grid1 type: {0}", grid1.Class.ToString());
-            Console.WriteLine("grid0 active values: {0}", grid0.ActiveVoxels().Length);
+            Console.WriteLine("grid0 type: {0}", grid0.GridClass.ToString());
+            Console.WriteLine("grid1 type: {0}", grid1.GridClass.ToString());
+            Console.WriteLine("grid0 active values: {0}", grid0.ActiveVoxelCount);
 
 
-            //grid0.Class = GridClass.GRID_LEVEL_SET;
-            //grid1.Class = GridClass.GRID_LEVEL_SET;
+            grid0.GridClass = GridClass.GRID_LEVEL_SET;
+            grid1.GridClass = GridClass.GRID_LEVEL_SET;
 
-            Grid.Union(grid0, grid1);
+            //Grid.Union(grid0, grid1);
 
-            Console.WriteLine("grid0 type: {0}", grid0.Class.ToString());
-            Console.WriteLine("grid0 active values: {0}", grid0.ActiveVoxels().Length);
+            Console.WriteLine("grid0 type: {0}", grid0.GridClass.ToString());
+            Console.WriteLine("grid0 active values: {0}", grid0.ActiveVoxelCount);
 
 
         }
+
+
+        public static void TestPoints()
+        {
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestPoints");
+            Console.WriteLine();
+
+            float[] verts = new float[]
+            {
+                0,0,0,
+                1,0,0,
+                1,1,0,
+                0,1,0,
+                0,0,1,
+                1,0,1,
+                1,1,1,
+                0,1,1
+            };
+
+            var grid = DeepSight.Convert.PointsToVolume(verts, 3.0f, 0.5f);
+
+            Console.WriteLine("Num active values: {0}", grid.ActiveVoxelCount);
+        }
+
+
         public static void TestMesh()
         {
             float[] verts = new float[]
@@ -73,27 +104,42 @@ namespace testDeepSightNet
             };
 
             float[] xform = new float[] {
-                0.5f,0,0,1,
-                0,0.5f,0,2,
-                0,0,5f,0,
-                2,3,4,1
+                0.1f,0,0,0,
+                0,0.1f,0,0,
+                0,0,0.1f,0,
+                0,0,0,1
             };
 
-            var grid = Grid.FromMesh(verts, tris, xform);
+            var mesh = new Mesh();
+            for (int i = 0; i < verts.Length; i+=3)
+            {
+                mesh.AddVertex(verts[i], verts[i + 1], verts[i + 2]);
+            }
+
+            for (int i = 0; i < tris.Length; i += 3)
+            {
+                mesh.AddFace(new int[] { tris[i], tris[i + 1], tris[i + 2], 0 });
+            }
+
+            var grid = DeepSight.Convert.MeshToVolume(mesh, xform);
 
             for (int i = 0; i < 16; ++i)
                 Console.WriteLine("{0} ", grid.Transform[i]);
 
-            Console.WriteLine("Num active values: {0}", grid.ActiveVoxels().Length);
+            Console.WriteLine("Num active values: {0}", grid.ActiveVoxelCount);
         }
 
         public static void TestFile()
         {
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestFile");
+            Console.WriteLine();
+
             var vdb_path = @"C:\Users\tsvi\OneDrive - Det Kongelige Akademi\03_Projects\2019_RawLam\Data\Microtec\20220301.154113.DK.feb.log02_char\20220301.154113.DK.feb.log02_char.vdb";
-            var grid = Grid.Read(vdb_path);
+            var grid = GridIO.Read(vdb_path)[0] as Grid;
 
 
-            var active = grid.ActiveVoxels();
+            var active = grid.GetActiveVoxels();
             Console.WriteLine(active.Length);
             if (active.Length > 2)
                 for (int i = 0; i < 3; ++i)
@@ -101,9 +147,9 @@ namespace testDeepSightNet
 
 
             Console.WriteLine("Eroding...");
-            grid.Erode();
+            //grid.Erode();
 
-            active = grid.ActiveVoxels();
+            active = grid.GetActiveVoxels();
             Console.WriteLine(active.Length);
             if (active.Length > 2)
                 for (int i = 0; i < 3; ++i)
@@ -113,8 +159,19 @@ namespace testDeepSightNet
         static void Main(string[] args)
         {
 
-            //TestMesh();
+            TestMesh();
             TestCSG();
+            TestPoints();
+
+            var grid = new FloatGrid();
+            grid[0, 0, 0] = 1.0f;
+            grid[0, 0, 1] = 1.0f;
+
+            var v = grid[0.0, 0.0, 0.5];
+
+            Console.WriteLine("Grid: {0}", grid);
+            Console.WriteLine("Grid name: {0}", grid.Name);
+            Console.WriteLine("Value is {0}", v);
 
             Console.Write("Press any key to exit.");
             Console.ReadLine();

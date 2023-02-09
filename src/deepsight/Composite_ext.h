@@ -13,9 +13,14 @@
 
 namespace DeepSight
 {
+#define NOT_TEMPLATED
 #ifdef TEMPLATED
-	template < typename GridOrTreeT>
+	template <typename GridOrTreeT>
 	void compDiff(GridOrTreeT& aTree, GridOrTreeT& bTree);
+
+	template <typename GridOrTreeT>
+	void compIfZero(GridOrTreeT& aTree, GridOrTreeT& bTree);
+
 #else
 	void compDiff(openvdb::FloatGrid& aTree, openvdb::FloatGrid& bTree);
 	void compIfZero(openvdb::FloatGrid& aTree, openvdb::FloatGrid& bTree);

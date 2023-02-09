@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 namespace DeepSight
 {
-
+#if OBSOLETE
     public class Vec3Grid : GridBase, IDisposable
     {
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
@@ -278,4 +278,5 @@ namespace DeepSight
 
 
     }
+#endif
 }
