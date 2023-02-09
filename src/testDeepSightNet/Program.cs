@@ -147,7 +147,7 @@ namespace testDeepSightNet
 
 
             Console.WriteLine("Eroding...");
-            //grid.Erode();
+            DeepSight.Weathering.Erode(grid);
 
             active = grid.GetActiveVoxels();
             Console.WriteLine(active.Length);

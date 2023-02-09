@@ -100,6 +100,27 @@ namespace DeepSight
         /// </summary>
         /// <returns>Index-space coordinates for all active voxels as repeating XYZ triplets ([x0, y0, z0, x1, y1, z1, x2, y2, z2, ...]).</returns>
         public abstract int[] GetActiveVoxels();
+
+        /// <summary>
+        /// Get all 26 neighbours of a voxel as well as the voxel itself (27 values).
+        /// </summary>
+        /// <param name="coordinates">Index-space coordinate of cell to retrieve neighbourhood ([x, y, z]).</param>
+        /// <returns>Values of all 27 cells in a 3x3x3 neighbourhood.</returns>
+        public abstract T[] GetNeighbours(int[] coordinates);
+
+        /// <summary>
+        /// Set the active state of a specific cell.
+        /// </summary>
+        /// <param name="coordinates">Index-space coordinates of cell to activate or deactivate.</param>
+        /// <param name="on">Active state of the cell.</param>
+        public abstract void SetActiveState(int[] coordinates, bool on);
+
+        /// <summary>
+        /// Set the active state of multiple cell.
+        /// </summary>
+        /// <param name="coordinates">Index-space coordinates of cells to activate or deactivate as repeating XYZ triplets ([x0, y0, z0, x1, y1, z1, x2, y2, z2, ...]).</param>
+        /// <param name="on">Active states of the cell.</param>
+        public abstract void SetActiveStates(int[] coordinates, bool[] on);
     }
 
     public abstract class GridApi: IDisposable

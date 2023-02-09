@@ -88,6 +88,21 @@ namespace DeepSight
             return coords;
         }
 
+        public override float[] GetNeighbours(int[] coordinates)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetActiveState(int[] coordinates, bool on)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetActiveStates(int[] coordinates, bool[] on)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string ToString()
         {
             return $"FloatGrid ({Name})";
