@@ -5,33 +5,39 @@ namespace DeepSight
 {
 
 #pragma region Construct_Init
-	GridBase* GridBase_CreateFloat()
+	GridBase* GridBase_CreateFloat(float background)
 	{
 		GridBase* grid = new GridBase();
-		grid->initialize<openvdb::FloatGrid>();
+		grid->initialize<openvdb::FloatGrid>(background);
 		return grid;
 	}
 
-	GridBase* GridBase_CreateDouble()
+	GridBase* GridBase_CreateDouble(double background)
 	{
 		GridBase* grid = new GridBase();
-		grid->initialize<openvdb::DoubleGrid>();
+		grid->initialize<openvdb::DoubleGrid>(background);
 		return grid;
 	}
 
-	GridBase* GridBase_CreateInt32()
+	GridBase* GridBase_CreateInt32(int background)
 	{
 		GridBase* grid = new GridBase();
-		grid->initialize<openvdb::Int32Grid>();
+		grid->initialize<openvdb::Int32Grid>(background);
 		return grid;
 	}
 
-	GridBase* GridBase_CreateVec3f()
+	GridBase* GridBase_CreateVec3f(float* background)
 	{
 		GridBase* grid = new GridBase();
-		grid->initialize<openvdb::Vec3fGrid>();
+		grid->initialize<openvdb::Vec3fGrid>(openvdb::Vec3f(background));
 		return grid;
 	}
+
+	GridBase* GridBase_Duplicate(GridBase* grid)
+	{
+		return grid->duplicate();
+	}
+
 #pragma endregion Construct_Init
 
 	void GridBase_Delete(GridBase* grid)
@@ -109,6 +115,7 @@ namespace DeepSight
 	void FloatGrid_GetActiveVoxels(GridBase* ptr, int* coords)
 	{
 		std::vector<Eigen::Vector3i> vecs = ptr->get_active_voxels<openvdb::FloatGrid>();
+		memcpy(coords, vecs.data(), sizeof(int) * 3 * vecs.size());
 
 		//std::copy(vecs.data()->begin(), vecs.data()->end(), coords);
 	}
@@ -205,6 +212,8 @@ namespace DeepSight
 	void DoubleGrid_GetActiveVoxels(GridBase* ptr, int* coords)
 	{
 		std::vector<Eigen::Vector3i> vecs = ptr->get_active_voxels<openvdb::DoubleGrid>();
+		memcpy(coords, vecs.data(), sizeof(int) * 3 * vecs.size());
+
 		//std::copy(vecs.begin(), vecs.end(), coords);
 	}
 
@@ -300,6 +309,8 @@ namespace DeepSight
 	void Int32Grid_GetActiveVoxels(GridBase* ptr, int* coords)
 	{
 		std::vector<Eigen::Vector3i> vecs = ptr->get_active_voxels<openvdb::Int32Grid>();
+		memcpy(coords, vecs.data(), sizeof(int) * 3 * vecs.size());
+
 		//std::copy(vecs.begin(), vecs.end(), coords);
 	}
 
@@ -328,7 +339,6 @@ namespace DeepSight
 	}
 
 #pragma endregion Int32Grid
-
 #pragma region Vec3fGrid
 
 	// Single value
@@ -453,6 +463,12 @@ namespace DeepSight
 			strcpy_s(pszReturn, ulSize, name.c_str());
 		return pszReturn;
 	}
+
+	void GridBase_GetBoundingBoxIndex(GridBase* ptr, int* min, int* max)
+	{
+		ptr->get_bounding_box(min, max);
+	}
+
 
 	void GridBase_ClipIndex(GridBase* ptr, int* min, int* max)
 	{

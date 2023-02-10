@@ -21,6 +21,8 @@ using System.Diagnostics;
 
 using Grasshopper.Kernel;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
 

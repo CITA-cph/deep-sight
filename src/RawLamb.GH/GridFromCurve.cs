@@ -24,6 +24,8 @@ using DeepSight.RhinoCommon;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
     /// <summary>
@@ -84,7 +86,7 @@ namespace DeepSight.GH.Components
                 coords[i * 3 + 2] = (float)(points[i].Z);
             });
 
-            var grid = Grid.FromPoints(coords, (float)thickness, (float)voxel_size);
+            var grid = Convert.PointsToVolume(coords, (float)thickness, (float)voxel_size);
             grid.Name = "points";
 
             DA.SetData("Grid", new GH_Grid(grid));

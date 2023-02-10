@@ -29,12 +29,23 @@ namespace DeepSight.RhinoCommon
 {
     public static class RhinoExtensions
     {
-        public static Grid ToVolume(this Mesh mesh, Transform xform, float isovalue=0.5f, float exteriorBandWidth = 3.0f, float interiorBandWidth = 3.0f)
+        public static FloatGrid ToVolume(this Rhino.Geometry.Mesh mesh, Transform xform, float isovalue=0.5f, float exteriorBandWidth = 3.0f, float interiorBandWidth = 3.0f)
         {
-            var verts = mesh.Vertices.ToFloatArray();
-            var tris = mesh.Faces.ToIntArray(true);
+            mesh.Faces.ConvertQuadsToTriangles();
 
-            return Grid.FromMesh(verts, tris, xform.ToFloatArray(false), isovalue, exteriorBandWidth, interiorBandWidth);
+            DeepSight.Mesh dmesh = new Mesh();
+            foreach (var v in mesh.Vertices)
+                dmesh.AddVertex(v.X, v.Y, v.Z);
+
+            foreach(var f in mesh.Faces)
+            {
+                if (f.IsTriangle)
+                    dmesh.AddFace(new int[] { f.A, f.B, f.C });
+                else
+                    dmesh.AddFace(new int[] { f.A, f.B, f.C, f.D });
+            }
+
+            return Convert.MeshToVolume(dmesh, xform.ToFloatArray(false), isovalue, exteriorBandWidth, interiorBandWidth);
 
         }
         public static Transform ToRhinoTransform(this IList<float> val)
@@ -65,12 +76,12 @@ namespace DeepSight.RhinoCommon
             return xform;
         }
 
-        public static Mesh ToRhinoMesh(this QuadMesh qm)
+        public static Rhino.Geometry.Mesh ToRhinoMesh(this Mesh qm)
         {
             var verts = qm.Vertices;
-            var faces = qm.Faces;
+            var faces = qm.Quads;
 
-            var mesh = new Mesh();
+            var mesh = new Rhino.Geometry.Mesh();
             for (int i = 0; i < verts.Length / 3; ++i)
             {
                 mesh.Vertices.Add(verts[i * 3], verts[i * 3 + 1], verts[i * 3 + 2]);
@@ -90,9 +101,11 @@ namespace DeepSight.RhinoCommon
             return mesh;
         }
 
-        public static Mesh ToRhinoMesh(this Grid log, double isovalue, bool cleanup=true)
+        public static Rhino.Geometry.Mesh ToRhinoMesh(this FloatGrid log, double isovalue, bool cleanup=true)
         {
-            var qm = log.ToMesh((float)isovalue);
+            DeepSight.Mesh qm = Convert.VolumeToMesh(log, (float)isovalue);
+
+            //var qm = log.ToMesh((float)isovalue);
             if (!cleanup)
                 return qm.ToRhinoMesh();
 
@@ -123,7 +136,7 @@ namespace DeepSight.RhinoCommon
             return log_mesh;
         }
 
-        public static void Transform(this Grid log, Transform xform)
+        public static void Transform(this GridApi log, Transform xform)
         {
             log.Transform = xform.ToFloatArray(false);
         }

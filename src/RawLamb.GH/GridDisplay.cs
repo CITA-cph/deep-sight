@@ -37,6 +37,8 @@ using Rhino.Geometry;
 
 using DeepSight.RhinoCommon;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
 
@@ -121,7 +123,7 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
 
@@ -156,7 +158,7 @@ namespace DeepSight.GH.Components
 
             Cloud = new PointCloud();
 
-            var active = Grid.ActiveVoxels();
+            var active = Grid.GetActiveVoxels();
 
             for (int i = 0; i < active.Length; i += 3)
             {

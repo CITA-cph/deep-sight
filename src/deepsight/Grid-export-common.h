@@ -3,10 +3,10 @@
 
 #include "Grid.h"
 #include <openvdb/tools/Composite.h>
+#include "Composite_ext.h"
 #include <openvdb/tools/ParticlesToLevelSet.h>
 #include <openvdb/tools/LevelSetUtil.h>
 #include "Mesh.h"
-#include "Composite_ext.h"
 #include "ParticleList.h"
 #include <tuple>
 

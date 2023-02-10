@@ -26,6 +26,8 @@ using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
     public class Cmpt_GridActive : GH_Component
@@ -69,7 +71,7 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
            
@@ -83,7 +85,7 @@ namespace DeepSight.GH.Components
             //var points = new List<GH_Point>();
             //var values = new List<float>();
 
-            var active_values = temp_grid.ActiveVoxels();
+            var active_values = temp_grid.GetActiveVoxels();
 
             debug.Add(string.Format("Got active voxels: {0}s", timer.ElapsedMilliseconds / 1000.0));
 
@@ -112,7 +114,7 @@ namespace DeepSight.GH.Components
             {*/
 
             
-                var values = temp_grid.GetValues(active_values).Select(x => new GH_Number(x));
+                var values = temp_grid.GetValuesIndex(active_values).Select(x => new GH_Number(x));
                 var tpoints = new GH_Point[N];
                 for (int x = 0; x < N; x++)
                 {

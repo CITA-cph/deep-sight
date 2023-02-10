@@ -7,6 +7,7 @@ using StudioAvw.Geometry;
 using DeepSight;
 using DeepSight.RhinoCommon;
 
+using Grid = DeepSight.FloatGrid;
 
 namespace RawLamb
 {
@@ -14,16 +15,12 @@ namespace RawLamb
     {
         public Guid Id;
         public string Name;
-
-        [Obsolete("Deprecated. Use Grids instead", false)]
-        public Grid CtLog;
-
-        public Mesh Mesh;
+        public Rhino.Geometry.Mesh Mesh;
         public Plane Plane;
         public List<Knot> Knots;
         public Polyline Pith;
         public BoundingBox BoundingBox;
-        public Dictionary<string, Grid> Grids;
+        public Dictionary<string, GridApi> Grids;
 
         public List<Board> Boards;
 
@@ -33,15 +30,13 @@ namespace RawLamb
             Boards = new List<Board>();
             Knots = null;
             Plane = Plane.WorldXY;
-            CtLog = null;
             Mesh = null;
             Pith = null;
-            Grids = new Dictionary<string, Grid>();
+            Grids = new Dictionary<string, GridApi>();
         }
 
         public Log(string name, Grid ctlog) : base()
         { 
-            CtLog = ctlog;
             Name = name;
         }
 
@@ -96,7 +91,8 @@ namespace RawLamb
             
             try
             {
-                ctlog = Grid.Read(path);
+                ctlog = GridIO.Read(path)[0] as FloatGrid;
+                if (ctlog == null) throw new ArgumentException("Could not get a FloatGrid.");
             }
             catch (Exception e)
             {
@@ -109,7 +105,7 @@ namespace RawLamb
 
             if (create_mesh)
             {
-                var rlog = ctlog.Resample(resample_resolution);
+                var rlog = Tools.Resample(ctlog, resample_resolution);
                 log.Mesh = rlog.ToRhinoMesh(mesh_isovalue, true);
             }
 
@@ -336,10 +332,24 @@ namespace RawLamb
             return brd;
         }
 
-        public float[] Sample(Mesh mesh, int sample_type = 0)
+        public T[] Sample<T>(Rhino.Geometry.Mesh mesh, string key, int sample_type = 0)
         {
+            if (!Grids.ContainsKey(key))
+            {
+                return null;
+            }
+
+            var grid = Grids[key];
+
+            if (grid.GetType().GetGenericArguments()[0] != typeof(T))
+                return null;
+
+            var tgrid = grid as GridBase<T>;
+
             var coords = mesh.Vertices.ToFloatArray();
-            return CtLog.Evaluate(coords, sample_type);
+
+            return tgrid.GetValuesWorld(Array.ConvertAll(coords, x => (double)x));
+            //return this.Grids[key].GetValuesWorld(Array.ConvertAll(coords, x => (double)x));
         }
     }
 }

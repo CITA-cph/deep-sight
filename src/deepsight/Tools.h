@@ -4,6 +4,7 @@
 #include "GridBase.h"
 #include "ParticleList.h"
 #include <openvdb/tools/ParticlesToLevelSet.h>
+#include <openvdb/tools/LevelSetUtil.h>
 
 #include <openvdb/tools/Filter.h>
 #include <openvdb/tools/GridOperators.h>
@@ -18,7 +19,7 @@ namespace DeepSight
 #pragma region Filter_Tools
 
 	template<typename GridT>
-	GridBase* filter(GridBase* grid, int width, int iterations, int type);
+	void filter(GridBase* grid, int width, int iterations, int type);
 
 	template<typename GridT>
 	GridBase* resample(GridBase* grid, float scale);
@@ -35,6 +36,13 @@ namespace DeepSight
 #pragma endregion Filter_Tools
 
 #pragma region Conversion_Tools
+
+	template<typename GridT>
+	void sdf_to_fog(GridBase* grid, float cutoffDistance)
+	{
+		auto tgrid = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		openvdb::tools::sdfToFogVolume<GridT>(*tgrid, cutoffDistance);
+	}
 
 	template<typename GridT>
 	void volume_to_mesh(
@@ -54,11 +62,6 @@ namespace DeepSight
 		float radius, float voxelsize);
 
 #pragma endregion Conversion_Tools
-
-
-
-
-
 }
 
 #endif

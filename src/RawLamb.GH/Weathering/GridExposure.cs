@@ -26,6 +26,8 @@ using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
     public class Cmpt_GridExposure : GH_Component
@@ -61,12 +63,12 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
            
             var xform = temp_grid.Transform.ToRhinoTransform();
-            var active_values = temp_grid.ActiveVoxels();
+            var active_values = temp_grid.GetActiveVoxels();
 
             var N = active_values.Length / 3;
 
@@ -80,7 +82,7 @@ namespace DeepSight.GH.Components
                 j = active_values[x * 3 + 1];
                 k = active_values[x * 3 + 2];
 
-                values[x] = new GH_Number(temp_grid.Exposure(temp_grid.GetNeighbours(i, j, k)));
+                values[x] = new GH_Number(Weathering.Exposure(temp_grid.GetNeighbours(new int[] { i, j, k })));
                 tpoints[x] = new GH_Point(new Point3d(i, j, k));
             }
 

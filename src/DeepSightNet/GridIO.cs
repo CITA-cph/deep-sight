@@ -26,14 +26,11 @@ namespace DeepSight
             IntPtr[] ptrs = ReadWrite_ReadVdb(filepath);
             var grids = new GridApi[ptrs.Length];
 
-            Console.WriteLine("Num grids: {0}", grids.Length);
-
             for(int i = 0; i < ptrs.Length; i++)
             {
-                Console.WriteLine($"Pointer: {ptrs[i]}");
                 string type = GridApi.GridBase_GetType(ptrs[i]);
                 var tokens = type.Split('_');
-                //Console.WriteLine($"Found grid type: {type}");
+
                 switch(tokens[1])
                 {
                     case ("float"):
@@ -49,8 +46,8 @@ namespace DeepSight
                         grids[i] = new Vec3fGrid(ptrs[i]);
                         break;
                     default:
-                        //Console.WriteLine($"Unknown grid: {type}");
-                        //GridApi.GridBase_Delete(ptrs[i]);
+                        Console.WriteLine($"Unknown grid: {type}");
+                        GridApi.GridBase_Delete(ptrs[i]);
                         break;
                 }
             }

@@ -25,6 +25,15 @@ namespace DeepSight
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr Int32Grid_ToMesh(IntPtr ptr, float isovalue);
 
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void FloatGrid_SdfToFog(IntPtr ptr, float cutoffDistance);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DoubleGrid_SdfToFog(IntPtr ptr, float cutoffDistance);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Int32Grid_SdfToFog(IntPtr ptr, float cutoffDistance);
+
 
         #endregion
 
@@ -41,6 +50,21 @@ namespace DeepSight
         public static FloatGrid PointsToVolume(float[] points, float radius, float voxelsize)
         {
             return new FloatGrid(FloatGrid_FromPoints(points.Length/3, points, radius, voxelsize));
+        }
+
+        public static void SdfToFog(FloatGrid grid, float cutoffDistance)
+        {
+            FloatGrid_SdfToFog(grid.Ptr, cutoffDistance);
+        }
+
+        public static void SdfToFog(DoubleGrid grid, float cutoffDistance)
+        {
+            DoubleGrid_SdfToFog(grid.Ptr, cutoffDistance);
+        }
+
+        public static void SdfToFog(Int32Grid grid, float cutoffDistance)
+        {
+            Int32Grid_SdfToFog(grid.Ptr, cutoffDistance);
         }
     }
 }

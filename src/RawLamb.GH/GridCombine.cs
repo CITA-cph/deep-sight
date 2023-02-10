@@ -25,6 +25,8 @@ using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
     public class Cmpt_GridCombine : GH_Component
@@ -40,7 +42,7 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid 1", "G1", "First grid to combine.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid 2", "G2", "Second grid to inspect.", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0 = min, 1 = max, 2 = sum, 3 = mult, 4 = diff, 5 = if zero.", GH_ParamAccess.item, 1);
+            pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0 = max, 1 = min, 2 = sum, 3 = diff, 4 = if zero, 5 = mul.", GH_ParamAccess.item, 1);
             pManager[2].Optional = true;
         }
 
@@ -60,7 +62,7 @@ namespace DeepSight.GH.Components
                 if (m_grid is Grid)
                     grid0 = m_grid as Grid;
                 else if (m_grid is GH_Grid)
-                    grid0 = (m_grid as GH_Grid).Value;
+                    grid0 = (m_grid as GH_Grid).Value as Grid;
                 else
                     return;
             }
@@ -69,9 +71,15 @@ namespace DeepSight.GH.Components
                 if (m_grid is Grid)
                     grid1 = m_grid as Grid;
                 else if (m_grid is GH_Grid)
-                    grid1 = (m_grid as GH_Grid).Value;
+                    grid1 = (m_grid as GH_Grid).Value as Grid;
                 else
                     return;
+            }
+
+            if (grid0 == null || grid1 == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unsupported grid types.");
+                return;
             }
 
             int mode = 0;
@@ -79,35 +87,38 @@ namespace DeepSight.GH.Components
 
             if (grid0 == null || grid1 == null) return;
 
+            var ngrid = Tools.Combine(grid0, grid1, (CombineType)mode);
+
+            /*
             var ngrid0 = grid0.Duplicate();
             var ngrid1 = grid1.Duplicate();
 
             switch(mode)
             {
                 case 1:
-                    Grid.Maximum(ngrid0, ngrid1);
+                    Combine.Maximum(ngrid0, ngrid1);
                     break;
                 case 2:
-                    Grid.Sum(ngrid0, ngrid1);
+                    Combine.Sum(ngrid0, ngrid1);
                     break;
                 case 3:
-                    Grid.Multiply(ngrid0, ngrid1);
+                    Combine.Multiply(ngrid0, ngrid1);
                     break;
                 case 4:
-                    Grid.Diff(ngrid0, ngrid1);
+                    Combine.Diff(ngrid0, ngrid1);
                     break;
                 case 5:
-                    Grid.IfZero(ngrid0, ngrid1);
+                    Combine.IfZero(ngrid0, ngrid1);
                     break;
                 default:
-                    Grid.Minimum(ngrid0, ngrid1);
+                    Combine.Minimum(ngrid0, ngrid1);
                     break;
             }
-
-            ngrid0.Prune();
+            */
+            ngrid.Prune();
             
 
-            DA.SetData("Grid", new GH_Grid(ngrid0));
+            DA.SetData("Grid", new GH_Grid(ngrid));
 
         }
 

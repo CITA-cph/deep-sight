@@ -47,12 +47,12 @@ namespace DeepSight.GH.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             object m_grid = null;
-            Grid temp_grid = null;
+            GridApi temp_grid = null;
             double m_threshold = 0.15;
 
             DA.GetData(0, ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
+            if (m_grid is GridApi)
+                temp_grid = m_grid as GridApi;
             else if (m_grid is GH_Grid)
                 temp_grid = (m_grid as GH_Grid).Value;
             else
@@ -60,7 +60,14 @@ namespace DeepSight.GH.Components
 
             DA.GetData(1, ref m_threshold);
 
-            Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
+            var fgrid = temp_grid as FloatGrid;
+            if (fgrid == null)
+            {
+                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Only scalar grids can be converted to a mesh.");
+                return;
+            }
+            Rhino.Geometry.Mesh rhino_mesh = Convert.VolumeToMesh(temp_grid as FloatGrid, (float)m_threshold).ToRhinoMesh();
+            //Rhino.Geometry.Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
             rhino_mesh.Normals.ComputeNormals();
 
             DA.GetData(1, ref m_threshold);

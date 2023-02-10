@@ -11,6 +11,14 @@ namespace DeepSight
 		openvdb::initialize();
 	}
 
+	GridBase* GridBase::duplicate()
+	{
+		auto grid = new GridBase();
+		grid->m_grid = m_grid->deepCopyGrid();
+
+		return grid;
+	}
+
 #pragma endregion Constructor_Init
 
 #pragma region Generic
@@ -66,6 +74,19 @@ namespace DeepSight
 	void GridBase::set_grid_class(int c)
 	{
 		m_grid->setGridClass((openvdb::GridClass)c);
+	}
+
+	void GridBase::get_bounding_box(int* min, int* max)
+	{
+		auto bb = m_grid->evalActiveVoxelBoundingBox();
+
+		min[0] = bb.min().x();
+		min[1] = bb.min().y();
+		min[2] = bb.min().z();
+
+		max[0] = bb.min().x();
+		max[1] = bb.min().y();
+		max[2] = bb.min().z();
 	}
 
 	std::string GridBase::get_type()

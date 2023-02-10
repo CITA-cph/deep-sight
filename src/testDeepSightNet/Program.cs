@@ -133,6 +133,13 @@ namespace testDeepSightNet
                 Console.WriteLine("{0} ", grid.Transform[i]);
 
             Console.WriteLine("Num active values: {0}", grid.ActiveVoxelCount);
+
+            var active = grid.GetActiveVoxels();
+            var N = Math.Min(20, active.Length / 3);
+            for (int i = 0; i < N; ++i)
+            {
+                Console.WriteLine($"[{active[i * 3]}, {active[i * 3 + 1]}, {active[i * 3 + 2]}]");
+            }
         }
 
         public static void TestFile()
@@ -157,6 +164,8 @@ namespace testDeepSightNet
                 grid = grids[0] as Grid;
             else
                 return;
+
+            Console.WriteLine($"Found {grid}.");
 
             var active = grid.GetActiveVoxels();
             Console.WriteLine(active.Length);
@@ -226,7 +235,7 @@ namespace testDeepSightNet
 
             Console.Write("Reading grids... ");
             var grids = GridIO.Read(path);
-            Console.WriteLine("OK.");
+            Console.WriteLine($"OK. Found {grids.Length} grids.");
             Console.WriteLine();
 
             foreach (var grid in grids)
@@ -241,10 +250,11 @@ namespace testDeepSightNet
         {
             TestBasic();
             TestMesh();
-            TestCSG();
-            TestPoints();
+
+            //TestCSG();
+            //TestPoints();
             //TestFile();
-            TestGridTypes();
+            //TestGridTypes();
 
 
             Console.Write("Press any key to exit.");

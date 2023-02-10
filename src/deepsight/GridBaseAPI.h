@@ -8,16 +8,19 @@ namespace DeepSight
 #ifdef __cplusplus
 	extern "C" {
 #endif
-		DEEPSIGHT_EXPORT GridBase* GridBase_CreateFloat();
-		DEEPSIGHT_EXPORT GridBase* GridBase_CreateDouble();
-		DEEPSIGHT_EXPORT GridBase* GridBase_CreateInt32();
-		DEEPSIGHT_EXPORT GridBase* GridBase_CreateVec3f();
+		DEEPSIGHT_EXPORT GridBase* GridBase_CreateFloat(float background);
+		DEEPSIGHT_EXPORT GridBase* GridBase_CreateDouble(double background);
+		DEEPSIGHT_EXPORT GridBase* GridBase_CreateInt32(int background);
+		DEEPSIGHT_EXPORT GridBase* GridBase_CreateVec3f(float* background);
+
+		DEEPSIGHT_EXPORT GridBase* GridBase_Duplicate(GridBase* grid);
 
 		DEEPSIGHT_EXPORT void GridBase_Delete(GridBase* grid);
 
 		DEEPSIGHT_EXPORT void GridBase_SetName(GridBase* ptr, const char* name);
 		DEEPSIGHT_EXPORT const char* GridBase_GetName(GridBase* ptr);
 
+		DEEPSIGHT_EXPORT void GridBase_GetBoundingBoxIndex(GridBase* ptr, int* min, int* max);
 		DEEPSIGHT_EXPORT void GridBase_ClipIndex(GridBase* ptr, int* min, int* max);
 		DEEPSIGHT_EXPORT void GridBase_ClipWorld(GridBase* ptr, double* min, double* max);
 		DEEPSIGHT_EXPORT void GridBase_Prune(GridBase* ptr, float tolerance);

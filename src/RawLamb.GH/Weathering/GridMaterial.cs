@@ -25,6 +25,7 @@ using Rhino.Geometry;
 using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -72,7 +73,7 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                grid = (m_grid as GH_Grid).Value;
+                grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
 
@@ -83,11 +84,10 @@ namespace DeepSight.GH.Components
             DA.GetData("Material density", ref density);
             DA.GetData("Material variance", ref variance);
 
-            var ngrid = new Grid(0.0f);
+            var ngrid = new Grid(mat_name, 0.0f);
             ngrid.Transform = grid.Transform;
-            ngrid.Name = mat_name;
 
-            var active = grid.ActiveVoxels();
+            var active = grid.GetActiveVoxels();
 
             var N = active.Length / 3;
 

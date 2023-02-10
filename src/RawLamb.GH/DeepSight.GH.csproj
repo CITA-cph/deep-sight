@@ -66,9 +66,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
-    <Compile Include="Graph Goo.cs" />
-    <Compile Include="GraphCommand.cs" />
-    <Compile Include="GraphCreate.cs" />
     <Compile Include="GridActive.cs" />
     <Compile Include="GridCombine.cs" />
     <Compile Include="GridDisplay.cs" />

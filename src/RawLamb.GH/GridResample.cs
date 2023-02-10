@@ -19,6 +19,8 @@
 using System;
 using Grasshopper.Kernel;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
 
@@ -52,14 +54,20 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
 
+            if (temp_grid == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
+                return;
+            }
+
             DA.GetData(1, ref m_size);
 
-            var ngrid = temp_grid.Duplicate();
-            var new_grid = ngrid.Resample(m_size);
+            var ngrid = temp_grid.DuplicateGrid();
+            var new_grid = Tools.Resample(ngrid, m_size);
 
             DA.SetData(0, new GH_Grid(new_grid));
         }

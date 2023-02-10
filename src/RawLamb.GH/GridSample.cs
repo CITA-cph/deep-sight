@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -60,16 +61,21 @@ namespace DeepSight.GH.Components
             DA.GetData(0, ref m_grid);
 
             Grid temp_grid;
-            if (m_grid is Grid)
+            if (m_grid is GridApi)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
 
+            if (temp_grid == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
+                return;
+            }
+
             debug.Add(string.Format("{0} : Wrangled Grid from inputs.", stopwatch.ElapsedMilliseconds));
 
-            //var points = new List<Point3d>();
             var points = new List<GH_Point>();
             DA.GetDataList(1, points);
 
@@ -80,17 +86,17 @@ namespace DeepSight.GH.Components
 
             debug.Add(string.Format("{0} : Got other inputs.", stopwatch.ElapsedMilliseconds));
 
-            var floats = new float[points.Count * 3];
+            var coords = new double[points.Count * 3];
             for (int i = 0; i < points.Count; i++)
             {
-                floats[i * 3] = (float)points[i].Value.X;
-                floats[i * 3 + 1] = (float)points[i].Value.Y;
-                floats[i * 3 + 2] = (float)points[i].Value.Z;
+                coords[i * 3] = points[i].Value.X;
+                coords[i * 3 + 1] = points[i].Value.Y;
+                coords[i * 3 + 2] = points[i].Value.Z;
 
             }
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
-            var values = temp_grid.GetValuesWS(floats, mode);
+            var values = temp_grid.GetValuesWorld(coords);
 
             debug.Add(string.Format("{0} : Finished sampling grid.", stopwatch.ElapsedMilliseconds));
 

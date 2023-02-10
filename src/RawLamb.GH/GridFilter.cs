@@ -19,6 +19,8 @@
 using System;
 using Grasshopper.Kernel;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
 
@@ -54,7 +56,7 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
 
@@ -62,8 +64,11 @@ namespace DeepSight.GH.Components
             DA.GetData(2, ref iterations);
             DA.GetData(3, ref type);
 
-            var new_grid = temp_grid.Duplicate();
-            new_grid.Filter(width, iterations, type);
+            var new_grid = temp_grid.DuplicateGrid();
+
+            Tools.Filter(new_grid, iterations, width, (FilterType)type);
+
+            //new_grid.Filter(width, iterations, type);
 
             DA.SetData(0, new GH_Grid(new_grid));
         }

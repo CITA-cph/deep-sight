@@ -6,6 +6,8 @@ using Rhino.Geometry;
 using DeepSight;
 using DeepSight.RhinoCommon;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace RawLamb
 {
     public class LogYard
@@ -62,15 +64,17 @@ namespace RawLamb
                           logs.Add(CtLogs[name]);
                         }
                 */
-                if (log.CtLog == null)
-                //if (!CtLogs.ContainsKey(name))
+                //if (log.CtLog == null)
+                if (!log.Grids.ContainsKey("density"))
                 {
                     //var ctlog = new RawLamNet.CtLog();
                     Grid ctlog = null;
 
                     try
                     {
-                        ctlog = Grid.Read(path);
+                        ctlog = GridIO.Read(path)[0] as Grid;
+                        if (ctlog == null)
+                            throw new ArgumentException("Couldn't find suitable grid.");
                     }
                     catch (Exception e)
                     {
@@ -97,7 +101,7 @@ namespace RawLamb
                     log.BoundingBox = bb;
                     //LogBounds[name] = bb;
 
-                    log.CtLog = ctlog;
+                    log.Grids["density"] = ctlog;
                     //CtLogs[name] = ctlog;
                     //logs.Add(CtLogs[name]);
                 }
@@ -107,7 +111,7 @@ namespace RawLamb
                           log_meshes.Add(MeshLogs[name]);
                         }
                 */
-                if (log.Mesh == null && log.CtLog != null)
+                if (log.Mesh == null && !log.Grids.ContainsKey("density"))
                 //if (!MeshLogs.ContainsKey(name) && CtLogs.ContainsKey(name))
                 {
                     // ***********************
@@ -122,10 +126,10 @@ namespace RawLamb
 
                         foreach (var obj in rfile.Objects)
                         {
-                            if (obj.Geometry is Mesh)
+                            if (obj.Geometry is Rhino.Geometry.Mesh)
                             {
                                 //Messages.Add(obj.Geometry.ToString());
-                                log.Mesh = obj.Geometry as Mesh;
+                                log.Mesh = obj.Geometry as Rhino.Geometry.Mesh;
                                 //MeshLogs[name] = obj.Geometry as Mesh;
                                 break;
                             }
@@ -139,10 +143,10 @@ namespace RawLamb
                     else
                     {
 
-                        var rlog = log.CtLog.Resample(34.0);
+                        var rlog = Tools.Resample(log.Grids["density"] as Grid, 34.0);
                         Messages.Add(string.Format("Resampled {0}: {1}s", name, stopwatch.ElapsedMilliseconds / 1000));
-
-                        var qm = rlog.ToMesh(0.25f);
+                        
+                        var qm = DeepSight.Convert.VolumeToMesh(rlog, 0.25f);
                         var log_mesh = qm.ToRhinoMesh();
                         log_mesh.Vertices.CombineIdentical(true, true);
                         log_mesh.Faces.CullDegenerateFaces();

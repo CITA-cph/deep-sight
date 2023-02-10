@@ -22,6 +22,8 @@ using Rhino.Geometry;
 using DeepSight.RhinoCommon;
 using System.Collections.Generic;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
     public class Cmpt_GridFromMesh : GH_Component
@@ -49,7 +51,7 @@ namespace DeepSight.GH.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            Mesh mesh = null;
+            Rhino.Geometry.Mesh mesh = null;
 
             DA.GetData("Mesh", ref mesh);
             if (mesh == null) return;
@@ -63,7 +65,7 @@ namespace DeepSight.GH.Components
 
             mesh.Transform(inv);
 
-            var grid = mesh.ToVolume(xform, (float)iso, 3.0f, 3.0f);
+            Grid grid = mesh.ToVolume(xform, (float)iso, 3.0f, 3.0f);
             //grid.SdfToFog();
 
             DA.SetData("Grid", new GH_Grid(grid));

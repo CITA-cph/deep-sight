@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -51,7 +52,7 @@ namespace DeepSight.GH.Components
 
 
             object m_grid = null;
-            Grid temp_grid = null;
+            GridApi temp_grid = null;
 
             DA.GetData(0, ref m_grid);
             if (m_grid is Grid)

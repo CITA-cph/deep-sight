@@ -25,7 +25,9 @@ namespace DeepSight
 		GridBase();
 
 		template<typename GridT>
-		void initialize();
+		void initialize(typename GridT::ValueType background);
+
+		GridBase* duplicate();
 
 #pragma endregion Constructor_Init
 
@@ -44,7 +46,7 @@ namespace DeepSight
 		int get_grid_class();
 		void set_grid_class(int c);
 
-		void get_bounding_box();
+		void get_bounding_box(int* min, int* max);
 
 		std::string get_type();
 
@@ -98,10 +100,13 @@ namespace DeepSight
 
 
 	template<typename GridT>
-	void GridBase::initialize()
+	void GridBase::initialize(typename GridT::ValueType background)
 	{
-		m_grid = GridT::create(openvdb::zeroVal<GridT::ValueType>());
+		//m_grid = GridT::create(openvdb::zeroVal<GridT::ValueType>());
+		m_grid = GridT::create(background);
 	}
+
+
 
 #pragma region Get_Set
 
@@ -124,21 +129,7 @@ namespace DeepSight
 
 		return worldValue;
 	}
-	/*
-	template <typename GridT>
-	typename GridT::ValueType GridBase::get_interpolated_value(Eigen::Vector3f xyz)
-	{
-		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
-		typename GridT::Accessor accessor = grid->getAccessor();
-		return openvdb::tools::BoxSampler::sample(
-			accessor,
-			openvdb::Vec3R(
-				xyz.x(),
-				xyz.y(),
-				xyz.z()
-			));
-	}
-	*/
+
 	template <typename GridT>
 	std::vector<typename GridT::ValueType> GridBase::get_values_is(std::vector<Eigen::Vector3i>& xyz)
 	{

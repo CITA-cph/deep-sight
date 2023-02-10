@@ -26,6 +26,7 @@ using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 using DeepSight.RhinoCommon;
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -66,9 +67,15 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
+                temp_grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
+
+            if (temp_grid == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
+                return;
+            }
 
             debug.Add(string.Format("{0} : Wrangled Grid from inputs.", stopwatch.ElapsedMilliseconds));
 
@@ -96,17 +103,17 @@ namespace DeepSight.GH.Components
                 }
             }
 
-            var fpoints = new float[points.Count * 3];
+            var fpoints = new int[points.Count * 3];
             for (int i = 0; i < points.Count; i++)
             {
-                fpoints[i * 3] = (float)Math.Floor(points[i].Value.X + 0.5);
-                fpoints[i * 3 + 1] = (float)Math.Floor(points[i].Value.Y + 0.5);
-                fpoints[i * 3 + 2] = (float)Math.Floor(points[i].Value.Z + 0.5);
+                fpoints[i * 3] = (int)Math.Floor(points[i].Value.X + 0.5);
+                fpoints[i * 3 + 1] = (int)Math.Floor(points[i].Value.Y + 0.5);
+                fpoints[i * 3 + 2] = (int)Math.Floor(points[i].Value.Z + 0.5);
             }
 
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
-            temp_grid.SetValuesWS(fpoints, values.Select(x => (float)x.Value).ToArray());
+            temp_grid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
 
             debug.Add(string.Format("{0} : Finished sampling grid.", stopwatch.ElapsedMilliseconds));
 

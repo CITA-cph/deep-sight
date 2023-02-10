@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Linq;
 using Grasshopper.Kernel;
 
 namespace DeepSight.GH.Components
@@ -39,7 +40,7 @@ namespace DeepSight.GH.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -49,8 +50,8 @@ namespace DeepSight.GH.Components
             DA.GetData("Filepath", ref m_path);
             if (System.IO.File.Exists(m_path) && m_path.EndsWith(".vdb"))
             {
-                var m_grid = Grid.Read(m_path);
-                DA.SetData("Grid", new GH_Grid(m_grid));
+                var grids = GridIO.Read(m_path);
+                DA.SetDataList("Grid", grids.Select(x => new GH_Grid(x)));
             }
         }
 

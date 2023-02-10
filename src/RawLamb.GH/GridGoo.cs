@@ -30,11 +30,11 @@ using DeepSight.RhinoCommon;
 
 namespace DeepSight.GH
 {
-    public class GH_Grid : GH_GeometricGoo<Grid>
+    public class GH_Grid : GH_GeometricGoo<GridApi>
     {
         #region Constructors
         public GH_Grid() : this(null) { }
-        public GH_Grid(Grid native) { this.Value = native; }
+        public GH_Grid(GridApi native) { this.Value = native; }
 
         public override IGH_Goo Duplicate()
         {
@@ -45,12 +45,12 @@ namespace DeepSight.GH
         }
         #endregion
 
-        public static Grid ParseStructure(object obj)
+        public static GridApi ParseStructure(object obj)
         {
             if (obj is GH_Grid)
                 return (obj as GH_Grid).Value;
             else
-                return obj as Grid;
+                return obj as GridApi;
         }
         public override string ToString()
         {
@@ -110,7 +110,7 @@ namespace DeepSight.GH
         public override bool CastFrom(object source)
         {
             if (source == null) return false;
-            if (source is Grid grid)
+            if (source is GridApi grid)
             {
                 Value = grid;
                 return true;

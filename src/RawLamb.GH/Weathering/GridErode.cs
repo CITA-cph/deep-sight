@@ -24,6 +24,7 @@ using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -106,11 +107,17 @@ namespace DeepSight.GH.Components
                 if (m_grid is Grid)
                     grid = m_grid as Grid;
                 else if (m_grid is GH_Grid)
-                    grid = (m_grid as GH_Grid).Value;
+                    grid = (m_grid as GH_Grid).Value as Grid;
                 else
                     return;
 
-                ErosionGrid = grid.Duplicate();
+                if (grid == null)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unsupported grid type.");
+                    return;
+                }
+
+                ErosionGrid = grid.DuplicateGrid();
                 Iterations = 0;
                 Message = "Reset";
                 return;
@@ -183,7 +190,7 @@ namespace DeepSight.GH.Components
             var killList = new List<int>();
             var killState = new List<bool>();
 
-            var active = grid.ActiveVoxels();
+            var active = grid.GetActiveVoxels();
             var N = active.Length / 3;
 
             /*
@@ -208,8 +215,8 @@ namespace DeepSight.GH.Components
                 int y = active[i * 3 + 1];
                 int z = active[i * 3 + 2];
 
-                var nbrs = grid.GetNeighbours(x, y, z);
-                var exp = grid.Exposure(nbrs, threshold);
+                var nbrs = grid.GetNeighbours(new int[] {x, y, z});
+                var exp = Weathering.Exposure(nbrs, threshold);
 
                 if (vector.IsValid)
                 {
@@ -239,7 +246,7 @@ namespace DeepSight.GH.Components
                 }
             }
 
-            grid.SetActiveState(killList.ToArray(), killState.ToArray());
+            grid.SetActiveStates(killList.ToArray(), killState.ToArray());
         }
 
         protected override System.Drawing.Bitmap Icon

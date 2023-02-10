@@ -19,6 +19,8 @@
 using System;
 using Grasshopper.Kernel;
 
+using Grid = DeepSight.FloatGrid;
+
 namespace DeepSight.GH.Components
 {
 
@@ -51,7 +53,7 @@ namespace DeepSight.GH.Components
             if (m_grid is Grid)
                 grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
-                grid = (m_grid as GH_Grid).Value;
+                grid = (m_grid as GH_Grid).Value as Grid;
             else
                 return;
 
@@ -80,11 +82,11 @@ namespace DeepSight.GH.Components
             }
             */
 
-            var ngrid = grid.Duplicate();
+            var ngrid = grid.DuplicateGrid();
             ngrid.Name = grid.Name;
-            ngrid.SdfToFog(1.0f);
+            Convert.SdfToFog(ngrid, 1.0f);
 
-            var active = ngrid.ActiveVoxels();
+            var active = ngrid.GetActiveVoxels();
             var N = active.Length / 3;
 
             int ii, jj, kk;
@@ -94,7 +96,7 @@ namespace DeepSight.GH.Components
                 if (ngrid[ii, jj, kk] < threshold)
                 {
                     ngrid[ii, jj, kk] = 0.0f;
-                    ngrid.SetActiveState(ii, jj, kk, false);
+                    ngrid.SetActiveState(new int[] { ii, jj, kk }, false);
                 }
             }
 

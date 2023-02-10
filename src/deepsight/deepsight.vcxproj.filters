@@ -66,6 +66,12 @@
     <ClInclude Include="ConvertAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ToolsAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CombineAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -111,6 +117,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConvertAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CombineAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

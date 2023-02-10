@@ -3,10 +3,13 @@
 namespace DeepSight
 {
 #pragma region Filter_Tools
+
 	template<typename GridT>
-	GridBase* filter(GridBase* grid, int width, int iterations, int type)
+	void filter(GridBase* grid, int width, int iterations, int type)
 	{
-		openvdb::tools::Filter<GridT> tool(*grid->m_grid);
+		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
+
+		openvdb::tools::Filter<GridT> tool(*source);
 		switch (type)
 		{
 		case(1):
@@ -24,7 +27,7 @@ namespace DeepSight
 	GridBase* resample(GridBase* grid, float scale)
 	{
 		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
-		typename GridT::Ptr target = source->deepCopyGrid();
+		typename GridT::Ptr target = openvdb::gridPtrCast<GridT>(source->deepCopyGrid());
 		target->clear();
 
 		target->setTransform(
@@ -161,7 +164,20 @@ namespace DeepSight
 		dgrid->m_grid = grid;
 		return dgrid;
 	}
+#pragma endregion Conversion_Tools
+#pragma region Template_specialization
 
+	template GridBase* resample<openvdb::FloatGrid>(GridBase* grid, float isovalue);
+	template GridBase* resample<openvdb::DoubleGrid>(GridBase* grid, float isovalue);
+	template GridBase* resample<openvdb::Int32Grid>(GridBase* grid, float isovalue);
+	
+	template void filter<openvdb::FloatGrid>(GridBase* grid, int width, int iterations, int type);
+	template void filter<openvdb::DoubleGrid>(GridBase* grid, int width, int iterations, int type);
+	template void filter<openvdb::Int32Grid>(GridBase* grid, int width, int iterations, int type);
+	
+	template void sdf_to_fog<openvdb::FloatGrid>(GridBase* grid, float cutoffDistance);
+	template void sdf_to_fog<openvdb::DoubleGrid>(GridBase* grid, float cutoffDistance);
+	template void sdf_to_fog<openvdb::Int32Grid>(GridBase* grid, float cutoffDistance);
 
 	template void volume_to_mesh<openvdb::FloatGrid>(
 		GridBase* grid, float isovalue,
@@ -181,7 +197,7 @@ namespace DeepSight
 		std::vector<Eigen::Vector4i>& quads,
 		std::vector<Eigen::Vector3i>& tris);
 
-#pragma endregion Conversion_Tools
+#pragma endregion Template_specialization
 
 
 }

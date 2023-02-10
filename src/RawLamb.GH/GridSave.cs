@@ -21,6 +21,7 @@ using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -33,11 +34,9 @@ namespace DeepSight.GH.Components
         {
         }
 
-
-
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Grid to save to disk.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "Grid to save to disk.", GH_ParamAccess.list);
             pManager.AddTextParameter("Filepath", "FP", "File path of grid.", GH_ParamAccess.item);
         }
 
@@ -54,23 +53,31 @@ namespace DeepSight.GH.Components
             DA.GetData("Filepath", ref m_path);
 
             object m_grid = null;
-            Grid temp_grid = null;
+            GridApi temp_grid = null;
 
-            DA.GetData(0, ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value;
-            else
-                return;
+            var inputs = new List<object>();
+            var input_grids = new List<GridApi>();
+
+            DA.GetDataList(0, inputs);
+
+            foreach(object input in inputs)
+            {
+                if (input is GridApi)
+                    input_grids.Add(input as GridApi);
+                else if (m_grid is GH_Grid)
+                    input_grids.Add((input as GH_Grid).Value);
+                else
+                    continue;
+            }
+
+            if (input_grids.Count < 1) return;
 
             if (!string.IsNullOrEmpty(m_path) && m_path.EndsWith(".vdb"))
             {
-                temp_grid.Write(m_path, false);
+                GridIO.Write(m_path, input_grids.ToArray());
             }
 
             DA.SetDataList("debug", debug);
-
         }
 
         protected override System.Drawing.Bitmap Icon
