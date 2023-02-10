@@ -53,6 +53,16 @@ namespace DeepSight
             }
         }
 
+        public Type ValueType()
+        {
+            return typeof(T);
+        }
+
+        public override object GetGridValue(int x, int y, int z)
+        {
+            return (object)this[x, y, z];
+        }
+
         /// <summary>
         /// Get a grid value in index-space coordinates.
         /// </summary>
@@ -135,7 +145,7 @@ namespace DeepSight
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.LPStr)]
-        private static extern string GridBase_GetName(IntPtr ptr);
+        internal static extern string GridBase_GetName(IntPtr ptr);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void GridBase_ClipIndex(IntPtr ptr, int[] min, int[] max);
@@ -257,6 +267,9 @@ namespace DeepSight
                 GridBase_SetGridClass(Ptr, (int)value);
             }
         }
+
+        public abstract object GetGridValue(int x, int y, int z);
+
 
         #region Dispose
         public void Dispose()

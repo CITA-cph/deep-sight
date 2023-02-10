@@ -25,6 +25,7 @@ namespace testDeepSightNet
 
         public static void TestCSG()
         {
+            Console.WriteLine();
             Console.WriteLine("#######################################");
             Console.WriteLine("TestCSG");
             Console.WriteLine();
@@ -51,6 +52,7 @@ namespace testDeepSightNet
 
         public static void TestPoints()
         {
+            Console.WriteLine();
             Console.WriteLine("#######################################");
             Console.WriteLine("TestPoints");
             Console.WriteLine();
@@ -75,6 +77,10 @@ namespace testDeepSightNet
 
         public static void TestMesh()
         {
+            Console.WriteLine();
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestMesh");
+            Console.WriteLine();
             float[] verts = new float[]
             {
                 0,0,0,
@@ -131,20 +137,32 @@ namespace testDeepSightNet
 
         public static void TestFile()
         {
+            Console.WriteLine();
             Console.WriteLine("#######################################");
             Console.WriteLine("TestFile");
             Console.WriteLine();
 
             var vdb_path = @"C:\Users\tsvi\OneDrive - Det Kongelige Akademi\03_Projects\2019_RawLam\Data\Microtec\20220301.154113.DK.feb.log02_char\20220301.154113.DK.feb.log02_char.vdb";
-            var grid = GridIO.Read(vdb_path)[0] as Grid;
+            Console.WriteLine($"Loading grids from '{vdb_path}'...");
+            
+            var grids = GridIO.Read(vdb_path);
+            if (grids == null || grids.Length < 1)
+            {
+                Console.WriteLine("Couldn't load any grids...");
+                return;
+            }
 
+            Grid grid;
+            if (grids[0] != null && grids[0] is Grid)
+                grid = grids[0] as Grid;
+            else
+                return;
 
             var active = grid.GetActiveVoxels();
             Console.WriteLine(active.Length);
             if (active.Length > 2)
                 for (int i = 0; i < 3; ++i)
                     Console.WriteLine(active[i]);
-
 
             Console.WriteLine("Eroding...");
             DeepSight.Weathering.Erode(grid);
@@ -156,12 +174,12 @@ namespace testDeepSightNet
                     Console.WriteLine(active[i]);
         }
 
-        static void Main(string[] args)
+        public static void TestBasic()
         {
-
-            TestMesh();
-            TestCSG();
-            TestPoints();
+            Console.WriteLine();
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestBasic");
+            Console.WriteLine();
 
             var grid = new FloatGrid();
             grid[0, 0, 0] = 1.0f;
@@ -172,6 +190,62 @@ namespace testDeepSightNet
             Console.WriteLine("Grid: {0}", grid);
             Console.WriteLine("Grid name: {0}", grid.Name);
             Console.WriteLine("Value is {0}", v);
+        }
+
+        public static void TestGridTypes()
+        {
+            Console.WriteLine();
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestGridTypes");
+            Console.WriteLine();
+
+            var fgrid = new FloatGrid();
+            fgrid[0,0,0] = 1.0f;
+
+            var igrid = new Int32Grid();
+            igrid[0, 0, 0] = 50;
+
+            var dgrid = new DoubleGrid();
+            dgrid[0, 0, 0] = 30.0;
+
+            var dgrid2 = new DoubleGrid();
+            dgrid[0, 0, 0] = 30.0;
+
+            var vgrid = new Vec3fGrid();
+            vgrid[0, 0, 0] = new Vec3<float> (3.0f, 0.0f, 1.3f);
+
+            Console.WriteLine($"{fgrid}");
+            Console.WriteLine($"{igrid}");
+            Console.WriteLine($"{dgrid}");
+            Console.WriteLine($"{vgrid}");
+
+            var path = "C:/tmp/grids.vdb";
+            Console.Write("Writing grids... ");
+            GridIO.Write(path, new GridApi[] { vgrid, igrid, dgrid, dgrid2, fgrid });
+            Console.WriteLine("OK.");
+
+            Console.Write("Reading grids... ");
+            var grids = GridIO.Read(path);
+            Console.WriteLine("OK.");
+            Console.WriteLine();
+
+            foreach (var grid in grids)
+            {
+                Console.WriteLine($"{grid}");
+                Console.WriteLine($"    {grid} value is {grid.GetGridValue(0, 0, 0)}");
+
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            TestBasic();
+            TestMesh();
+            TestCSG();
+            TestPoints();
+            //TestFile();
+            TestGridTypes();
+
 
             Console.Write("Press any key to exit.");
             Console.ReadLine();

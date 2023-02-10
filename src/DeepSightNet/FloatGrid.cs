@@ -36,6 +36,12 @@ namespace DeepSight
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_SetActiveState(IntPtr ptr, int[] coord, int state);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_SetActiveStates(IntPtr ptr, int num_boords, int[] coord, int[] state);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_GetNeighbours(IntPtr ptr, int[] coord, float[] values);
         #endregion
 
         public FloatGrid(IntPtr ptr)
@@ -90,17 +96,24 @@ namespace DeepSight
 
         public override float[] GetNeighbours(int[] coordinates)
         {
-            throw new NotImplementedException();
+            var values = new float[27];
+            FloatGrid_GetNeighbours(Ptr, coordinates, values);
+            return values;
         }
 
         public override void SetActiveState(int[] coordinates, bool on)
         {
-            throw new NotImplementedException();
+            FloatGrid_SetActiveState(Ptr, coordinates, on ? 1 : 0);
         }
 
         public override void SetActiveStates(int[] coordinates, bool[] on)
         {
-            throw new NotImplementedException();
+            FloatGrid_SetActiveStates(Ptr, coordinates.Length / 3, coordinates, on.Select(x => (x ? 1 : 0)).ToArray());
+        }
+
+        public override object GetGridValue(int x, int y, int z)
+        {
+            return (object)this[x, y, z];
         }
 
         public override string ToString()

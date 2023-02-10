@@ -109,7 +109,6 @@
     <ClInclude Include="Composite_ext.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="ConvertAPI.h" />
-    <ClInclude Include="CtLog.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Grid-export-common.h" />
     <ClInclude Include="Grid-export.h" />
@@ -118,7 +117,7 @@
     <ClInclude Include="GridBaseAPI.h" />
     <ClInclude Include="InfoLog-export.h" />
     <ClInclude Include="InfoLog.h" />
-    <ClInclude Include="io.h" />
+    <ClInclude Include="ReadWrite.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ParticleList.h" />
     <ClInclude Include="pch.h" />
@@ -128,7 +127,6 @@
   <ItemGroup>
     <ClCompile Include="Composite_ext.cpp" />
     <ClCompile Include="ConvertAPI.cpp" />
-    <ClCompile Include="CtLog.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Grid-export-common.cpp" />
     <ClCompile Include="Grid-export.cpp" />
@@ -137,7 +135,7 @@
     <ClCompile Include="GridBaseAPI.cpp" />
     <ClCompile Include="InfoLog-export.cpp" />
     <ClCompile Include="InfoLog.cpp" />
-    <ClCompile Include="io.cpp" />
+    <ClCompile Include="ReadWrite.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ParticleList.cpp" />
     <ClCompile Include="pch.cpp">

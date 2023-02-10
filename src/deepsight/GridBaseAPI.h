@@ -10,7 +10,8 @@ namespace DeepSight
 #endif
 		DEEPSIGHT_EXPORT GridBase* GridBase_CreateFloat();
 		DEEPSIGHT_EXPORT GridBase* GridBase_CreateDouble();
-		DEEPSIGHT_EXPORT GridBase* GridBase_CreateInt();
+		DEEPSIGHT_EXPORT GridBase* GridBase_CreateInt32();
+		DEEPSIGHT_EXPORT GridBase* GridBase_CreateVec3f();
 
 		DEEPSIGHT_EXPORT void GridBase_Delete(GridBase* grid);
 
@@ -45,6 +46,10 @@ namespace DeepSight
 
 		DEEPSIGHT_EXPORT void FloatGrid_GetActiveVoxels(GridBase* ptr, int* coords);
 		DEEPSIGHT_EXPORT void FloatGrid_SetActiveState(GridBase* ptr, int* coord, int state);
+		DEEPSIGHT_EXPORT void FloatGrid_SetActiveStates(GridBase* ptr, int num_coords, int* coord, int* state);
+
+		DEEPSIGHT_EXPORT void FloatGrid_GetNeighbours(GridBase* ptr, int* coord, float* values);
+
 
 #pragma endregion FloatGrid
 
@@ -60,6 +65,10 @@ namespace DeepSight
 
 		DEEPSIGHT_EXPORT void DoubleGrid_GetActiveVoxels(GridBase* ptr, int* coords);
 		DEEPSIGHT_EXPORT void DoubleGrid_SetActiveState(GridBase* ptr, int* coord, int state);
+		DEEPSIGHT_EXPORT void DoubleGrid_SetActiveStates(GridBase* ptr, int num_coords, int* coord, int* state);
+
+		DEEPSIGHT_EXPORT void DoubleGrid_GetNeighbours(GridBase* ptr, int* coord, double* values);
+
 
 #pragma endregion DoubleGrid
 
@@ -75,7 +84,29 @@ namespace DeepSight
 
 		DEEPSIGHT_EXPORT void Int32Grid_GetActiveVoxels(GridBase* ptr, int* coords);
 		DEEPSIGHT_EXPORT void Int32Grid_SetActiveState(GridBase* ptr, int* coord, int state);
+		DEEPSIGHT_EXPORT void Int32Grid_SetActiveStates(GridBase* ptr, int num_coords, int* coord, int* state);
+
+		DEEPSIGHT_EXPORT void Int32Grid_GetNeighbours(GridBase* ptr, int* coord, int* values);
+
 #pragma endregion Int32Grid
+
+#pragma region Vec3fGrid
+
+		DEEPSIGHT_EXPORT void Vec3fGrid_GetValueWs(GridBase* ptr, double x, double y, double z, float* value);
+		DEEPSIGHT_EXPORT void Vec3fGrid_GetValueIs(GridBase* ptr, int x, int y, int z, float* value);
+		DEEPSIGHT_EXPORT void Vec3fGrid_SetValue(GridBase* ptr, int x, int y, int z, float* v);
+
+		DEEPSIGHT_EXPORT void Vec3fGrid_GetValuesWs(GridBase* ptr, int num_coords, double* coords, float* values);
+		DEEPSIGHT_EXPORT void Vec3fGrid_GetValuesIs(GridBase* ptr, int num_coords, int* coords, float* values);
+		DEEPSIGHT_EXPORT void Vec3fGrid_SetValues(GridBase* ptr, int num_coords, int* coords, float* values);
+
+		DEEPSIGHT_EXPORT void Vec3fGrid_GetActiveVoxels(GridBase* ptr, int* coords);
+		DEEPSIGHT_EXPORT void Vec3fGrid_SetActiveState(GridBase* ptr, int* coord, int state);
+		DEEPSIGHT_EXPORT void Vec3fGrid_SetActiveStates(GridBase* ptr, int num_coords, int* coord, int* state);
+
+		DEEPSIGHT_EXPORT void Vec3fGrid_GetNeighbours(GridBase* ptr, int* coord, float* values);
+
+#pragma endregion Vec3fGrid
 
 #endif
 

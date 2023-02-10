@@ -46,6 +46,10 @@
     <Compile Include="Convert.cs" />
     <Compile Include="CtLog.cs" />
     <Compile Include="Filter.cs" />
+    <Compile Include="DoubleGrid.cs" />
+    <Compile Include="Types.cs" />
+    <Compile Include="Vec3fGrid.cs" />
+    <Compile Include="Int32Grid.cs" />
     <Compile Include="FloatGrid.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="GridBase.cs" />
@@ -57,6 +61,7 @@
     <Compile Include="QuadMesh.cs" />
     <Compile Include="RLGeom.cs" />
     <Compile Include="Vec3Grid.cs" />
+    <Compile Include="Weathering.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DeepSightNetDiagram.cd" />

@@ -1,5 +1,5 @@
-#ifndef IO_H
-#define IO_H
+#ifndef READ_WRITE_H
+#define READ_WRITE_H
 
 #define NOMINMAX
 #include <windows.h>
@@ -19,6 +19,7 @@
 
 #include "Grid.h"
 #include "InfoLog.h"
+#include "GridBase.h"
 
 #include <map>
 #include <vector>
@@ -42,5 +43,16 @@ namespace DeepSight
 	Grid<openvdb::Vec3f>::Ptr load_vector_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
 	RawLam::InfoLog::Ptr load_infolog(const std::string path, bool verbose = false);
 
+	std::vector<GridBase*> read_vdb(const std::string path);
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+	DEEPSIGHT_EXPORT SAFEARRAY* ReadWrite_ReadVdb(const char* path);
+	DEEPSIGHT_EXPORT void ReadWrite_WriteVdb(const char* path, int num_grids, GridBase** grids, int float_as_half);
+
+#ifdef __cplusplus
+	}
+#endif
 }
 #endif

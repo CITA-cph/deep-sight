@@ -1,4 +1,4 @@
-#include "io.h"
+#include "ReadWrite.h"
 
 
 namespace DeepSight
@@ -390,5 +390,67 @@ namespace DeepSight
 			return std::shared_ptr<RawLam::InfoLog>(nullptr);
 		}
 		return std::shared_ptr<RawLam::InfoLog>(nullptr);
+	}
+
+	std::vector<GridBase*> read_vdb(const std::string path)
+	{
+		openvdb::io::File file(path);
+		file.open();
+
+		std::vector<GridBase*> grids;
+
+		//auto grid_ptr_vec = file.getGrids();
+
+		//for(auto iter=grid_ptr_vec->begin(); iter != grid_ptr_vec->end(); ++iter)
+
+		for (openvdb::io::File::NameIterator nameIter = file.beginName();
+			nameIter != file.endName(); ++nameIter)
+		{
+			//std::cout << "Reading " << (*iter)->type() << std::endl;
+			auto grid = new GridBase();
+			//grid->m_grid = openvdb::GridBase::Ptr( * iter);
+			//std::cout << "Grid set: " << grid->m_grid->type() << std::endl;
+			//std::cout << "Grid ptr: " << grid << std::endl;
+			grid->m_grid = file.readGrid(nameIter.gridName());
+			grids.push_back(grid);
+		}
+
+		file.close();
+
+		return grids;
+	}
+
+	SAFEARRAY* ReadWrite_ReadVdb(const char* path)
+	{
+		std::vector<GridBase*> grids = read_vdb(path);
+		//std::cout << "Found " << grids.size() << " grids... " << std::endl;
+		//std::cout << "Size of grids array: " << sizeof(grids) << std::endl;
+		//std::cout << "Size of single ptr : " << sizeof(GridBase*) << std::endl;
+
+		SAFEARRAY* psa = SafeArrayCreateVector(VT_I4, 0, grids.size());
+		void* data;
+		SafeArrayAccessData(psa, &data);
+		CopyMemory(data, grids.data(), grids.size() * sizeof(GridBase*));
+		SafeArrayUnaccessData(psa);
+		return psa;
+	}
+
+	void ReadWrite_WriteVdb(const char* path, int num_grids, GridBase** grids, int float_as_half)
+	{
+		openvdb::io::File file(path);
+		openvdb::GridPtrVec grids_out;
+
+		for (int i = 0; i < num_grids; ++i)
+		{
+			auto grid = grids[i]->m_grid;
+			grid->pruneGrid();
+			grid->setSaveFloatAsHalf(float_as_half != 0);
+			grids_out.push_back(grid);
+		}
+
+		file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+
+		file.write(grids_out);
+		file.close();
 	}
 }
