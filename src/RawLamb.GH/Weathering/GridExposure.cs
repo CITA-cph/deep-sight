@@ -35,7 +35,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridExposure()
           : base("GridExposure", "GExp",
               "Get a grid's exposure values.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Biopol")
         {
         }
 

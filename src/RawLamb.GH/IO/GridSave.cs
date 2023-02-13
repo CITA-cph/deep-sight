@@ -30,7 +30,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridSave()
           : base("GridSave", "GSave",
               "Save a grid to disk.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "IO")
         {
         }
 

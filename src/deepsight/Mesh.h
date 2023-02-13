@@ -44,8 +44,11 @@ namespace DeepSight
 		DEEPSIGHT_EXPORT void Mesh_get_quads(Mesh* ptr, int* data);
 		DEEPSIGHT_EXPORT void Mesh_get_tris(Mesh* ptr, int* data);
 		DEEPSIGHT_EXPORT void Mesh_add_vertex(Mesh* ptr, float* data);
+		DEEPSIGHT_EXPORT void Mesh_add_vertices(Mesh* ptr, int num_verts, float* data);
 		DEEPSIGHT_EXPORT void Mesh_add_tri(Mesh* ptr, int* data);
 		DEEPSIGHT_EXPORT void Mesh_add_quad(Mesh* ptr, int* data);
+		DEEPSIGHT_EXPORT void Mesh_add_faces(Mesh* ptr, int num_faces, int* data);
+
 
 #ifdef __cplusplus
 	}

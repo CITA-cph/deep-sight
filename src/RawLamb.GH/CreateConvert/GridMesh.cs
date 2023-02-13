@@ -18,71 +18,73 @@
 
 using System;
 using Grasshopper.Kernel;
-
-using Grid = DeepSight.FloatGrid;
+using Rhino.Geometry;
+using DeepSight.RhinoCommon;
+using System.Collections.Generic;
 
 namespace DeepSight.GH.Components
 {
-
-    public class Cmpt_GridResample : GH_Component
+    public class Cmpt_GridMesh : GH_Component
     {
-        public Cmpt_GridResample()
-          : base("GridResample", "GRes",
-              "Resample a grid to a new cell size.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+        public Cmpt_GridMesh()
+          : base("Grid2Mesh", "G2M",
+              "Get the isomesh of a grid.",
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Size", "S", "New cell size.", GH_ParamAccess.item, 5);
+            pManager.AddNumberParameter("Isovalue", "I", "Isovalue for meshing.", GH_ParamAccess.item, 0.15);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Resampled grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh", "M", "Isomesh of grid.", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             object m_grid = null;
-            Grid temp_grid = null;
-            double m_size = 0.15;
+            GridApi temp_grid = null;
+            double m_threshold = 0.15;
 
             DA.GetData(0, ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
+            if (m_grid is GridApi)
+                temp_grid = m_grid as GridApi;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
+                temp_grid = (m_grid as GH_Grid).Value;
             else
                 return;
 
-            if (temp_grid == null)
+            DA.GetData(1, ref m_threshold);
+
+            var fgrid = temp_grid as FloatGrid;
+            if (fgrid == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
+                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Only scalar grids can be converted to a mesh.");
                 return;
             }
+            Rhino.Geometry.Mesh rhino_mesh = Convert.VolumeToMesh(temp_grid as FloatGrid, (float)m_threshold).ToRhinoMesh();
+            //Rhino.Geometry.Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
+            rhino_mesh.Normals.ComputeNormals();
 
-            DA.GetData(1, ref m_size);
-
-            var ngrid = temp_grid.DuplicateGrid();
-            var new_grid = Tools.Resample(ngrid, m_size);
-
-            DA.SetData(0, new GH_Grid(new_grid));
+            DA.GetData(1, ref m_threshold);
+            DA.SetData(0, rhino_mesh);
         }
 
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                return Properties.Resources.GridResample_01;
+                return Properties.Resources.GridMesh_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("0bf9ba62-b6af-4667-aed1-cfd8179eb911"); }
+            get { return new Guid("90a8da23-75a6-4ebc-a83c-405bb725b5cf"); }
         }
     }
 }

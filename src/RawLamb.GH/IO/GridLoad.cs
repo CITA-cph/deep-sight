@@ -17,63 +17,55 @@
  */
 
 using System;
-using System.Diagnostics;
-
+using System.Linq;
 using Grasshopper.Kernel;
-
-using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
-
-    public class Cmpt_GridCreate : GH_Component
+    public class Cmpt_GridLoad : GH_Component
     {
-        public Cmpt_GridCreate()
-          : base("GridCreate", "GNew",
-              "Create empty grid.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+        public Cmpt_GridLoad()
+          : base("GridLoad", "GLoad",
+              "Load a grid.", 
+              DeepSight.GH.Api.ComponentCategory, "IO")
         {
         }
 
+
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Name of grid.", GH_ParamAccess.item, "Grid");
-            pManager[0].Optional = true;
-
+            pManager.AddTextParameter("Filepath", "FP", "File path of grid.", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "New grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            string m_path = String.Empty;
 
-            string name = "Grid";
-            DA.GetData(0, ref name);
-
-            Grid grid = new Grid();
-            grid.Name = name;
-
-
-            DA.SetData(0, new GH_Grid(grid));
-
+            DA.GetData("Filepath", ref m_path);
+            if (System.IO.File.Exists(m_path) && m_path.EndsWith(".vdb"))
+            {
+                var grids = GridIO.Read(m_path);
+                DA.SetDataList("Grid", grids.Select(x => new GH_Grid(x)));
+            }
         }
 
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                return Properties.Resources.GridNew_01;
+                return Properties.Resources.GridLoad_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("03e5d07a-4776-4fff-bd66-8e6152e6f9b1"); }
+            get { return new Guid("d18197ba-60f2-4a46-8479-ce6f5380918a"); }
         }
     }
 }

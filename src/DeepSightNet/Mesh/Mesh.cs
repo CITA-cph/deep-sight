@@ -26,6 +26,9 @@ using System.Threading.Tasks;
 
 namespace DeepSight
 {
+    /// <summary>
+    /// Simple interface for passing mesh data back and forth between .NET and the native API.
+    /// </summary>
     public class Mesh : IDisposable
     {
         #region Api calls
@@ -57,10 +60,16 @@ namespace DeepSight
         private static extern void Mesh_add_vertex(IntPtr ptr, float[] vertex);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Mesh_add_vertices(IntPtr ptr, int num_verts, float[] vert_data);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Mesh_add_tri(IntPtr ptr, int[] data);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Mesh_add_quad(IntPtr ptr, int[] data);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Mesh_add_faces(IntPtr ptr, int num_faces, int[] face_data);
 
         #endregion
 
@@ -77,6 +86,9 @@ namespace DeepSight
             Ptr = Mesh_Create();
         }
 
+        /// <summary>
+        /// Return a flattened array of vertex data as repeating XYZ triplets.
+        /// </summary>
         public float[] Vertices
         {
             get
@@ -88,6 +100,9 @@ namespace DeepSight
             }
         }
 
+        /// <summary>
+        /// Return a flattened array of quad faces.
+        /// </summary>
         public int[] Quads
         {
             get
@@ -99,11 +114,46 @@ namespace DeepSight
             }
         }
 
+        /// <summary>
+        /// Return a flattened array of triangle faces.
+        /// </summary>
+        public int[] Tris
+        {
+            get
+            {
+                var faces = new int[Mesh_num_tris(Ptr) * 3];
+                Mesh_get_tris(Ptr, faces);
+
+                return faces;
+            }
+        }
+
+        /// <summary>
+        /// Add a single vertex from its XYZ coordinates.
+        /// </summary>
+        /// <param name="x">The X-component of the vertex location.</param>
+        /// <param name="y">The Y-component of the vertex location.</param>
+        /// <param name="z">The Z-component of the vertex location.</param>
         public void AddVertex(float x, float y, float z)
         {
             Mesh_add_vertex(Ptr, new float[] { x, y, z });
         }
 
+        /// <summary>
+        /// Add multiple vertices from flattened float data as repeating
+        /// XYZ triplets ([x0, y0, z0, x1, y1, z1, ...]).
+        /// </summary>
+        /// <param name="data">Vertex data as list of floats.</param>
+        public void AddVertices(float[] data)
+        {
+            Mesh_add_vertices(Ptr, data.Length / 3, data);
+        }
+
+        /// <summary>
+        /// Add a tri or quad face.
+        /// </summary>
+        /// <param name="face">A list of the face indices. Tris are length 3, quads are length 4.</param>
+        /// <exception cref="ArgumentException"></exception>
         public void AddFace(int[] face)
         {
             if (face.Length == 3)
@@ -114,15 +164,16 @@ namespace DeepSight
                 throw new ArgumentException("Face must be either a triangle or a quad.");
         }
 
-        public int[] Tris
+        /// <summary>
+        /// Add multiple tri or quad faces as flat list of indices. 
+        /// Each face always has 4 indices. 
+        /// Quads just list their indices (i.e. [0, 1, 2, 3]).
+        /// Tris repeat the last index (i.e. [0, 1, 3, 3]).
+        /// </summary>
+        /// <param name="data">Flattened list of face indices, padded to 4 values.</param>
+        public void AddFaces(int[] data)
         {
-            get
-            {
-                var faces = new int[Mesh_num_tris(Ptr) * 3];
-                Mesh_get_tris(Ptr, faces);
-
-                return faces;
-            }
+            Mesh_add_faces(Ptr, data.Length / 4, data);
         }
 
         /// <summary>

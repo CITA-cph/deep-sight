@@ -98,6 +98,15 @@ namespace DeepSight
 		ptr->vertices->push_back(Eigen::Vector3f(data));
 	}
 
+	void Mesh_add_vertices(Mesh* ptr, int num_verts, float* data)
+	{
+		for (int i = 0; i < num_verts; ++i)
+		{
+			ptr->vertices->push_back(Eigen::Vector3f(data));
+			data += 3;
+		}
+	}
+
 	void Mesh_add_tri(Mesh* ptr, int* data)
 	{
 		ptr->tris->push_back(Eigen::Vector3i(data));
@@ -106,5 +115,27 @@ namespace DeepSight
 	void Mesh_add_quad(Mesh* ptr, int* data)
 	{
 		ptr->quads->push_back(Eigen::Vector4i(data));
+	}
+
+	void Mesh_add_faces(Mesh* ptr, int num_faces, int* data)
+	{
+		int a, b, c, d;
+		for (int i = 0; i < num_faces; ++i)
+		{
+			a = *data; data++;
+			b = *data; data++;
+			c = *data; data++;
+			d = *data; data++;
+
+			if (c == d)
+			{
+				ptr->tris->push_back(Eigen::Vector3i(a, b, c));
+			}
+			else
+			{
+				ptr->quads->push_back(Eigen::Vector4i(a, b, c, d));
+
+			}
+		}
 	}
 }

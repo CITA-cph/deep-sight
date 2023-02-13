@@ -31,7 +31,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridFromMesh()
           : base("Mesh2Grid", "M2G",
               "Convert a mesh to a level-set grid.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 

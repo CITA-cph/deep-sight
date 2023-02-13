@@ -34,7 +34,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridCombine()
           : base("GridCombine", "GCom",
               "Combine two grids together (min, max, sum, mult, diff).",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 

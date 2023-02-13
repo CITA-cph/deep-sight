@@ -33,9 +33,7 @@ namespace DeepSight
 		DEEPSIGHT_EXPORT void GridBase_SetTransform(GridBase* ptr, float* xform);
 		DEEPSIGHT_EXPORT void GridBase_GetTransform(GridBase* ptr, float* xform);
 
-
 #ifndef TEST
-
 
 #pragma region FloatGrid
 

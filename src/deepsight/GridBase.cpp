@@ -91,11 +91,6 @@ namespace DeepSight
 
 	std::string GridBase::get_type()
 	{
-		if (m_grid == nullptr)
-		{
-			std::cout << "What the fuck..." << std::endl;
-			throw;
-		}
 		return m_grid->type();
 	}
 #pragma endregion Generic

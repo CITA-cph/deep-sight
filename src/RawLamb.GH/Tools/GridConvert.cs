@@ -29,7 +29,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridConvert()
           : base("GridConvert", "GCon",
               "Convert a grid from level-set to density.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 

@@ -24,33 +24,31 @@ using Grid = DeepSight.FloatGrid;
 namespace DeepSight.GH.Components
 {
 
-    public class Cmpt_GridFilter : GH_Component
+    public class Cmpt_GridResample : GH_Component
     {
-        public Cmpt_GridFilter()
-          : base("GridFilter", "GFil",
-              "Filter a grid.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+        public Cmpt_GridResample()
+          : base("GridResample", "GRes",
+              "Resample a grid to a new cell size.",
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Width", "W", "Width of filtering kernel.", GH_ParamAccess.item, 1);
-            pManager.AddIntegerParameter("Iterations", "I", "Number of filter iterations.", GH_ParamAccess.item, 1);
-            pManager.AddIntegerParameter("Mode", "M", "Filter mode.", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Size", "S", "New cell size.", GH_ParamAccess.item, 5);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Filtered grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "Resampled grid.", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             object m_grid = null;
             Grid temp_grid = null;
-            int width = 1, iterations = 1, type = 0;
+            double m_size = 0.15;
 
             DA.GetData(0, ref m_grid);
             if (m_grid is Grid)
@@ -60,15 +58,16 @@ namespace DeepSight.GH.Components
             else
                 return;
 
-            DA.GetData(1, ref width);
-            DA.GetData(2, ref iterations);
-            DA.GetData(3, ref type);
+            if (temp_grid == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
+                return;
+            }
 
-            var new_grid = temp_grid.DuplicateGrid();
+            DA.GetData(1, ref m_size);
 
-            Tools.Filter(new_grid, iterations, width, (FilterType)type);
-
-            //new_grid.Filter(width, iterations, type);
+            var ngrid = temp_grid.DuplicateGrid();
+            var new_grid = Tools.Resample(ngrid, m_size);
 
             DA.SetData(0, new GH_Grid(new_grid));
         }
@@ -77,13 +76,13 @@ namespace DeepSight.GH.Components
         {
             get
             {
-                return Properties.Resources.GridFilter_01;
+                return Properties.Resources.GridResample_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("905431dd-9437-484a-acdf-e862ddc17685"); }
+            get { return new Guid("0bf9ba62-b6af-4667-aed1-cfd8179eb911"); }
         }
     }
 }
