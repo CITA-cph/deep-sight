@@ -39,7 +39,8 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Mesh", "M", "Mesh to convert to grid.", GH_ParamAccess.item);
             pManager.AddNumberParameter("Isovalue", "I", "Isovalue for level-set.", GH_ParamAccess.item, 0.0);
-            pManager.AddNumberParameter("Voxel size", "S", "Size of voxels.", GH_ParamAccess.item, 5.0);
+            pManager.AddNumberParameter("Voxel size", "S", "Size of voxels.", GH_ParamAccess.item, 1.0);
+            pManager.AddTextParameter("Name", "N", "Name of grid", GH_ParamAccess.item, "default");
 
         }
 
@@ -60,12 +61,17 @@ namespace DeepSight.GH.Components
             DA.GetData("Isovalue", ref iso);
             DA.GetData("Voxel size", ref voxel_size);
 
+            string name = "default";
+            DA.GetData("Name", ref name);
+
+
             Transform inv, xform = Transform.Scale(Point3d.Origin, voxel_size);
             xform.TryGetInverse(out inv);
 
             mesh.Transform(inv);
 
             Grid grid = mesh.ToVolume(xform, (float)iso, 3.0f, 3.0f);
+            grid.Name = name;
             //grid.SdfToFog();
 
             DA.SetData("Grid", new GH_Grid(grid));

@@ -148,4 +148,16 @@
   <data name="GridSet_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridSet_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="VGridDisplay_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VGridDisplay_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VGridNew_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VGridNew_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VGridResample_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VGridResample_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VGridSample_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VGridSample_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

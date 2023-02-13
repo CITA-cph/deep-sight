@@ -35,7 +35,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridActive()
           : base("GridActive", "GAct",
               "Get a grid's active values.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Display")
         {
         }
 

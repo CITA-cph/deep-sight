@@ -37,7 +37,7 @@ namespace DeepSight.GH.Components
         public Cmpt_Curve2Grid()
           : base("Curve2Grid", "C2G",
               "Convert curves to volume grid.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
@@ -45,7 +45,8 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Curve", "C", "Curve to convert.", GH_ParamAccess.list);
             pManager.AddNumberParameter("Thickness", "T", "Thickness of volumetric curve.", GH_ParamAccess.item, 3.0);
-            pManager.AddNumberParameter("Voxel size", "S", "Size of voxels.", GH_ParamAccess.item, 3.0);
+            pManager.AddNumberParameter("Voxel size", "S", "Size of voxels.", GH_ParamAccess.item, 1.0);
+            pManager.AddTextParameter("Name", "N", "Name of grid.", GH_ParamAccess.item, "default");
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -62,6 +63,9 @@ namespace DeepSight.GH.Components
             double thickness = 3.0, voxel_size = 3.0;
             DA.GetData("Thickness", ref thickness);
             DA.GetData("Voxel size", ref voxel_size);
+
+            string name = "default";
+            DA.GetData("Name", ref name);
 
             if (voxel_size <= 0.0) throw new ArgumentException("Voxel size must be above 0.");
             if (thickness <= 0.0) throw new ArgumentException("Thickness must be above 0.");
@@ -87,7 +91,7 @@ namespace DeepSight.GH.Components
             });
 
             var grid = Convert.PointsToVolume(coords, (float)thickness, (float)voxel_size);
-            grid.Name = "points";
+            grid.Name = name;
 
             DA.SetData("Grid", new GH_Grid(grid));
         }

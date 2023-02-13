@@ -48,7 +48,7 @@ namespace DeepSight
 #ifdef __cplusplus
 	extern "C" {
 #endif
-	DEEPSIGHT_EXPORT SAFEARRAY* ReadWrite_ReadVdb(const char* path);
+	DEEPSIGHT_EXPORT void ReadWrite_ReadVdb(const char* path, int* num_grids, GridBase** grid_ptrs);
 	DEEPSIGHT_EXPORT void ReadWrite_WriteVdb(const char* path, int num_grids, GridBase** grids, int float_as_half);
 
 #ifdef __cplusplus

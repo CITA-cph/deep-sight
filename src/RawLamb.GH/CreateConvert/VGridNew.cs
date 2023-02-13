@@ -21,30 +21,30 @@ using System.Diagnostics;
 
 using Grasshopper.Kernel;
 
-using Grid = DeepSight.FloatGrid;
+using Grid = DeepSight.Vec3fGrid;
 
 namespace DeepSight.GH.Components
 {
 
-    public class Cmpt_GridCreate : GH_Component
+    public class Cmpt_VGridCreate : GH_Component
     {
-        public Cmpt_GridCreate()
-          : base("GridCreate", "GNew",
-              "Create empty grid.",
+        public Cmpt_VGridCreate()
+          : base("VGridCreate", "VGNew",
+              "Create empty vector grid.",
               DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Name of grid.", GH_ParamAccess.item, "default");
+            pManager.AddTextParameter("Name", "N", "Name of vector grid.", GH_ParamAccess.item, "default");
             pManager[0].Optional = true;
 
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "New grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("VGrid", "VG", "New vector grid.", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -67,13 +67,13 @@ namespace DeepSight.GH.Components
         {
             get
             {
-                return Properties.Resources.GridNew_01;
+                return Properties.Resources.VGridNew_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("03e5d07a-4776-4fff-bd66-8e6152e6f9b1"); }
+            get { return new Guid("1babdbfb-6330-473f-b818-83184eacbc6e"); }
         }
     }
 }

@@ -31,7 +31,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridInspect()
           : base("GridInspect", "GInsp",
               "See a grid's properties.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Display")
         {
         }
 
@@ -44,6 +44,7 @@ namespace DeepSight.GH.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddTextParameter("Name", "N", "Get the name of the grid.", GH_ParamAccess.item);
             pManager.AddTransformParameter("Transform", "T", "The transformation matrix of the grid.", GH_ParamAccess.item);
         }
 
@@ -65,6 +66,7 @@ namespace DeepSight.GH.Components
             var xform = temp_grid.Transform.ToRhinoTransform();
 
             DA.SetData("Transform", xform);
+            DA.SetData("Name", temp_grid.Name);
         }
 
         protected override System.Drawing.Bitmap Icon

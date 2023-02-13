@@ -36,7 +36,7 @@ namespace DeepSight.GH.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Grid to save to disk.", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grids", "G", "Grids to save to disk.", GH_ParamAccess.list);
             pManager.AddTextParameter("Filepath", "FP", "File path of grid.", GH_ParamAccess.item);
         }
 
@@ -52,8 +52,11 @@ namespace DeepSight.GH.Components
 
             DA.GetData("Filepath", ref m_path);
 
-            object m_grid = null;
-            GridApi temp_grid = null;
+            if (string.IsNullOrEmpty(m_path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No file path specified.");
+                return;
+            }
 
             var inputs = new List<object>();
             var input_grids = new List<GridApi>();
@@ -62,17 +65,27 @@ namespace DeepSight.GH.Components
 
             foreach(object input in inputs)
             {
+                debug.Add($"Input: {input}");
                 if (input is GridApi)
                     input_grids.Add(input as GridApi);
-                else if (m_grid is GH_Grid)
+                else if (input is GH_Grid)
                     input_grids.Add((input as GH_Grid).Value);
                 else
                     continue;
             }
 
-            if (input_grids.Count < 1) return;
 
-            if (!string.IsNullOrEmpty(m_path) && m_path.EndsWith(".vdb"))
+            if (input_grids.Count < 1)
+            {
+                DA.SetDataList("debug", debug);
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No grids found.");
+                return;
+            }
+
+            if (!System.IO.Path.HasExtension(m_path))
+                m_path = m_path + ".vdb";
+
+            if (!string.IsNullOrEmpty(m_path))
             {
                 GridIO.Write(m_path, input_grids.ToArray());
             }

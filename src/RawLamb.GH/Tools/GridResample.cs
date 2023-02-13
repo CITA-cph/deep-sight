@@ -68,6 +68,7 @@ namespace DeepSight.GH.Components
 
             var ngrid = temp_grid.DuplicateGrid();
             var new_grid = Tools.Resample(ngrid, m_size);
+            new_grid.Name = temp_grid.Name;
 
             DA.SetData(0, new GH_Grid(new_grid));
         }

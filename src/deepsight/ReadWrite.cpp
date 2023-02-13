@@ -394,6 +394,8 @@ namespace DeepSight
 
 	std::vector<GridBase*> read_vdb(const std::string path)
 	{
+		openvdb::initialize();
+
 		openvdb::io::File file(path);
 		file.open();
 
@@ -420,19 +422,29 @@ namespace DeepSight
 		return grids;
 	}
 
-	SAFEARRAY* ReadWrite_ReadVdb(const char* path)
+	void ReadWrite_ReadVdb(const char* path, int* num_grids, GridBase** grid_ptrs)
 	{
 		std::vector<GridBase*> grids = read_vdb(path);
 		//std::cout << "Found " << grids.size() << " grids... " << std::endl;
 		//std::cout << "Size of grids array: " << sizeof(grids) << std::endl;
 		//std::cout << "Size of single ptr : " << sizeof(GridBase*) << std::endl;
 
+		*grid_ptrs = (GridBase*)CoTaskMemAlloc(sizeof(GridBase*) * grids.size());
+		CopyMemory(*grid_ptrs, grids.data(), sizeof(GridBase*) * grids.size());
+		*num_grids = grids.size();
+
+		/*
+
 		SAFEARRAY* psa = SafeArrayCreateVector(VT_I4, 0, grids.size());
+		if (psa == nullptr)
+			return nullptr;
+
 		void* data;
 		SafeArrayAccessData(psa, &data);
 		CopyMemory(data, grids.data(), grids.size() * sizeof(GridBase*));
 		SafeArrayUnaccessData(psa);
 		return psa;
+		*/
 	}
 
 	void ReadWrite_WriteVdb(const char* path, int num_grids, GridBase** grids, int float_as_half)

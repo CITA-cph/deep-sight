@@ -47,7 +47,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridDisplay()
           : base("GridDisplay", "GDis",
               "Visualize a grid as a pointcloud.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "Display")
         {
             //Attributes = new ButtonRefreshComponentAttributes(this);
         }
@@ -82,8 +82,13 @@ namespace DeepSight.GH.Components
             pManager.AddNumberParameter("Threshold", "T", "Threshold for displaying values.", GH_ParamAccess.item, 0.15);
             pManager.AddIntegerParameter("Step", "S", "Step size (list of 3 numbers for X, Y, and Z).", GH_ParamAccess.list);
             pManager[2].Optional = true;
+
             pManager.AddBooleanParameter("Update", "U", "Update display with each change (can be slow)", GH_ParamAccess.item, false);
             pManager[3].Optional = true;
+
+            pManager.AddColourParameter("Color", "C", "Colour of display points.", GH_ParamAccess.item, Color.White);
+            pManager[4].Optional = true;
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -111,6 +116,8 @@ namespace DeepSight.GH.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            Message = "";
+
             object m_grid = null;
             Grid temp_grid = null;
             double m_threshold = 0.15;
@@ -131,6 +138,7 @@ namespace DeepSight.GH.Components
             {
                 Grid = temp_grid;
                 Values = null;
+                Message = "Updating";
             }
 
             DA.GetData(1, ref m_threshold);
@@ -139,6 +147,9 @@ namespace DeepSight.GH.Components
 
             for (int i = steps.Count; i <= 3; ++i)
                 steps.Add(1);
+
+            Color color = Color.White;
+            DA.GetData("Color", ref color);
 
             GridTransform = Grid.Transform.ToRhinoTransform();
 
@@ -166,10 +177,18 @@ namespace DeepSight.GH.Components
                     continue;
                 var pt = new Point3d(active[i], active[i + 1], active[i + 2]);
                 var value = Grid[active[i], active[i + 1], active[i + 2]];
-                if (value < 0.01) continue;
-                var grey = Math.Max(0, Math.Min(255, (int)(value * 255)));
+                if (value < m_threshold) continue;
 
-                Cloud.Add(pt, System.Drawing.Color.FromArgb((int)(grey * Alpha), grey, grey, grey));
+                value = Math.Max(0, Math.Min(1.0f, value));
+
+                //var grey = Math.Max(0, Math.Min(255, (int)(value * 255)));
+                //Cloud.Add(pt, System.Drawing.Color.FromArgb((int)(grey * Alpha), grey, grey, grey));
+
+                Cloud.Add(pt, Color.FromArgb(color.A, 
+                    (int)(color.R * value),
+                    (int)(color.G * value),
+                    (int)(color.B * value)
+                    ));
             }
 
             Cloud.Transform(GridTransform);
