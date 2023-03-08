@@ -66,8 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="CreateConvert\DeLog.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
+    <Compile Include="LogGoo.cs" />
+    <Compile Include="IO\MetaLogLoad.cs" />
     <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Display\GridDisplay.cs" />
     <Compile Include="Tools\GridFilter.cs" />

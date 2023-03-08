@@ -90,6 +90,9 @@ namespace DeepSight
         public override void SetValue(int[] coordinates, Vec3f value) => 
             Vec3fGrid_SetValue(Ptr, coordinates[0], coordinates[1], coordinates[2], value.Data);
 
+        public void SetValue(int[] coordinates, float[] value) => 
+            Vec3fGrid_SetValue(Ptr, coordinates[0], coordinates[1], coordinates[2], value);
+
         public override Vec3f[] GetValuesIndex(int[] coordinates)
         {
             int N = coordinates.Length / 3;
@@ -134,6 +137,11 @@ namespace DeepSight
             }    
 
             Vec3fGrid_SetValues(Ptr, coordinates.Length / 3, coordinates, values_raw);
+        }
+
+        public void SetValues(int[] coordinates, float[] values)
+        {
+            Vec3fGrid_SetValues(Ptr, coordinates.Length / 3, coordinates, values);
         }
 
         public override int[] GetActiveVoxels()

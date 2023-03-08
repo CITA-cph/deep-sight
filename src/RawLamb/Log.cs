@@ -351,5 +351,10 @@ namespace RawLamb
             return tgrid.GetValuesWorld(Array.ConvertAll(coords, x => (double)x));
             //return this.Grids[key].GetValuesWorld(Array.ConvertAll(coords, x => (double)x));
         }
+
+        public override string ToString()
+        {
+            return $"Log ({Name})";
+        }
     }
 }
