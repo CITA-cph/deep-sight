@@ -11,6 +11,8 @@ namespace testDeepSightNet
 {
     internal class Program
     {
+        internal static Dictionary<string, string> settings = new Dictionary<string, string>();
+
         public static Grid MakeBoxGrid(int[] min, int[] max)
         {
             var grid = new Grid();
@@ -21,6 +23,24 @@ namespace testDeepSightNet
                         grid[i, j, k] = 1.0f;
 
             return grid;
+        }
+
+        public static void LoadSettings(string path)
+        {
+            if (System.IO.File.Exists(path))
+            {
+                var lines = System.IO.File.ReadAllLines(path);
+                foreach (var line in lines)
+                {
+                    var tok = line.Split('=');
+                    if (tok.Length != 2)
+                        continue;
+                    var key = tok[0].Trim();
+                    var value = tok[1].Trim();
+
+                    settings.Add(key, value);
+                }
+            }
         }
 
         public static void TestCSG()
@@ -149,7 +169,22 @@ namespace testDeepSightNet
             Console.WriteLine("TestFile");
             Console.WriteLine();
 
-            var vdb_path = @"C:\Users\tsvi\OneDrive - Det Kongelige Akademi\03_Projects\2019_RawLam\Data\Microtec\20220301.154113.DK.feb.log02_char\20220301.154113.DK.feb.log02_char.vdb";
+            string vdb_path = "";
+
+            if (settings.ContainsKey("test_vdb_path"))
+                vdb_path = settings["test_vdb_path"];
+            else
+            {
+                Console.WriteLine($"Couldn't find 'test_vdb_path' in settings.");
+                return;
+            }
+
+            if (!System.IO.File.Exists(vdb_path))
+            {
+                Console.WriteLine($"File '{vdb_path}' doesn't exist.");
+                return;
+            }
+
             Console.WriteLine($"Loading grids from '{vdb_path}'...");
             
             var grids = GridIO.Read(vdb_path);
@@ -248,12 +283,13 @@ namespace testDeepSightNet
 
         static void Main(string[] args)
         {
+            LoadSettings("test.ini");
             TestBasic();
             TestMesh();
 
             //TestCSG();
             //TestPoints();
-            //TestFile();
+            TestFile();
             //TestGridTypes();
 
 
