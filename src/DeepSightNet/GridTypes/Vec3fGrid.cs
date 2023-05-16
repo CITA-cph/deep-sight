@@ -103,9 +103,9 @@ namespace DeepSight
 
             for (int i = 0; i < vecs.Length; ++i)
                 vecs[i] = new Vec3f(
-                    values[i + 3 + 0],
-                    values[i + 3 + 1],
-                    values[i + 3 + 2]);
+                    values[i * 3 + 0],
+                    values[i * 3 + 1],
+                    values[i * 3 + 2]);
             
             return vecs;
         }
@@ -120,9 +120,9 @@ namespace DeepSight
 
             for (int i = 0; i < vecs.Length; ++i)
                 vecs[i] = new Vec3f(
-                    values[i + 3 + 0],
-                    values[i + 3 + 1],
-                    values[i + 3 + 2]);
+                    values[i * 3 + 0],
+                    values[i * 3 + 1],
+                    values[i * 3 + 2]);
 
             return vecs;
         }

@@ -81,6 +81,7 @@
     <Compile Include="Geometry.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Knot.cs" />
+    <Compile Include="KnotFibreOrientationModel.cs" />
     <Compile Include="LamellaPerformance.cs" />
     <Compile Include="LamellaPlacement.cs" />
     <Compile Include="Extensions.cs" />

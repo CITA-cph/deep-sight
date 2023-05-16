@@ -1,0 +1,122 @@
+﻿/*
+ * RawLamb
+ * Copyright 2022 Tom Svilans
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Rhino.Geometry;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
+using System.Drawing;
+using GH_IO.Serialization;
+using GH_IO;
+using CaeModel;
+
+
+namespace PrePoMax.GH
+{
+    public class GH_FeModel : GH_Goo<FeModel>
+    {
+        #region Constructors
+        public GH_FeModel() : this(null) { }
+        public GH_FeModel(FeModel native) { this.Value = native; }
+
+        public override IGH_Goo Duplicate()
+        {
+            if (Value == null)
+                return new GH_FeModel();
+            else
+                return this;
+        }
+        #endregion
+
+        public static FeModel Parse(object obj)
+        {
+            if (obj is GH_FeResults)
+                return (obj as GH_FeModel).Value;
+            else if (obj is FeModel)
+                return obj as FeModel;
+            else
+            {
+                string msg = "";
+                msg += string.Format("type: {0}\n", obj.GetType());
+                msg += string.Format("reflected type: {0}\n", obj.GetType().ReflectedType);
+                msg += string.Format("equals: {0}\n", obj.GetType() == typeof(FeModel));
+                msg += string.Format("assembly: {0}\n", typeof(FeModel).AssemblyQualifiedName);
+                msg += string.Format("assembly: {0}\n", obj.GetType().AssemblyQualifiedName);
+
+                throw new Exception(msg);
+            }
+        }
+
+        public override string ToString()
+        {
+            if (Value == null) return "Null FeModel";
+            return Value.ToString();
+        }
+
+        public override string TypeName => "FeModelGoo";
+        public override string TypeDescription => "FeModelGoo";
+        public override object ScriptVariable() => Value;
+
+        public override bool IsValid
+        {
+            get
+            {
+                if (Value == null) return false;
+                return true;
+            }
+        }
+        public override string IsValidWhyNot
+        {
+            get
+            {
+                if (Value == null) return "No data";
+                return string.Empty;
+            }
+        }
+
+        #region Casting
+        public override bool CastFrom(object source)
+        {
+            if (source == null) return false;
+            if (source is FeModel fres)
+            {
+                Value = fres;
+                return true;
+            }
+            if (source is GH_FeModel gh_fres)
+            {
+                Value = gh_fres.Value;
+                return true;
+            }
+            return false;
+        }
+
+        public override bool CastTo<Q>(ref Q target)
+        {
+            if (Value == null) return false;
+
+            return false;
+        }
+
+        #endregion
+
+
+    }
+}

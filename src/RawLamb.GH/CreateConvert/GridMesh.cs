@@ -69,6 +69,7 @@ namespace DeepSight.GH.Components
             Rhino.Geometry.Mesh rhino_mesh = Convert.VolumeToMesh(temp_grid as FloatGrid, (float)m_threshold).ToRhinoMesh();
             //Rhino.Geometry.Mesh rhino_mesh = temp_grid.ToMesh((float)m_threshold).ToRhinoMesh();
             rhino_mesh.Normals.ComputeNormals();
+            rhino_mesh.Faces.CullDegenerateFaces();
 
             DA.GetData(1, ref m_threshold);
             DA.SetData(0, rhino_mesh);

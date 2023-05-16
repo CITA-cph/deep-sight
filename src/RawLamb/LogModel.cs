@@ -11,19 +11,28 @@ namespace RawLamb
     public abstract class LogModel
     {
         protected Plane m_plane;
-        protected Transform World2Log;
-        protected Transform Log2World;
+        protected Rhino.Geometry.Transform World2Log;
+        protected Rhino.Geometry.Transform Log2World;
 
         public Plane Plane
         {
             get { return m_plane; }
             set { 
                 m_plane = value;
-                World2Log = Transform.PlaneToPlane(m_plane, Plane.WorldXY);
-                Log2World = Transform.PlaneToPlane(Plane.WorldXY, m_plane);
+                World2Log = Rhino.Geometry.Transform.PlaneToPlane(m_plane, Plane.WorldXY);
+                Log2World = Rhino.Geometry.Transform.PlaneToPlane(Plane.WorldXY, m_plane);
             }
         }
         public abstract Plane GetMaterialDirection(Point3d pt);
+        public abstract GeometryBase ToGeometry();
+
+        public void Transform(Transform xform)
+        {
+            var temp = Plane;
+            temp.Transform(xform);
+            Plane = temp;
+        }
+
     }
 
     public class SimpleLogModel : LogModel
@@ -41,7 +50,7 @@ namespace RawLamb
             set
             {
                 m_conical_angle = value;
-                TConicalAngle = Transform.Identity;
+                TConicalAngle = Rhino.Geometry.Transform.Identity;
                 TConicalAngle.M00 = Math.Cos(m_conical_angle);
                 TConicalAngle.M01 = -Math.Sin(m_conical_angle);
                 TConicalAngle.M10 = Math.Sin(m_conical_angle);
@@ -55,7 +64,7 @@ namespace RawLamb
             set
             {
                 m_spiral_angle = value;
-                TSpiralGrain = Transform.Identity;
+                TSpiralGrain = Rhino.Geometry.Transform.Identity;
                 TSpiralGrain.M00 = Math.Cos(m_spiral_angle);
                 TSpiralGrain.M02 = -Math.Sin(m_spiral_angle);
                 TSpiralGrain.M20 = Math.Sin(m_spiral_angle);
@@ -103,7 +112,7 @@ namespace RawLamb
             var L = Vector3d.ZAxis;
             var R = new Vector3d(pt.X, pt.Y, 0);
 
-            Transform Local2Global = Transform.PlaneToPlane(
+            Transform Local2Global = Rhino.Geometry.Transform.PlaneToPlane(
               Plane.WorldXY,
               new Plane(pt, L, R));
 
@@ -113,7 +122,8 @@ namespace RawLamb
             return m;
         }
 
-        public GeometryBase ToGeometry()
+
+        public override GeometryBase ToGeometry()
         {
             if (Math.Abs(m_conical_angle) < Rhino.RhinoMath.Epsilon)
                 return new Cylinder(
@@ -128,6 +138,22 @@ namespace RawLamb
             Line axis = new Line(bottom_circle.Center, top_circle.Center);
             RevSurface revsrf = RevSurface.Create(shapeCurve, axis);
             return Brep.CreateFromRevSurface(revsrf, true, true);
+        }
+
+        public int Contains(Point3d point)
+        {
+            point.Transform(World2Log);
+            Vector3d A = (Vector3d)point;      // Vector from sample point to log origin
+            double dot = A * Vector3d.ZAxis;     // Length of axis at closest point
+            double t = dot / Length;   // Proportion of length at closest point
+
+            if (dot < 0 || dot > Length) return -1; // if closest point is past the limits of the log...
+
+            double r = (EndRadius - StartRadius) * t + StartRadius; // Radius of truncated cone at closest point
+            Vector3d B = point - new Point3d(0,0, dot); // Vector from sample point to closest point
+
+            // Compare length of vector B to the radius at closest point
+            return Math.Sign(r * r - (B.X * B.X + B.Y * B.Y + B.Z * B.Z));
         }
     }
 }

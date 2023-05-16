@@ -59,22 +59,26 @@ namespace RawLamb
             {
                 var buf = ilog.Knots;
 
-                var knot = new Knot();
-                knot.Index = (int)buf[i];
                 var line = new Line(
                     new Point3d(
-                        buf[i + 1], 
-                        buf[i + 2], 
+                        buf[i + 1],
+                        buf[i + 2],
                         buf[i + 3]),
                     new Point3d(
-                        buf[i + 4], 
-                        buf[i + 5], 
+                        buf[i + 4],
+                        buf[i + 5],
                         buf[i + 6]));
-                knot.Axis = line;
-                knot.Length = line.Length;
-                knot.DeadKnotRadius = ilog.Knots[i + 7];
-                knot.Radius = ilog.Knots[i + 8];
-                knot.Volume = ilog.Knots[i + 10];
+
+                var knot = new Knot()
+                {
+                    Index = (int)buf[i],
+                    Axis = line,
+                    Length = line.Length,
+                    DeadKnotRadius = ilog.Knots[i + 7],
+                    Radius = ilog.Knots[i + 8],
+                    Volume = ilog.Knots[i + 10]
+                };
+
                 Knots.Add(knot);
             }
         }
@@ -114,7 +118,9 @@ namespace RawLamb
         
         public void Transform(Transform xform)
         {
-            Mesh.Transform(xform);
+            if (Mesh != null)
+                Mesh.Transform(xform);
+    
             Plane.Transform(xform);
             for (int i = 0; i < Boards.Count; ++i)
             {
@@ -124,6 +130,9 @@ namespace RawLamb
             {
                 Grids[key].Transform(xform);
             }
+            foreach (var knot in Knots)
+                knot.Transform(xform);
+
         }
 
         public Log Duplicate()
