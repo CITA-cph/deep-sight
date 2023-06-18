@@ -88,6 +88,7 @@
     <Compile Include="Cmpt_FeResultsMesh.cs" />
     <Compile Include="Cmpt_FeResultsQuery.cs" />
     <Compile Include="Cmpt_FeResultsValues.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="FeModelGoo.cs" />
     <Compile Include="FeResultsGoo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

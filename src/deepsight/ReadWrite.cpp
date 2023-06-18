@@ -291,6 +291,70 @@ namespace DeepSight
 
 		//std::cout << "Found " << infolog->knots.size() << " knots." << std::endl;
 	}
+	
+	void read_border(TIFF* tif, RawLam::InfoLog::Ptr infolog, uint32_t height, uint32_t width)
+	{
+		uint16_t s, nsamples;
+		tdata_t bufx = _TIFFmalloc(TIFFScanlineSize(tif));
+		tdata_t bufy = _TIFFmalloc(TIFFScanlineSize(tif));
+
+		int16_t* datax, *datay;
+		TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &nsamples);
+		for (s = 0; s < nsamples; s++)
+		{
+			for (uint32_t row = 0; row < height; row+=2)
+			{
+				TIFFReadScanline(tif, bufx, row, s);
+				TIFFReadScanline(tif, bufy, row + 1, s);
+				datax = (int16_t*)bufx;
+				datay = (int16_t*)bufy;
+
+				std::vector<Eigen::Vector2f> outline;
+
+				for (uint32_t i = 0; i < width; i += 1)
+				{
+					outline.push_back(Eigen::Vector2f(static_cast<float>(datax[i]), static_cast<float>(datay[i])));
+				}
+
+				infolog->border.push_back(outline);
+			}
+		}
+
+		_TIFFfree(bufx);
+		_TIFFfree(bufy);
+	}
+
+	void read_sapwood(TIFF* tif, RawLam::InfoLog::Ptr infolog, uint32_t height, uint32_t width)
+	{
+		uint16_t s, nsamples;
+		tdata_t bufx = _TIFFmalloc(TIFFScanlineSize(tif));
+		tdata_t bufy = _TIFFmalloc(TIFFScanlineSize(tif));
+
+		int16_t* datax, * datay;
+		TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &nsamples);
+		for (s = 0; s < nsamples; s++)
+		{
+			for (uint32_t row = 0; row < height; row += 2)
+			{
+				TIFFReadScanline(tif, bufx, row, s);
+				TIFFReadScanline(tif, bufy, row + 1, s);
+				datax = (int16_t*)bufx;
+				datay = (int16_t*)bufy;
+
+				std::vector<Eigen::Vector2f> outline;
+
+				for (uint32_t i = 0; i < width; i += 1)
+				{
+					outline.push_back(Eigen::Vector2f(static_cast<float>(datax[i]), static_cast<float>(datay[i])));
+				}
+
+				infolog->sapwood.push_back(outline);
+			}
+		}
+
+		_TIFFfree(bufx);
+		_TIFFfree(bufy);
+	}
 
 
 	RawLam::InfoLog::Ptr load_infolog(const std::string path, bool verbose)
@@ -309,6 +373,8 @@ namespace DeepSight
 		enum mode {
 			PITH,
 			KNOTS,
+			BORDER,
+			SAPWOOD,
 			NONE
 		};
 
@@ -340,6 +406,10 @@ namespace DeepSight
 						m = mode::PITH;
 					else if (page_name == "knots")
 						m = mode::KNOTS;
+					else if (page_name == "border")
+						m = mode::BORDER;
+					else if (page_name == "sapwood")
+						m = mode::SAPWOOD;
 					else
 						m = mode::NONE;
 
@@ -362,6 +432,12 @@ namespace DeepSight
 						break;
 					case(mode::KNOTS):
 						read_knots(tif, infolog, height);
+						break;
+					case(mode::SAPWOOD):
+						read_sapwood(tif, infolog, height, width);
+						break;
+					case(mode::BORDER):
+						read_border(tif, infolog, height, width);
 						break;
 					default:
 						break;

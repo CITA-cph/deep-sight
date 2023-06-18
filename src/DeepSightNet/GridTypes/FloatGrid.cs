@@ -42,6 +42,10 @@ namespace DeepSight
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_GetNeighbours(IntPtr ptr, int[] coord, float[] values);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FloatGrid_InactivateBelow(IntPtr ptr, float threshold);
+
         #endregion
 
         public FloatGrid(IntPtr ptr)
@@ -128,6 +132,11 @@ namespace DeepSight
         public override object GetGridValue(int x, int y, int z)
         {
             return (object)this[x, y, z];
+        }
+
+        public void InactivateBelow(float threshold)
+        {
+            FloatGrid_InactivateBelow(Ptr, threshold);
         }
 
         public override string ToString()

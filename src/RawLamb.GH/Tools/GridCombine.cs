@@ -41,7 +41,7 @@ namespace DeepSight.GH.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid 1", "G1", "First grid to combine.", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Grid 2", "G2", "Second grid to inspect.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid 2", "G2", "Second grid to combine.", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0 = max, 1 = min, 2 = sum, 3 = diff, 4 = if zero, 5 = mul.", GH_ParamAccess.item, 1);
             pManager[2].Optional = true;
         }
@@ -54,8 +54,9 @@ namespace DeepSight.GH.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             object m_grid = null;
+            List<object> m_grids = new List<object>();
             Grid grid0 = null;
-            Grid grid1 = null;
+            List<Grid> grid1 = new List<Grid>();
 
             if (DA.GetData("Grid 1", ref m_grid))
             {
@@ -66,17 +67,20 @@ namespace DeepSight.GH.Components
                 else
                     return;
             }
-            if (DA.GetData("Grid 2", ref m_grid))
+            if (DA.GetDataList("Grid 2", m_grids))
             {
-                if (m_grid is Grid)
-                    grid1 = m_grid as Grid;
-                else if (m_grid is GH_Grid)
-                    grid1 = (m_grid as GH_Grid).Value as Grid;
-                else
-                    return;
+                foreach(var obj in m_grids)
+                {
+                    if (obj is Grid)
+                        grid1.Add(obj as Grid);
+                    else if (m_grid is GH_Grid)
+                        grid1.Add((obj as GH_Grid).Value as Grid);
+                    else
+                        continue;
+                }
             }
 
-            if (grid0 == null || grid1 == null)
+            if (grid0 == null || grid1.Count < 1)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unsupported grid types.");
                 return;
@@ -85,9 +89,14 @@ namespace DeepSight.GH.Components
             int mode = 0;
             DA.GetData("Mode", ref mode);
 
-            if (grid0 == null || grid1 == null) return;
+            Grid ngrid = grid0;
+            Grid temp = null;
 
-            var ngrid = Tools.Combine(grid0, grid1, (CombineType)mode);
+            for (int i = 1; i < grid1.Count; i++)
+            {
+                temp = Tools.Combine(ngrid, grid1[1], (CombineType)mode);
+                ngrid = temp;
+            }
 
             /*
             var ngrid0 = grid0.Duplicate();

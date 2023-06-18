@@ -41,7 +41,7 @@ namespace DeepSight
 	//std::shared_ptr<Grid<openvdb::Vec3f>> load_vector_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
 
 	Grid<openvdb::Vec3f>::Ptr load_vector_tiff(const std::string path, double threshold = 1.0e-3, unsigned int crop = 0);
-	RawLam::InfoLog::Ptr load_infolog(const std::string path, bool verbose = false);
+	DEEPSIGHT_EXPORT RawLam::InfoLog::Ptr load_infolog(const std::string path, bool verbose = false);
 
 	std::vector<GridBase*> read_vdb(const std::string path);
 

@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "build_all", "src\build_all\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrePoMax.GH", "src\PrePoMax.GH\PrePoMax.GH.csproj", "{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeepSightCommon", "DeepSightCommon\DeepSightCommon.vcxproj", "{28F3B902-577B-49F6-9D86-6A012284EFD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -72,6 +74,10 @@ Global
 		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Debug|x64.Build.0 = Debug|Any CPU
 		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Release|x64.ActiveCfg = Release|Any CPU
 		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Release|x64.Build.0 = Release|Any CPU
+		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Debug|x64.ActiveCfg = Debug|x64
+		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Debug|x64.Build.0 = Debug|x64
+		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Release|x64.ActiveCfg = Release|x64
+		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

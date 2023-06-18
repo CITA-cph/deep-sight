@@ -94,6 +94,9 @@ namespace DeepSight
 		template<typename GridT>
 		void set_active_states(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states);
 
+		template<typename GridT>
+		void inactivate_below(typename GridT::ValueType min);
+
 #pragma endregion Get_Set
 
 	};
@@ -272,6 +275,21 @@ namespace DeepSight
 		typename GridT::Accessor accessor = grid->getAccessor();
 
 		return accessor.isValueOn(openvdb::math::Coord(xyz.data()));
+	}
+
+	template<typename GridT>
+	void GridBase::inactivate_below(typename GridT::ValueType threshold)
+	{
+		typename GridT::Ptr ptr = openvdb::gridPtrCast<GridT>(m_grid);
+		typename GridT::ValueType background = ptr->background();
+
+		for (auto iter = ptr->beginValueOn(); iter; ++iter) 
+		{
+			if (iter.getValue() < threshold) {
+				iter.setValue(background);
+				iter.setValueOff();
+			}
+		}
 	}
 
 	template<typename GridT>

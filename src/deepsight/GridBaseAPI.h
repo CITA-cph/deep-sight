@@ -50,6 +50,7 @@ namespace DeepSight
 		DEEPSIGHT_EXPORT void FloatGrid_SetActiveStates(GridBase* ptr, int num_coords, int* coord, int* state);
 
 		DEEPSIGHT_EXPORT void FloatGrid_GetNeighbours(GridBase* ptr, int* coord, float* values);
+		DEEPSIGHT_EXPORT void FloatGrid_InactivateBelow(GridBase* ptr, float threshold);
 
 
 #pragma endregion FloatGrid

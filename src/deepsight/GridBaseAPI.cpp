@@ -144,6 +144,11 @@ namespace DeepSight
 		memcpy(values, nbrs.data(), sizeof(float) * 27);
 	}
 
+	void FloatGrid_InactivateBelow(GridBase* ptr, float threshold)
+	{
+		ptr->inactivate_below<openvdb::FloatGrid>(threshold);
+	}
+
 #pragma endregion FloatGrid
 #pragma region DoubleGrid
 

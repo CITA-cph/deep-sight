@@ -30,7 +30,11 @@ namespace RawLam
 
 		InfoLog();
 
+		InfoLog(InfoLog&&) = default;
+
 		std::vector<Eigen::Vector2f> pith;
+		std::vector<std::vector<Eigen::Vector2f>> sapwood;
+		std::vector< std::vector<Eigen::Vector2f>> border;
 		std::vector<knot> knots;
 
 		std::string name;

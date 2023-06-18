@@ -66,6 +66,7 @@ namespace DeepSight
 		m_grid->pruneGrid(tolerance);
 	}
 
+
 	int GridBase::get_grid_class()
 	{
 		return (int)m_grid->getGridClass();
@@ -84,9 +85,9 @@ namespace DeepSight
 		min[1] = bb.min().y();
 		min[2] = bb.min().z();
 
-		max[0] = bb.min().x();
-		max[1] = bb.min().y();
-		max[2] = bb.min().z();
+		max[0] = bb.max().x();
+		max[1] = bb.max().y();
+		max[2] = bb.max().z();
 	}
 
 	std::string GridBase::get_type()
