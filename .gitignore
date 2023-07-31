@@ -44,6 +44,7 @@ obj/
 src/RawLam/bin/
 src/RawLam/obj/
 src/deepsight/x64/
+src/DeepSightCommon/x64/
 src/pyDeepSight/x64/
 src/build_all/x64/
 UpgradeLog.htm

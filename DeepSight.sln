@@ -7,13 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deepsight", "src\deepsight\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSightNet", "src\DeepSightNet\DeepSightNet.csproj", "{70A45ECC-931D-4FEE-833F-442EF9CB54A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawLamb", "src\RawLamb\RawLamb.csproj", "{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSightRhino", "src\DeepSightRhino\DeepSightRhino.csproj", "{8B62411C-EBCE-40FC-A1E7-6B5C085B1582}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openvdb_sandbox", "src\openvdb_sandbox\openvdb_sandbox.vcxproj", "{C0347436-FEE5-4CEF-82BB-5C92BA6853C3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pydeepsight", "src\pyDeepSight\pyDeepSight.vcxproj", "{D644F446-D59A-464D-983C-435FB2A05380}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSight.GH", "src\RawLamb.GH\DeepSight.GH.csproj", "{34E0FE2E-4D40-4444-88D0-7BD701941516}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSight.GH", "src\DeepSight.GH\DeepSight.GH.csproj", "{34E0FE2E-4D40-4444-88D0-7BD701941516}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8B62411C-EBCE-40FC-A1E7-6B5C085B1582} = {8B62411C-EBCE-40FC-A1E7-6B5C085B1582}
 	EndProjectSection
@@ -29,9 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "build_all", "src\build_all\
 		{9E52B1FA-DD78-4F63-97F3-B5873AE151CB} = {9E52B1FA-DD78-4F63-97F3-B5873AE151CB}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrePoMax.GH", "src\PrePoMax.GH\PrePoMax.GH.csproj", "{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeepSightCommon", "DeepSightCommon\DeepSightCommon.vcxproj", "{28F3B902-577B-49F6-9D86-6A012284EFD1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeepSightCommon", "src\DeepSightCommon\DeepSightCommon.vcxproj", "{28F3B902-577B-49F6-9D86-6A012284EFD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,10 +68,6 @@ Global
 		{1F6F7C7C-114D-4BE3-853B-27F8D59B3642}.Debug|x64.Build.0 = Debug|x64
 		{1F6F7C7C-114D-4BE3-853B-27F8D59B3642}.Release|x64.ActiveCfg = Release|x64
 		{1F6F7C7C-114D-4BE3-853B-27F8D59B3642}.Release|x64.Build.0 = Release|x64
-		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Debug|x64.Build.0 = Debug|Any CPU
-		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Release|x64.ActiveCfg = Release|Any CPU
-		{5D4E6DFB-5BB8-4533-8607-234E71A53DD9}.Release|x64.Build.0 = Release|Any CPU
 		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Debug|x64.ActiveCfg = Debug|x64
 		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Debug|x64.Build.0 = Debug|x64
 		{28F3B902-577B-49F6-9D86-6A012284EFD1}.Release|x64.ActiveCfg = Release|x64
