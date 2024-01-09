@@ -54,6 +54,12 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin</OutDir>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -62,7 +68,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\lz4\include;C:\lib\cpp\tbb\include;C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
       <AdditionalOptions>-W4 -wd4251 -wd4146 -wd4127 -wd4244 -wd4275 /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -71,6 +77,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <Version>$(DEEPSIGHT_VERSION)</Version>
+      <AdditionalLibraryDirectories>C:\lib\cpp\zlib\lib\debug;C:\lib\cpp\tbb\lib\debug;C:\lib\cpp\openvdb-11.0\lib\debug;C:\lib\cpp\lz4\lib\debug;C:\lib\cpp\blosc\lib\debug;C:\lib\cpp\tiff\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openvdb.lib;tiffd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -87,7 +95,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\lz4\include;C:\lib\cpp\tbb\include;C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
       <AdditionalOptions>-W4 -wd4251 -wd4146 -wd4127 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessToFile>false</PreprocessToFile>
@@ -99,6 +107,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <Version>"$(DEEPSIGHT_VERSION)"</Version>
+      <AdditionalLibraryDirectories>C:\lib\cpp\zlib\lib;C:\lib\cpp\tbb\lib;C:\lib\cpp\openvdb-11.0\lib\debug;C:\lib\cpp\lz4\lib;C:\lib\cpp\blosc\lib;C:\lib\cpp\tiff\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openvdb.lib;tiff.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>

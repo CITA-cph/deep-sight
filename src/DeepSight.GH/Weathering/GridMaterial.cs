@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 using Rhino.Geometry;
 using Grasshopper.Kernel;
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 
 using Grid = DeepSight.FloatGrid;
 

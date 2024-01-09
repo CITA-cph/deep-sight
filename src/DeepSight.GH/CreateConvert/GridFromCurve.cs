@@ -20,7 +20,7 @@ using System;
 using System.Linq;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

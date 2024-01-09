@@ -56,12 +56,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DEEPSIGHT_EXPORT=__declspec(dllexport);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\git\deep-sight\src\deepsight;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEEPSIGHT_EXPORT=__declspec(dllexport);NDEBUG;IMATH_DLL;IMATH_HALF_NO_LOOKUP_TABLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\tbb\include;C:\lib\cpp\eigen-3.4.0;C:\git\deep-sight\src\deepsight;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>deepsight.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>deepsight.lib;openvdb.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\lib\cpp\openvdb-11.0\lib;C:\lib\cpp\tbb\lib;C:\lib\cpp\tiff\lib;$(SolutionDir)\bin</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -69,15 +71,18 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DEEPSIGHT_EXPORT=__declspec(dllexport);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\git\deep-sight\src\deepsight;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEEPSIGHT_EXPORT=__declspec(dllexport);_DEBUG;IMATH_DLL;IMATH_HALF_NO_LOOKUP_TABLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\tbb\include;C:\lib\cpp\eigen-3.4.0;C:\git\deep-sight\src\deepsight;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>deepsight.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>deepsight.lib;openvdb.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\lib\cpp\openvdb-11.0\lib\debug;C:\lib\cpp\tbb\lib\debug;C:\lib\cpp\tiff\lib\debug;$(SolutionDir)\bin</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AdditiveRender.h" />
     <ClInclude Include="DeepSightCommon.h" />
     <ClInclude Include="InfoLogClr.h" />
     <ClInclude Include="KnotClr.h" />
@@ -85,6 +90,7 @@
     <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdditiveRender.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="DeepSightCommon.cpp" />
     <ClCompile Include="InfoLogClr.cpp" />

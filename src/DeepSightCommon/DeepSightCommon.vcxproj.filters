@@ -30,6 +30,9 @@
     <ClInclude Include="KnotClr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AdditiveRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeepSightCommon.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KnotClr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AdditiveRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

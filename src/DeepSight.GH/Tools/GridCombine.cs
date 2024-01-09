@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 using Rhino.Geometry;
 using Grasshopper.Kernel;
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
 using Grid = DeepSight.FloatGrid;
@@ -92,9 +92,9 @@ namespace DeepSight.GH.Components
             Grid ngrid = grid0;
             Grid temp = null;
 
-            for (int i = 1; i < grid1.Count; i++)
+            for (int i = 0; i < grid1.Count; i++)
             {
-                temp = Tools.Combine(ngrid, grid1[1], (CombineType)mode);
+                temp = Tools.Combine(ngrid, grid1[i], (CombineType)mode);
                 ngrid = temp;
             }
 

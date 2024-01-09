@@ -79,6 +79,14 @@ namespace DeepSight
 		openvdb::tools::dilateActiveValues(source->tree(), iterations, openvdb::tools::NearestNeighbors::NN_FACE_EDGE_VERTEX);
 	}
 
+	template<typename GridT>
+	void gradient(GridBase* grid)
+	{
+		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		//openvdb::tools::
+
+	}
+
 #pragma endregion Filter_Tools
 
 #pragma region Conversion_Tools

@@ -23,7 +23,7 @@ using System.Diagnostics;
 
 using Rhino.Geometry;
 using Grasshopper.Kernel;
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
 using Grid = DeepSight.FloatGrid;
@@ -54,6 +54,7 @@ namespace DeepSight.GH.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddMeshParameter("Mesh", "M", "Colored mesh of the grid slice.", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Values", "V", "Grid values for each vertex of grid slice mesh.", GH_ParamAccess.list);
 
         }
 
@@ -126,8 +127,10 @@ namespace DeepSight.GH.Components
             var yrange = max[axes[1]] - min[axes[1]];
 
 
-            var bmp = new System.Drawing.Bitmap(xrange + 1, yrange + 1);
+            //var bmp = new System.Drawing.Bitmap(xrange + 1, yrange + 1);
             int ix = 0, iy = yrange;
+
+            var outputValues = new List<double>();
 
             for (int x = min[axes[0]]; x <= max[axes[0]]; ++x)
             {
@@ -138,11 +141,12 @@ namespace DeepSight.GH.Components
                     ijk[axes[2]] = z;
 
                     m.Vertices.Add((float)ijk[0], (float)ijk[1], (float)ijk[2]);
+                    outputValues.Add(grid[ijk[0], ijk[1], ijk[2]]);
 
                     //var v = (int)(255 - grid[ijk[0], ijk[1], ijk[2]] * 255);
-                    var v = (int)(grid[ijk[0], ijk[1], ijk[2]] * 255);
-                    m.VertexColors.Add(v, v, v);
-                    bmp.SetPixel(ix, iy, System.Drawing.Color.FromArgb(255, v, v, v));
+                    //var v = (int)(grid[ijk[0], ijk[1], ijk[2]] * 255);
+                    //m.VertexColors.Add(v, v, v);
+                    //bmp.SetPixel(ix, iy, System.Drawing.Color.FromArgb(255, v, v, v));
 
                     iy -= 1;
                 }
@@ -166,6 +170,7 @@ namespace DeepSight.GH.Components
             m.Transform(xform);
 
             DA.SetData("Mesh", m);
+            DA.SetDataList("Values", outputValues);
         }
 
         protected override System.Drawing.Bitmap Icon

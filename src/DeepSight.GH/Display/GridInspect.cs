@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 
 using Grasshopper.Kernel;
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 
 using Grid = DeepSight.FloatGrid;
 

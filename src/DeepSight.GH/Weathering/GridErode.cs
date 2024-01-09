@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 using Rhino.Geometry;
 using Grasshopper.Kernel;
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
 using Grid = DeepSight.FloatGrid;

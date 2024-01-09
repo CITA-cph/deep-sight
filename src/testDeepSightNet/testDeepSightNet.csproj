@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +52,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DeepSightCommon\DeepSightCommon.vcxproj">
+      <Project>{28f3b902-577b-49f6-9d86-6a012284efd1}</Project>
+      <Name>DeepSightCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DeepSightNet\DeepSightNet.csproj">
       <Project>{70a45ecc-931d-4fee-833f-442ef9cb54a8}</Project>
       <Name>DeepSightNet</Name>

@@ -38,7 +38,7 @@ namespace DeepSight.GH.Components
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Width", "W", "Width of filtering kernel.", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Iterations", "I", "Number of filter iterations.", GH_ParamAccess.item, 1);
-            pManager.AddIntegerParameter("Mode", "M", "Filter mode.", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Mode", "M", "Filter mode (0 = Gaussian, 1 = Mean, 2 = Median).", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)

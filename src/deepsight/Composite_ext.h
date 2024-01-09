@@ -7,7 +7,7 @@
 #include <openvdb/Exceptions.h>
 #include <openvdb/Types.h>
 #include <openvdb/Grid.h>
-#include <openvdb/math/Math.h> // for isExactlyEqual()
+//#include <openvdb/math/Math.h> // for isExactlyEqual()
 #include <openvdb/openvdb.h>
 
 

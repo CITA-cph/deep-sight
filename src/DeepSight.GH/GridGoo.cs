@@ -26,7 +26,7 @@ using System.Drawing;
 using GH_IO.Serialization;
 using GH_IO;
 
-using DeepSight.Rhino;
+using DeepSight.RhinoCommon;
 
 namespace DeepSight.GH
 {

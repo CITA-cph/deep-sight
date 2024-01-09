@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 using Rhino.Geometry;
 using DeepSight;
 
-namespace DeepSight.Rhino
+namespace DeepSight.RhinoCommon
 {
     public static class RhinoExtensions
     {
@@ -115,26 +115,42 @@ namespace DeepSight.Rhino
                 return qm.ToRhinoMesh();
 
             var log_mesh = qm.ToRhinoMesh();
+
+            if (log_mesh == null)
+                return null;
+
             log_mesh.Vertices.CombineIdentical(true, true);
             log_mesh.Faces.CullDegenerateFaces();
             log_mesh.Vertices.CullUnused();
 
-            var pieces = log_mesh.SplitDisjointPieces();
+            Rhino.Geometry.Mesh[] pieces = null;
 
-            double max_volume = 0;
-            int index = -1;
-
-            for (int i = 0; i < pieces.Length; ++i)
+            try
             {
-                var vmp = VolumeMassProperties.Compute(pieces[i]);
-                if (vmp.Volume > max_volume)
-                {
-                    max_volume = vmp.Volume;
-                    index = i;
-                }
-            }
+                pieces = log_mesh.SplitDisjointPieces();
 
-            log_mesh = pieces[index];
+                if (pieces == null || pieces.Length < 1)
+                    return null;
+
+                double max_volume = 0;
+                int index = -1;
+
+                for (int i = 0; i < pieces.Length; ++i)
+                {
+                    var vmp = VolumeMassProperties.Compute(pieces[i]);
+                    if (vmp.Volume > max_volume)
+                    {
+                        max_volume = vmp.Volume;
+                        index = i;
+                    }
+                }
+
+                log_mesh = pieces[index];
+            }
+            catch (Exception ex)
+            {
+                
+            }
 
             log_mesh.Compact();
 

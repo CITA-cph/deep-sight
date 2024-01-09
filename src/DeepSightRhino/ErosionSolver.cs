@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Rhino.Geometry;
 using Grid = DeepSight.FloatGrid;
 
-namespace DeepSight.Rhino
+namespace DeepSight.RhinoCommon
 {
 
     public abstract class ConditionBase

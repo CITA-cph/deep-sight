@@ -66,11 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
-    <Compile Include="CreateConvert\DeLog.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
     <Compile Include="Display\GridSlice.cs" />
-    <Compile Include="IO\MetaLogLoad.cs" />
     <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Display\GridDisplay.cs" />
     <Compile Include="Tools\GridFilter.cs" />
@@ -92,11 +90,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utility\ExpandEnvVars.cs" />
-    <Compile Include="Utility\ReadLog.cs" />
-    <Compile Include="Utility\AppendLog.cs" />
-    <Compile Include="Utility\BrepBasePlane.cs" />
-    <Compile Include="Utility\FlipBasePlane.cs" />
     <Compile Include="Weathering\GridExposure.cs" />
     <Compile Include="Weathering\GridMaterial.cs" />
     <Compile Include="Weathering\GridToolpath.cs" />
@@ -106,11 +99,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DeepSightCommon\DeepSightCommon.vcxproj">
+    <ProjectReference Include="..\DeepSightCommon\DeepSightCommon.vcxproj">
       <Project>{28f3b902-577b-49f6-9d86-6a012284efd1}</Project>
       <Name>DeepSightCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RawLamb\DeepSightRhino.csproj">
+    <ProjectReference Include="..\DeepSightRhino\DeepSightRhino.csproj">
       <Project>{8b62411c-ebce-40fc-a1e7-6b5c085b1582}</Project>
       <Name>DeepSightRhino</Name>
     </ProjectReference>

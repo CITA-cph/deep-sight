@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 using DeepSight;
+using DeepSightCommon;
 using Grid = DeepSight.FloatGrid;
 
 namespace testDeepSightNet
@@ -147,6 +149,8 @@ namespace testDeepSightNet
                 mesh.AddFace(new int[] { tris[i], tris[i + 1], tris[i + 2], 0 });
             }
 
+            return;
+
             var grid = DeepSight.Convert.MeshToVolume(mesh, xform);
 
             for (int i = 0; i < 16; ++i)
@@ -225,6 +229,8 @@ namespace testDeepSightNet
             Console.WriteLine("TestBasic");
             Console.WriteLine();
 
+            var infolog = DeepSightCommon.InfoLog.Read(@"C:\Users\tsvi\Det Kongelige Akademi\ERC_TIMBER_TRACK - General\04_RESOURCES\Data\Microtec\20220301.142735.DK.feb.log01_char\infolog@20220301.142735.DK.feb.log01_char.tiff");
+            return;
             var grid = new FloatGrid();
             grid[0, 0, 0] = 1.0f;
             grid[0, 0, 1] = 1.0f;
@@ -281,15 +287,77 @@ namespace testDeepSightNet
             }
         }
 
+        static double TransferFunction(double v)
+        {
+
+            return v;
+        }
+
+        static void TestRender()
+        {
+            Console.WriteLine();
+            Console.WriteLine("#######################################");
+            Console.WriteLine("TestRender");
+            Console.WriteLine();
+
+            double gain = 0.014;
+
+            var opts = new VoxelRendererSettings();
+
+            opts.tx = 100;
+            opts.ty = -700;
+            opts.tz = 1000;
+
+            opts.rx = 50;
+
+            opts.lightZ = -0.4;
+
+            opts.clipValueMin = 0.7;
+
+            var filepath = @"C:\Users\tsvi\Det Kongelige Akademi\ERC_TIMBER_TRACK - General\04_RESOURCES\Data\Microtec\20220301.154113.DK.feb.log02_char\20220301.154113.DK.feb.log02_char.vdb";
+            filepath = "test.vdb";
+
+            Console.WriteLine($"Reading '{filepath}'...");
+
+            int width = 800, height = 600;
+            var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            var vr = new VoxelRenderer();
+            var buffer = vr.TestRender(filepath, 800, 600, opts);
+
+            for (int y = 0; y < height; ++y)
+            {
+                for (int x = 0; x < width; ++x)
+                {
+                    float[] colorRaw = new float[4];
+                    Array.Copy(buffer, (y * width + x) * 4, colorRaw, 0, 4);
+
+                    var floatValue = TransferFunction(colorRaw[0] * gain);
+                    int pixelValue = Math.Min(255, (int)(floatValue * 255.0));
+
+                    var color = System.Drawing.Color.FromArgb(255, pixelValue, pixelValue, pixelValue);
+                    bitmap.SetPixel(x, y, color);
+                }
+            }
+            var output_path = "test_render.png";
+
+            Console.WriteLine($"Writing output to '{output_path}'...");
+
+            bitmap.Save(output_path);
+        }
+
         static void Main(string[] args)
         {
             LoadSettings("test.ini");
-            TestBasic();
-            TestMesh();
+            TestRender();
+
+            //TestBasic();
+            //TestMesh();
+
 
             //TestCSG();
             //TestPoints();
-            TestFile();
+            //TestFile();
             //TestGridTypes();
 
 
