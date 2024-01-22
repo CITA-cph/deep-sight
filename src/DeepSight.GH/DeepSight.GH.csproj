@@ -39,19 +39,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Eto, Version=2.6.0.0, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
-      <HintPath>..\packages\RhinoCommon.7.15.22039.13001\lib\net48\Eto.dll</HintPath>
+      <HintPath>..\..\packages\RhinoCommon.7.15.22039.13001\lib\net48\Eto.dll</HintPath>
     </Reference>
     <Reference Include="GH_IO, Version=7.15.22039.13000, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
-      <HintPath>..\packages\Grasshopper.7.15.22039.13001\lib\net48\GH_IO.dll</HintPath>
+      <HintPath>..\..\packages\Grasshopper.7.15.22039.13001\lib\net48\GH_IO.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper, Version=7.15.22039.13000, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
-      <HintPath>..\packages\Grasshopper.7.15.22039.13001\lib\net48\Grasshopper.dll</HintPath>
+      <HintPath>..\..\packages\Grasshopper.7.15.22039.13001\lib\net48\Grasshopper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Rhino.UI, Version=7.15.22039.13000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
-      <HintPath>..\packages\RhinoCommon.7.15.22039.13001\lib\net48\Rhino.UI.dll</HintPath>
+      <HintPath>..\..\packages\RhinoCommon.7.15.22039.13001\lib\net48\Rhino.UI.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon, Version=7.15.22039.13000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
-      <HintPath>..\packages\RhinoCommon.7.15.22039.13001\lib\net48\RhinoCommon.dll</HintPath>
+      <HintPath>..\..\packages\RhinoCommon.7.15.22039.13001\lib\net48\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,9 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="CreateConvert\GridFromPointCloud.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
+    <Compile Include="Display\VGridDisplay.cs" />
     <Compile Include="Display\GridSlice.cs" />
+    <Compile Include="VGridSample.cs" />
+    <Compile Include="VGridSet.cs" />
     <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Display\GridDisplay.cs" />
     <Compile Include="Tools\GridFilter.cs" />
@@ -161,15 +168,15 @@
     <None Include="Resources\VGridSample_01.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets')" />
+  <Import Project="..\..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets" Condition="Exists('..\..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets'))" />
-    <Error Condition="!Exists('..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets'))" />
+    <Error Condition="!Exists('..\..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets'))" />
   </Target>
-  <Import Project="..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets" Condition="Exists('..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets')" />
+  <Import Project="..\..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets" Condition="Exists('..\..\packages\Grasshopper.7.15.22039.13001\build\Grasshopper.targets')" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
