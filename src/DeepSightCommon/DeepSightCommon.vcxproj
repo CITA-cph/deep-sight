@@ -72,7 +72,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DEEPSIGHT_EXPORT=__declspec(dllexport);_DEBUG;IMATH_DLL;IMATH_HALF_NO_LOOKUP_TABLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\tbb\include;C:\lib\cpp\eigen-3.4.0;C:\git\deep-sight\src\deepsight;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\tbb\include;C:\lib\cpp\eigen-3.4.0;$(SolutionDir)src\deepsight;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
