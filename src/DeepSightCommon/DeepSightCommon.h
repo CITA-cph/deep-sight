@@ -16,6 +16,60 @@ using System::Runtime::InteropServices::Marshal;
 
 namespace DeepSightCommon {
 
+	
+	public ref class FloatGrid
+	{
+	public:
+		FloatGrid()
+		{
+			openvdb::initialize();
+			m_grid = new openvdb::FloatGrid(openvdb::zeroVal<float>());
+		}
+
+		FloatGrid(float background)
+		{
+			openvdb::initialize();
+			m_grid = new openvdb::FloatGrid(background);
+		}
+
+		FloatGrid(openvdb::FloatGrid* ptr)
+		{
+			openvdb::initialize();
+			m_grid = ptr;
+		}
+
+		static array<FloatGrid^>^ Read(System::String^ path)
+		{
+			std::string filepathNative = msclr::interop::marshal_as<std::string>(path);
+
+			openvdb::io::File file(filepathNative);
+
+			file.open();
+
+			std::vector<openvdb::GridBase::Ptr> grids;
+
+			for (openvdb::io::File::NameIterator nameIter = file.beginName();
+				nameIter != file.endName(); ++nameIter)
+			{
+				grids.push_back(file.readGrid(nameIter.gridName()));
+			}
+
+			file.close();
+
+			array<FloatGrid^>^ gridsOut = gcnew array<FloatGrid^>(grids.size());
+
+			for (int i = 0; i < grids.size(); ++i)
+			{
+				gridsOut[i] = gcnew FloatGrid(std::move(openvdb::gridPtrCast<openvdb::FloatGrid>(grids[i]).get()));
+			}
+
+			return gridsOut;
+
+
+		}
+
+		openvdb::FloatGrid* m_grid;
+	};
 
 	public ref class VoxelRendererSettings
 	{
