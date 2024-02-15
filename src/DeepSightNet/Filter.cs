@@ -53,7 +53,31 @@ namespace DeepSight
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void Int32Grid_Filter(IntPtr ptr, int width, int iterations, int type);
-        
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void FloatGrid_Erode(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DoubleGrid_Erode(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Int32Grid_Erode(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Vec3fGrid_Erode(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void FloatGrid_Dilate(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DoubleGrid_Dilate(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Int32Grid_Dilate(IntPtr ptr, int iterations);
+
+        [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Vec3fGrid_Dilate(IntPtr ptr, int iterations);
+
         #endregion
 
         public static FloatGrid Resample(FloatGrid grid, double scale)
@@ -84,6 +108,46 @@ namespace DeepSight
         public static void Filter(Int32Grid grid, int width, int iterations, FilterType type)
         {
             Int32Grid_Filter(grid.Ptr, width, iterations, (int)type);
+        }
+
+        public static void Erode(FloatGrid grid, int iterations)
+        {
+            FloatGrid_Erode(grid.Ptr, iterations);
+        }
+
+        public static void Erode(DoubleGrid grid, int iterations)
+        {
+            DoubleGrid_Erode(grid.Ptr, iterations);
+        }
+
+        public static void Erode(Int32Grid grid, int iterations)
+        {
+            Int32Grid_Erode(grid.Ptr, iterations);
+        }
+
+        public static void Erode(Vec3fGrid grid, int iterations)
+        {
+            Vec3fGrid_Erode(grid.Ptr, iterations);
+        }
+
+        public static void Dilate(FloatGrid grid, int iterations)
+        {
+            FloatGrid_Dilate(grid.Ptr, iterations);
+        }
+
+        public static void Dilate(DoubleGrid grid, int iterations)
+        {
+            DoubleGrid_Dilate(grid.Ptr, iterations);
+        }
+
+        public static void Dilate(Int32Grid grid, int iterations)
+        {
+            Int32Grid_Dilate(grid.Ptr, iterations);
+        }
+
+        public static void Dilate(Vec3fGrid grid, int iterations)
+        {
+            Vec3fGrid_Dilate(grid.Ptr, iterations);
         }
 
         private static void Gaussian(GridApi grid, int iterations, int width)

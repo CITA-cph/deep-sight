@@ -417,7 +417,7 @@ namespace DeepSight
 
 	void Vec3fGrid_GetActiveVoxels(GridBase* ptr, int* coords)
 	{
-		std::vector<Eigen::Vector3i> vecs = ptr->get_active_voxels<openvdb::Int32Grid>();
+		std::vector<Eigen::Vector3i> vecs = ptr->get_active_voxels<openvdb::Vec3fGrid>();
 		Eigen::Vector3i* coords_ptr = reinterpret_cast<Eigen::Vector3i*>(coords);
 		std::copy(vecs.begin(), vecs.end(), coords_ptr);
 	}

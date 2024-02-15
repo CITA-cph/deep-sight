@@ -27,6 +27,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\..\bin\</OutputPath>
@@ -70,10 +71,14 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="CreateConvert\GridFromPointCloud.cs" />
+    <Compile Include="CreateConvert\PointCloudNew.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
     <Compile Include="Display\VGridDisplay.cs" />
     <Compile Include="Display\GridSlice.cs" />
+    <Compile Include="Tools\GridDilate.cs" />
+    <Compile Include="Tools\VGridDilate.cs" />
+    <Compile Include="Tools\VGridFilter.cs" />
     <Compile Include="VGridSample.cs" />
     <Compile Include="VGridSet.cs" />
     <Compile Include="Tools\GridCombine.cs" />
@@ -97,6 +102,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="VGrid\ColorFromPtCloud.cs" />
+    <Compile Include="VGrid\WarpSrf.cs" />
+    <Compile Include="VGrid\GridMath.cs" />
+    <Compile Include="VGrid\ConstructVGrid.cs" />
+    <Compile Include="VGrid\DeconstructVGrid.cs" />
     <Compile Include="Weathering\GridExposure.cs" />
     <Compile Include="Weathering\GridMaterial.cs" />
     <Compile Include="Weathering\GridToolpath.cs" />

@@ -14,4 +14,14 @@ namespace DeepSight
 	void DoubleGrid_SdfToFog(GridBase* ptr, float cutoffDistance) { sdf_to_fog<openvdb::DoubleGrid>(ptr, cutoffDistance); }
 	void Int32Grid_SdfToFog(GridBase* ptr, float cutoffDistance) { sdf_to_fog<openvdb::Int32Grid>(ptr, cutoffDistance); }
 
+	void FloatGrid_Erode(GridBase* ptr, int iterations) { erode<openvdb::FloatGrid>(ptr, iterations); }
+	void DoubleGrid_Erode(GridBase* ptr, int iterations) { erode<openvdb::DoubleGrid>(ptr, iterations); }
+	void Int32Grid_Erode(GridBase* ptr, int iterations) { erode<openvdb::Int32Grid>(ptr, iterations); }
+	void Vec3fGrid_Erode(GridBase* ptr, int iterations) { erode<openvdb::Vec3fGrid>(ptr, iterations); }
+
+	void FloatGrid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::FloatGrid>(ptr, iterations); }
+	void DoubleGrid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::DoubleGrid>(ptr, iterations); }
+	void Int32Grid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::Int32Grid>(ptr, iterations); }
+	void Vec3fGrid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::Vec3fGrid>(ptr, iterations); } 
+
 }

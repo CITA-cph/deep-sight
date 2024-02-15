@@ -17,34 +17,36 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using Grasshopper.Kernel;
-
-using Grid = DeepSight.Vec3fGrid;
+using Rhino.Geometry;
 
 namespace DeepSight.GH.Components
 {
 
-    public class Cmpt_VGridCreate : GH_Component
+    public class Cmpt_PointCloudCreate : GH_Component
     {
-        public Cmpt_VGridCreate()
-          : base("VGridCreate", "VGNew",
-              "Create empty vector grid.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+        public Cmpt_PointCloudCreate()
+          : base("PointCloudCreate", "PtClNew",
+              "Create point cloud with optional colors.",
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Name of vector grid.", GH_ParamAccess.item, "default");
-            pManager[0].Optional = true;
+            //pManager.AddGenericParameter("PointCloud", "PC", "Base point cloud to add to (optional)", GH_ParamAccess.item);
+            pManager.AddPointParameter("Points", "P", "Points to add to cloud.", GH_ParamAccess.list);
+            pManager.AddColourParameter("Colors", "C", "Colors for points (optional).", GH_ParamAccess.list);
+            pManager[1].Optional = true;
 
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("VGrid", "VG", "New vector grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("PointCloud", "PC", "PointCloud", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -52,14 +54,16 @@ namespace DeepSight.GH.Components
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            string name = "default";
-            DA.GetData(0, ref name);
+            List<Point3d> pts = new List<Point3d>();
+            DA.GetDataList(0, pts);
 
-            Grid grid = new Grid();
-            grid.Name = name;
+            List<System.Drawing.Color> col = new List<System.Drawing.Color>();
+            DA.GetDataList(1, col);
 
+            PointCloud pc = new PointCloud();
+            pc.AddRange(pts,col);
 
-            DA.SetData(0, new GH_Grid(grid));
+            DA.SetData(0, pc);
 
         }
 
@@ -67,13 +71,13 @@ namespace DeepSight.GH.Components
         {
             get
             {
-                return Properties.Resources.VGridNew_01;
+                return Properties.Resources.GridNew_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("1babdbfb-6330-473f-b818-83184eacbc6e"); }
+            get { return new Guid("5484E40A-D1CF-4283-8BAA-C3A5068938CB"); }
         }
     }
 }

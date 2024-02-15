@@ -84,7 +84,6 @@ namespace DeepSight
 	{
 		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
 		//openvdb::tools::
-
 	}
 
 #pragma endregion Filter_Tools
@@ -186,6 +185,16 @@ namespace DeepSight
 	template void sdf_to_fog<openvdb::FloatGrid>(GridBase* grid, float cutoffDistance);
 	template void sdf_to_fog<openvdb::DoubleGrid>(GridBase* grid, float cutoffDistance);
 	template void sdf_to_fog<openvdb::Int32Grid>(GridBase* grid, float cutoffDistance);
+
+	template void erode<openvdb::FloatGrid>(GridBase* grid, int iterations);
+	template void erode<openvdb::DoubleGrid>(GridBase* grid, int iterations);
+	template void erode<openvdb::Int32Grid>(GridBase* grid, int iterations);
+	template void erode<openvdb::Vec3fGrid>(GridBase* grid, int iterations);
+
+	template void dilate<openvdb::FloatGrid>(GridBase* grid, int iterations);
+	template void dilate<openvdb::DoubleGrid>(GridBase* grid, int iterations);
+	template void dilate<openvdb::Int32Grid>(GridBase* grid, int iterations);
+	template void dilate<openvdb::Vec3fGrid>(GridBase* grid, int iterations);
 
 	template void volume_to_mesh<openvdb::FloatGrid>(
 		GridBase* grid, float isovalue,

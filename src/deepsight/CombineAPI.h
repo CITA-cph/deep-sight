@@ -11,6 +11,8 @@ namespace DeepSight
 	extern "C" {
 #endif
 	DEEPSIGHT_EXPORT void FloatGrid_combine(GridBase* ptr0, GridBase* ptr1, int type);
+	DEEPSIGHT_EXPORT void Scalar_FloatGrid_combine(GridBase* ptr0, float n, int type);
+	DEEPSIGHT_EXPORT void Vec3fGrid_combine(GridBase* ptr0, GridBase* ptr1, int type);
 
 #ifdef __cplusplus
 	}
