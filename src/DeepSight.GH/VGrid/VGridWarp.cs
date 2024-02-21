@@ -37,8 +37,8 @@ namespace DeepSight.GH.Components
 public class Cmpt_WarpSrf : GH_Component
     {
         public Cmpt_WarpSrf()
-          : base("WarpSrf", "WarpSrf",
-              "Warp a grid to surface UVW coordinates.",
+          : base("VGridWarp", "VGridWarp",
+              "Warp a vector grid to surface UVW coordinates.",
               DeepSight.GH.Api.ComponentCategory, "VGrid")
         {
         }
@@ -46,7 +46,8 @@ public class Cmpt_WarpSrf : GH_Component
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "VGrid to be assigned colors.", GH_ParamAccess.item);
-            pManager.AddSurfaceParameter("Surface", "S", "Surface to warp to.", GH_ParamAccess.item);
+            pManager.AddSurfaceParameter("Source Surface", "S", "Surface to warp from.", GH_ParamAccess.item);
+            pManager.AddSurfaceParameter("Target Surface", "T", "Surface to warp to.", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -75,15 +76,17 @@ public class Cmpt_WarpSrf : GH_Component
             int[] active = temp_grid.GetActiveVoxels();
             Vec3<float>[] values = temp_grid.GetValuesIndex(active);
 
-            Surface srf = null;
-            DA.GetData("Surface", ref srf);
-            if (srf == null) return;
+            Surface tosrf = null;
+            DA.GetData("Target Surface", ref tosrf);
+            if (tosrf == null) return;
 
-            double x = srf.Domain(0).T1;
-            double y = srf.Domain(1).T1;
+            double x = tosrf.Domain(0).T1;
+            double y = tosrf.Domain(1).T1;
             Plane xy = new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, 1));
             Surface fromsrf = new Rhino.Geometry.PlaneSurface(xy, new Rhino.Geometry.Interval(0, x), new Rhino.Geometry.Interval(0, y));
-            Rhino.Geometry.Morphs.SporphSpaceMorph S = new Rhino.Geometry.Morphs.SporphSpaceMorph(fromsrf, srf);
+              
+            DA.GetData("Source Surface", ref fromsrf);
+            Rhino.Geometry.Morphs.SporphSpaceMorph S = new Rhino.Geometry.Morphs.SporphSpaceMorph(fromsrf, tosrf);
 
             int[] active_warped = new int[active.Length];
 
