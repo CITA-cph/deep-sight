@@ -24,59 +24,23 @@ using System.Linq;
 using System.Xml.Schema;
 using Grasshopper.Kernel;
 
-using Grid = DeepSight.Vec3fGrid;
+using Grid = DeepSight.FloatGrid;
 
 namespace DeepSight.GH.Components
 {
 
-    public enum MorphOpType
+    public class Cmpt_GridMorphology : GH_Component
     {
-        DILATE = 0,
-        ERODE = 1,
-        OPEN = 2,
-        CLOSE = 3
-    }
-
-    public class Cmpt_VGridMorphology : GH_Component
-    {
-        public Cmpt_VGridMorphology()
-          : base("VGridMorph", "VGMorph",
-              "Apply morphology operations to a vector grid.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+        public Cmpt_GridMorphology()
+          : base("GridMorph", "GMorph",
+              "Perform morphological operations on a float grid.",
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
-        //public int[] GetNeighborIndices(int[] coords)
-        //{
-        //    int[] nbrs = new int[27 * 3];
-        //    int x=coords[0], y=coords[1], z=coords[2];
-        //    int counter = 0;
-        //    for(int i=-1; i<2; i++)
-        //    {
-        //        for(int j=-1; j<2; j++)
-        //        {
-        //            for (int k=-1; k<2; k++)
-        //            {
-        //                nbrs[counter] = x + i;
-        //                nbrs[counter+1] = y + j;
-        //                nbrs[counter+2] = z + k;
-        //                counter += 3;
-        //            }
-        //        }
-        //    }
-        //    return nbrs;
-        //}
-
-        //public Vec3<float>[] GetNeighborValues(Vec3fGrid grid, int[] coords)
-        //{
-        //    int[] nbrs_indices = GetNeighborIndices(coords);
-        //    Vec3<float>[] nbrs_values = grid.GetValuesIndex(nbrs_indices);
-        //    return nbrs_values;
-        //}
-
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "Vector grid.", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Iterations", "I", "Number of filter iterations.", GH_ParamAccess.item, 1);
+            pManager.AddIntegerParameter("Iterations", "I", "Number of iterations.", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Mode", "M", "Type of morphology operation to perform.", GH_ParamAccess.item, 0);
         }
 
@@ -95,7 +59,7 @@ namespace DeepSight.GH.Components
             Grid temp_grid = null;
             int iterations = 1;
 
-            DA.GetData(0, ref m_grid);
+            DA.GetData("Grid", ref m_grid);
             if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
@@ -103,11 +67,11 @@ namespace DeepSight.GH.Components
             else
                 return;
 
-            DA.GetData(1, ref iterations);
+            DA.GetData("Iterations", ref iterations);
             debug.Add(string.Format("{0} : Got input data.", stopwatch.ElapsedMilliseconds));
 
             int mode = 0;
-            if (!DA.GetData(2, ref mode)) return;
+            if (!DA.GetData("Mode", ref mode)) return;
 
             Grid new_grid = temp_grid.DuplicateGrid();
             switch (mode)
@@ -132,6 +96,58 @@ namespace DeepSight.GH.Components
                         Tools.Erode(new_grid, 1);
                     }
                     break;
+                case (int)(MorphOpType.POPEN):
+                    for (int i = 0; i < iterations; i++)
+                    {
+                        Grid I = new_grid.DuplicateGrid();
+                        Tools.Erode(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
+                    }
+                    break;
+                case (int)(MorphOpType.PCLOSE):
+                    for (int i = 0; i < iterations; i++)
+                    {
+                        Grid I = new_grid.DuplicateGrid();
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        new_grid = Tools.Combine(I, new_grid, CombineType.MAX);
+                    }
+                    break;
+                case (int)(MorphOpType.AUTOMED):
+                    for (int i = 0; i < iterations; i++)
+                    {
+                        Grid I = new_grid.DuplicateGrid();
+
+                        Grid new_grid_2 = new_grid.DuplicateGrid();
+
+                        Tools.Erode(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        Tools.Erode(new_grid, 1);
+                        Tools.Dilate(new_grid, 1);
+                        new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
+
+                        Tools.Dilate(new_grid_2, 1);
+                        Tools.Erode(new_grid_2, 1);
+                        Tools.Erode(new_grid_2, 1);
+                        Tools.Dilate(new_grid_2, 1);
+                        Tools.Dilate(new_grid_2, 1);
+                        Tools.Erode(new_grid_2, 1);
+                        new_grid_2 = Tools.Combine(I, new_grid_2, CombineType.MAX);
+
+                        new_grid = Tools.Combine(new_grid, new_grid_2, CombineType.MIN);
+                    }
+                    break;
                 default: return;
             }
             debug.Add(string.Format("{0} : Completed morphology operation.", stopwatch.ElapsedMilliseconds));
@@ -144,13 +160,13 @@ namespace DeepSight.GH.Components
         {
             get
             {
-                return Properties.Resources.VGridResample_01;
+                return Properties.Resources.GridFilter_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("E06ACEA1-ED84-48C8-BF7C-B99B2C4D71D3"); }
+            get { return new Guid("C0B6B053-1347-42DF-BF02-01AD7E0CEA77"); }
         }
     }
 }
