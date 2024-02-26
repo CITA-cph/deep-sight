@@ -64,7 +64,7 @@ namespace DeepSight.GH.Components
             DA.GetData("Grid", ref m_grid);
 
             Grid temp_grid;
-            if (m_grid is GridApi)
+            if (m_grid is Grid)
                 temp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
                 temp_grid = (m_grid as GH_Grid).Value as Grid;
@@ -81,7 +81,7 @@ namespace DeepSight.GH.Components
             DA.GetData("Displace Map", ref m_grid);
 
             Grid disp_grid;
-            if (m_grid is GridApi)
+            if (m_grid is Grid)
                 disp_grid = m_grid as Grid;
             else if (m_grid is GH_Grid)
                 disp_grid = (m_grid as GH_Grid).Value as Grid;
@@ -121,9 +121,10 @@ namespace DeepSight.GH.Components
             }
 
             Vec3<float>[] disp = disp_grid.GetValuesWorld(coord);
+
             int[] new_coord = new int[coord.Length];
 
-            for(int i = 0; i < active.Length; i+=3)
+            for (int i = 0; i < active.Length; i+=3)
             {
                 Vec3<float> pt = new Vec3<float>((float)coord[i], (float)coord[i + 1], (float)coord[i + 2]);
                 
@@ -132,12 +133,12 @@ namespace DeepSight.GH.Components
                 new_coord[i+2] = (int)Math.Round(pt.Z + t * disp[i / 3].Z);
             }
 
-
             Grid new_grid = temp_grid.DuplicateGrid();
+            debug.Add("New coordinates match values: " + new_coord.Length.ToString() + ", " + values.Length.ToString());
             new_grid.SetValues(new_coord, values);
 
             DA.SetDataList("debug", debug);
-            DA.SetData("Grid", new_grid);
+            DA.SetData("Grid", new GH_Grid(new_grid));
 
         }
 

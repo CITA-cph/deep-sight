@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="CreateConvert\GridFromPointCloud.cs" />
+    <Compile Include="CreateConvert\GetPointCloud.cs" />
     <Compile Include="CreateConvert\PointCloudNew.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Tools\GridDilate.cs" />
     <Compile Include="Tools\VGridDilate.cs" />
     <Compile Include="Tools\VGridFilter.cs" />
+    <Compile Include="VGridDisplace.cs" />
     <Compile Include="VGridSample.cs" />
     <Compile Include="VGridSet.cs" />
     <Compile Include="Tools\GridCombine.cs" />
@@ -103,8 +105,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="VGrid\ColorFromPtCloud.cs" />
-    <Compile Include="VGrid\WarpSrf.cs" />
-    <Compile Include="VGrid\GridMath.cs" />
+    <Compile Include="VGrid\VGridWarp.cs" />
+    <Compile Include="VGrid\ScalarMath.cs" />
     <Compile Include="VGrid\ConstructVGrid.cs" />
     <Compile Include="VGrid\DeconstructVGrid.cs" />
     <Compile Include="Weathering\GridExposure.cs" />

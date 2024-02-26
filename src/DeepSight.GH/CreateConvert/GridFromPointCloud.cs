@@ -35,7 +35,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridFromPointCloud()
           : base("PointCloud2Grid", "PC2G",
               "Convert a pointcloud to a VGrid with colors.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
