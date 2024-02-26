@@ -77,8 +77,8 @@
     <Compile Include="Display\GridActive.cs" />
     <Compile Include="Display\VGridDisplay.cs" />
     <Compile Include="Display\GridSlice.cs" />
-    <Compile Include="Tools\GridDilate.cs" />
-    <Compile Include="Tools\VGridDilate.cs" />
+    <Compile Include="Tools\GridMorphology.cs" />
+    <Compile Include="Tools\VGridMorphology.cs" />
     <Compile Include="Tools\VGridFilter.cs" />
     <Compile Include="VGridDisplace.cs" />
     <Compile Include="VGridSample.cs" />
