@@ -42,7 +42,7 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid 1", "G1", "First grid to combine.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid 2", "G2", "Second grid to combine.", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0 = max, 1 = min, 2 = sum, 3 = diff, 4 = if zero, 5 = mul.", GH_ParamAccess.item, 1);
+            pManager.AddIntegerParameter("Mode", "M", "Mode to combine grids. 0=max, 1=min, 2=sum, 3=diff, 4=if zero, 5=mul.", GH_ParamAccess.item, 1);
             pManager[2].Optional = true;
         }
 

@@ -133,7 +133,9 @@ namespace DeepSight.GH.Components
                 new_coord[i+2] = (int)Math.Round(pt.Z + t * disp[i / 3].Z);
             }
 
-            Grid new_grid = temp_grid.DuplicateGrid();
+            Grid new_grid = new Grid("newgrid", new float[3] { 0, 0, 0 });
+            new_grid.Transform = temp_grid.Transform;
+
             debug.Add("New coordinates match values: " + new_coord.Length.ToString() + ", " + values.Length.ToString());
             new_grid.SetValues(new_coord, values);
 

@@ -35,7 +35,7 @@ public class Cmpt_ScalarMath : GH_Component
         public Cmpt_ScalarMath()
           : base("ScalarMath", "ScalarMath",
               "Perform various operations with scalars",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 

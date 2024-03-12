@@ -41,7 +41,7 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid", "G", "Vector grid.", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Iterations", "I", "Number of iterations.", GH_ParamAccess.item, 1);
-            pManager.AddIntegerParameter("Mode", "M", "Type of morphology operation to perform.", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Mode", "M", "Type of morphology operation to perform. 0=dilate, 1=erode, 2=open, 3=close, 4=proper open, 5=proper close, 6=automedian", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
