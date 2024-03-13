@@ -22,9 +22,12 @@ using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Xml.Schema;
+using Eto.Forms;
 using Grasshopper.Kernel;
 
-using Grid = DeepSight.FloatGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
+
 
 namespace DeepSight.GH.Components
 {
@@ -55,105 +58,152 @@ namespace DeepSight.GH.Components
             var debug = new List<string>();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            object m_grid = null;
-            Grid temp_grid = null;
+
             int iterations = 1;
-
-            DA.GetData("Grid", ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
-
             DA.GetData("Iterations", ref iterations);
-            debug.Add(string.Format("{0} : Got input data.", stopwatch.ElapsedMilliseconds));
 
             int mode = 0;
             if (!DA.GetData("Mode", ref mode)) return;
 
-            Grid new_grid = temp_grid.DuplicateGrid();
-            switch (mode)
+            object m_grid = null;
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null;
+
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
+
+            if (temp_fgrid != null)
             {
-                case (int)(MorphOpType.DILATE):
-                    Tools.Dilate(new_grid, iterations);
-                    break;
-                case (int)(MorphOpType.ERODE):
-                    Tools.Erode(new_grid, iterations);
-                    break;
-                case (int)(MorphOpType.OPEN):
-                    for (int i = 0; i < iterations; i++)
-                    {
-                        Tools.Erode(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                    }
-                    break;
-                case (int)(MorphOpType.CLOSE):
-                    for (int i = 0; i < iterations; i++)
-                    {
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                    }
-                    break;
-                case (int)(MorphOpType.POPEN):
-                    for (int i = 0; i < iterations; i++)
-                    {
-                        Grid I = new_grid.DuplicateGrid();
-                        Tools.Erode(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
-                    }
-                    break;
-                case (int)(MorphOpType.PCLOSE):
-                    for (int i = 0; i < iterations; i++)
-                    {
-                        Grid I = new_grid.DuplicateGrid();
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        new_grid = Tools.Combine(I, new_grid, CombineType.MAX);
-                    }
-                    break;
-                case (int)(MorphOpType.AUTOMED):
-                    for (int i = 0; i < iterations; i++)
-                    {
-                        Grid I = new_grid.DuplicateGrid();
+                FGrid new_grid = temp_fgrid.DuplicateGrid();
+                switch (mode)
+                {
+                    case (int)(MorphOpType.DILATE):
+                        Tools.Dilate(new_grid, iterations);
+                        break;
+                    case (int)(MorphOpType.ERODE):
+                        Tools.Erode(new_grid, iterations);
+                        break;
+                    case (int)(MorphOpType.OPEN):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                        }
+                        break;
+                    case (int)(MorphOpType.CLOSE):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                        }
+                        break;
+                    case (int)(MorphOpType.POPEN):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            FGrid I = new_grid.DuplicateGrid();
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
+                        }
+                        break;
+                    case (int)(MorphOpType.PCLOSE):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            FGrid I = new_grid.DuplicateGrid();
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            new_grid = Tools.Combine(I, new_grid, CombineType.MAX);
+                        }
+                        break;
+                    case (int)(MorphOpType.AUTOMED):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            FGrid I = new_grid.DuplicateGrid();
 
-                        Grid new_grid_2 = new_grid.DuplicateGrid();
+                            FGrid new_grid_2 = new_grid.DuplicateGrid();
 
-                        Tools.Erode(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        Tools.Erode(new_grid, 1);
-                        Tools.Dilate(new_grid, 1);
-                        new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                            new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
 
-                        Tools.Dilate(new_grid_2, 1);
-                        Tools.Erode(new_grid_2, 1);
-                        Tools.Erode(new_grid_2, 1);
-                        Tools.Dilate(new_grid_2, 1);
-                        Tools.Dilate(new_grid_2, 1);
-                        Tools.Erode(new_grid_2, 1);
-                        new_grid_2 = Tools.Combine(I, new_grid_2, CombineType.MAX);
+                            Tools.Dilate(new_grid_2, 1);
+                            Tools.Erode(new_grid_2, 1);
+                            Tools.Erode(new_grid_2, 1);
+                            Tools.Dilate(new_grid_2, 1);
+                            Tools.Dilate(new_grid_2, 1);
+                            Tools.Erode(new_grid_2, 1);
+                            new_grid_2 = Tools.Combine(I, new_grid_2, CombineType.MAX);
 
-                        new_grid = Tools.Combine(new_grid, new_grid_2, CombineType.MIN);
-                    }
-                    break;
-                default: return;
+                            new_grid = Tools.Combine(new_grid, new_grid_2, CombineType.MIN);
+                        }
+                        break;
+                    default: return;
+                }
+                debug.Add(string.Format("{0} : Completed morphology operation.", stopwatch.ElapsedMilliseconds));
+
+                DA.SetDataList("debug", debug);
+                DA.SetData("Grid", new GH_Grid(new_grid));
             }
-            debug.Add(string.Format("{0} : Completed morphology operation.", stopwatch.ElapsedMilliseconds));
+            else if (temp_vgrid != null)
+            {
+                VGrid new_grid = temp_vgrid.DuplicateGrid();
+                switch (mode)
+                {
+                    case (int)(MorphOpType.DILATE):
+                        Tools.Dilate(new_grid, iterations);
+                        break;
+                    case (int)(MorphOpType.ERODE):
+                        Tools.Erode(new_grid, iterations);
+                        break;
+                    case (int)(MorphOpType.OPEN):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            Tools.Erode(new_grid, 1);
+                            Tools.Dilate(new_grid, 1);
+                        }
+                        break;
+                    case (int)(MorphOpType.CLOSE):
+                        for (int i = 0; i < iterations; i++)
+                        {
+                            Tools.Dilate(new_grid, 1);
+                            Tools.Erode(new_grid, 1);
+                        }
+                        break;
+                    case (int)(MorphOpType.POPEN):
+                    case (int)(MorphOpType.PCLOSE):
+                    case (int)(MorphOpType.AUTOMED):
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "This operation is not currently supported on Vector Grids");
+                        break;
+                    default: return;
+                }
+                debug.Add(string.Format("{0} : Completed morphology operation.", stopwatch.ElapsedMilliseconds));
 
-            DA.SetDataList(0, debug);
-            DA.SetData(1, new GH_Grid(new_grid));
+                DA.SetDataList("debug", debug);
+                DA.SetData("Grid", new GH_Grid(new_grid));
+            }
         }
 
         protected override System.Drawing.Bitmap Icon

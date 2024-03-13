@@ -24,7 +24,10 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
-using Grid = DeepSight.FloatGrid;
+using DeepSight.RhinoCommon;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
+using Rhino.Geometry;
 
 namespace DeepSight.GH.Components
 {
@@ -34,7 +37,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridSample()
           : base("GridSample", "GSmp",
               "Query a point in the grid.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "CGrid")
         {
         }
 
@@ -42,13 +45,14 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
             pManager.AddPointParameter("Sample points", "SP", "Points to query in the grid.", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Mode", "M", "Sampling method to use.", GH_ParamAccess.item, 0);
+            pManager.AddBooleanParameter("Grid space", "GS", "Coordinates in grid-space (true) or world-space (false).", GH_ParamAccess.item, false);
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("debug", "d", "Debugging messages.", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Values", "V", "Grid value at each sampling point.", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "V", "Grid value at each sampling point.", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -57,54 +61,68 @@ namespace DeepSight.GH.Components
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            object m_grid = null;
-            DA.GetData(0, ref m_grid);
-
-            Grid temp_grid;
-            if (m_grid is GridApi)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
-
-            if (temp_grid == null)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
-                return;
-            }
-
-            debug.Add(string.Format("{0} : Wrangled Grid from inputs.", stopwatch.ElapsedMilliseconds));
-
             var points = new List<GH_Point>();
-            DA.GetDataList(1, points);
-
-            int mode = 0;
-            DA.GetData(2, ref mode);
-            if (mode < 0) mode = 0;
-            else if (mode > 2) mode = 2;
-
-            debug.Add(string.Format("{0} : Got other inputs.", stopwatch.ElapsedMilliseconds));
-
+            DA.GetDataList("Sample points", points);
             var coords = new double[points.Count * 3];
             for (int i = 0; i < points.Count; i++)
             {
                 coords[i * 3] = points[i].Value.X;
                 coords[i * 3 + 1] = points[i].Value.Y;
                 coords[i * 3 + 2] = points[i].Value.Z;
-
             }
-            debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
-            var values = temp_grid.GetValuesWorld(coords);
+            bool gridspace = false;
+            DA.GetData("Grid space", ref gridspace);
 
-            debug.Add(string.Format("{0} : Finished sampling grid.", stopwatch.ElapsedMilliseconds));
+            object m_grid = null;
+            DA.GetData("Grid", ref m_grid);
 
-            
-            DA.SetDataList(1, values.Select(x => new GH_Number(x)));
+            if (!gridspace)
+            {
+                Transform imat;
+                Transform mat = (m_grid as GH_Grid).Value.Transform.ToRhinoTransform();
+                mat.TryGetInverse(out imat);
 
-            debug.Add(string.Format("{0} : Set output values.", stopwatch.ElapsedMilliseconds));
-            DA.SetDataList(0, debug);
+                for (int i = 0; i < points.Count; ++i)
+                {
+                    points[i] = (GH_Point)points[i].Transform(imat);
+                }
+            }
+
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null;
+
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
+
+            if (temp_fgrid != null)
+            {
+                var values = temp_fgrid.GetValuesWorld(coords);
+
+                DA.SetDataList("Values", values.Select(x => new GH_Number(x)));
+
+                DA.SetDataList("debug", debug);
+            } 
+            else if (temp_vgrid != null)
+            {
+                var values = temp_vgrid.GetValuesWorld(coords);
+
+                DA.SetDataList("Values", values.Select(x => new GH_Vector(new Rhino.Geometry.Vector3d(x.X,x.Y,x.Z))));
+
+                DA.SetDataList("debug", debug);
+            }
+            else return;
 
         }
 

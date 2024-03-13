@@ -18,9 +18,11 @@
 
 using System;
 using System.Linq;
+using Eto.Forms;
 using Grasshopper.Kernel;
 
-using Grid = DeepSight.FloatGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -48,32 +50,70 @@ namespace DeepSight.GH.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             object m_grid = null;
-            Grid temp_grid, mask_grid = null;
-
-            DA.GetData("Grid", ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
+            FGrid temp_fgrid = null, mask_fgrid = null;
+            VGrid temp_vgrid = null, mask_vgrid = null;
+            //Grid temp_grid, mask_grid = null;
 
             DA.GetData("Mask", ref m_grid);
-            if (m_grid is Grid)
-                mask_grid = m_grid as Grid;
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
             else if (m_grid is GH_Grid)
-                mask_grid = (m_grid as GH_Grid).Value as Grid;
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
             else
                 return;
 
-            var new_grid = new Grid("new_grid", 0f);
-            new_grid.Transform = temp_grid.Transform;
+            int[] active = null;
+            if (mask_fgrid != null) {
+                active = mask_fgrid.GetActiveVoxels();
+            } else if (mask_vgrid != null)
+            {
+                active = mask_vgrid.GetActiveVoxels();
+            }
 
-            int[] active = mask_grid.GetActiveVoxels();
-            float[] values = temp_grid.GetValuesIndex(active);
-            new_grid.SetValues(active, values);
+            DA.GetData("Grid", ref m_grid);
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
 
-            DA.SetData(0, new GH_Grid(new_grid));
+            if (temp_fgrid != null)
+            {
+                var new_grid = new FGrid("new_grid", 0f);
+                new_grid.Transform = temp_fgrid.Transform;
+
+                float[] values = temp_fgrid.GetValuesIndex(active);
+                new_grid.SetValues(active, values);
+
+                DA.SetData(0, new GH_Grid(new_grid));
+
+            }
+            else if (temp_vgrid != null)
+            {
+                var new_grid = new VGrid("new_grid", new float[3] { 0, 0, 0 });
+                new_grid.Transform = temp_vgrid.Transform;
+
+                Vec3<float>[] values = temp_vgrid.GetValuesIndex(active);
+                new_grid.SetValues(active, values);
+
+                DA.SetData(0, new GH_Grid(new_grid));
+
+            }
         }
 
         protected override System.Drawing.Bitmap Icon

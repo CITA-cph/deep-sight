@@ -24,9 +24,11 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
-using Grid = DeepSight.Vec3fGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
 using Rhino.Geometry;
 using DeepSight.RhinoCommon;
+using Eto.Forms;
 
 namespace DeepSight.GH.Components
 {
@@ -60,89 +62,129 @@ namespace DeepSight.GH.Components
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            object m_grid = null;
-            DA.GetData("Grid", ref m_grid);
-
-            Grid temp_grid;
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
-
-            if (temp_grid == null)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
-                return;
-            }
-
-            m_grid = null;
-            DA.GetData("Displace Map", ref m_grid);
-
-            Grid disp_grid;
-            if (m_grid is Grid)
-                disp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                disp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
-
-            if (disp_grid == null)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
-                return;
-            }
-
             double t = 1.0;
             DA.GetData("Interpolation", ref t);
-
-            int[] active = temp_grid.GetActiveVoxels();
-            Vec3<float>[] values = temp_grid.GetValuesIndex(active);
-
-            double[] coord = active.Select(i => (double)i).ToArray();
-
             bool gridspace = false;
             DA.GetData(3, ref gridspace);
-            if (!gridspace)
+
+            object m_grid = null;
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null, disp_grid = null;
+
+            DA.GetData("Displace Map", ref m_grid);
+            if (m_grid is VGrid)
+                disp_grid = m_grid as VGrid;
+            else if ((m_grid as GH_Grid).Value is VGrid)
+                disp_grid = (m_grid as GH_Grid).Value as VGrid;
+            else
+                return;
+            
+            DA.GetData("Grid", ref m_grid);
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
+
+            if (temp_fgrid != null)
             {
-                Transform imat;
-                Transform mat = temp_grid.Transform.ToRhinoTransform();
-                mat.TryGetInverse(out imat);
+                int[] active = temp_fgrid.GetActiveVoxels();
+                float[] values = temp_fgrid.GetValuesIndex(active);
+
+                double[] coord = active.Select(i => (double)i).ToArray();
+
+                if (!gridspace)
+                {
+                    Transform imat;
+                    Transform mat = temp_fgrid.Transform.ToRhinoTransform();
+                    mat.TryGetInverse(out imat);
+
+                    for (int i = 0; i < active.Length; i += 3)
+                    {
+                        Point3d pt = new Point3d(coord[i], coord[i + 1], coord[i + 2]);
+                        pt.Transform(imat);
+                        coord[i] = pt.X;
+                        coord[i + 1] = pt.Y;
+                        coord[i + 2] = pt.Z;
+                    }
+                }
+
+                Vec3<float>[] disp = disp_grid.GetValuesWorld(coord);
+
+                int[] new_coord = new int[coord.Length];
 
                 for (int i = 0; i < active.Length; i += 3)
                 {
-                    Point3d pt = new Point3d(coord[i], coord[i + 1], coord[i + 2]);
-                    pt.Transform(imat);
-                    coord[i] = pt.X;
-                    coord[i + 1] = pt.Y;
-                    coord[i + 2] = pt.Z;
+                    Vec3<float> pt = new Vec3<float>((float)coord[i], (float)coord[i + 1], (float)coord[i + 2]);
+
+                    new_coord[i] = (int)Math.Round(pt.X + t * disp[i / 3].X);
+                    new_coord[i + 1] = (int)Math.Round(pt.Y + t * disp[i / 3].Y);
+                    new_coord[i + 2] = (int)Math.Round(pt.Z + t * disp[i / 3].Z);
                 }
-            }
 
-            Vec3<float>[] disp = disp_grid.GetValuesWorld(coord);
+                FGrid new_grid = new FGrid("newgrid", 0);
+                new_grid.Transform = temp_fgrid.Transform;
 
-            int[] new_coord = new int[coord.Length];
+                debug.Add("New coordinates match values: " + new_coord.Length.ToString() + ", " + values.Length.ToString());
+                new_grid.SetValues(new_coord, values);
 
-            for (int i = 0; i < active.Length; i+=3)
+                DA.SetDataList("debug", debug);
+                DA.SetData("Grid", new GH_Grid(new_grid));
+            } 
+            else if (temp_vgrid != null)
             {
-                Vec3<float> pt = new Vec3<float>((float)coord[i], (float)coord[i + 1], (float)coord[i + 2]);
-                
-                new_coord[i] = (int)Math.Round(pt.X + t * disp[i / 3].X);
-                new_coord[i+1] = (int)Math.Round(pt.Y + t * disp[i / 3].Y);
-                new_coord[i+2] = (int)Math.Round(pt.Z + t * disp[i / 3].Z);
+                int[] active = temp_vgrid.GetActiveVoxels();
+                Vec3<float>[] values = temp_vgrid.GetValuesIndex(active);
+
+                double[] coord = active.Select(i => (double)i).ToArray();
+
+                if (!gridspace)
+                {
+                    Transform imat;
+                    Transform mat = temp_vgrid.Transform.ToRhinoTransform();
+                    mat.TryGetInverse(out imat);
+
+                    for (int i = 0; i < active.Length; i += 3)
+                    {
+                        Point3d pt = new Point3d(coord[i], coord[i + 1], coord[i + 2]);
+                        pt.Transform(imat);
+                        coord[i] = pt.X;
+                        coord[i + 1] = pt.Y;
+                        coord[i + 2] = pt.Z;
+                    }
+                }
+
+                Vec3<float>[] disp = disp_grid.GetValuesWorld(coord);
+
+                int[] new_coord = new int[coord.Length];
+
+                for (int i = 0; i < active.Length; i += 3)
+                {
+                    Vec3<float> pt = new Vec3<float>((float)coord[i], (float)coord[i + 1], (float)coord[i + 2]);
+
+                    new_coord[i] = (int)Math.Round(pt.X + t * disp[i / 3].X);
+                    new_coord[i + 1] = (int)Math.Round(pt.Y + t * disp[i / 3].Y);
+                    new_coord[i + 2] = (int)Math.Round(pt.Z + t * disp[i / 3].Z);
+                }
+
+                VGrid new_grid = new VGrid("newgrid", new float[3] { 0, 0, 0 });
+                new_grid.Transform = temp_vgrid.Transform;
+
+                debug.Add("New coordinates match values: " + new_coord.Length.ToString() + ", " + values.Length.ToString());
+                new_grid.SetValues(new_coord, values);
+
+                DA.SetDataList("debug", debug);
+                DA.SetData("Grid", new GH_Grid(new_grid));
             }
-
-            Grid new_grid = new Grid("newgrid", new float[3] { 0, 0, 0 });
-            new_grid.Transform = temp_grid.Transform;
-
-            debug.Add("New coordinates match values: " + new_coord.Length.ToString() + ", " + values.Length.ToString());
-            new_grid.SetValues(new_coord, values);
-
-            DA.SetDataList("debug", debug);
-            DA.SetData("Grid", new GH_Grid(new_grid));
-
-        }
+        } 
 
         protected override System.Drawing.Bitmap Icon
         {

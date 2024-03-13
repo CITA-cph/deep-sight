@@ -26,7 +26,9 @@ using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 using DeepSight.RhinoCommon;
-using Grid = DeepSight.FloatGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
+using System.Linq.Expressions;
 
 namespace DeepSight.GH.Components
 {
@@ -36,7 +38,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridSet()
           : base("GridSet", "GSet",
               "Set grid values.",
-              DeepSight.GH.Api.ComponentCategory, "Grid")
+              DeepSight.GH.Api.ComponentCategory, "CGrid")
         {
         }
 
@@ -44,7 +46,7 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
             pManager.AddPointParameter("Sample points", "SP", "Coordinates to set in the grid.", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Sample values", "SV", "Values to set at the coordinates in the grid.", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Sample values", "SV", "Values to set at the coordinates in the grid.", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Grid space", "GS", "Coordinates in grid-space (true) or world-space (false).", GH_ParamAccess.item, false);
         }
 
@@ -60,41 +62,20 @@ namespace DeepSight.GH.Components
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            object m_grid = null;
-            DA.GetData(0, ref m_grid);
-
-            Grid temp_grid;
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
-
-            if (temp_grid == null)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
-                return;
-            }
-
-            debug.Add(string.Format("{0} : Wrangled Grid from inputs.", stopwatch.ElapsedMilliseconds));
-
-            //var points = new List<Point3d>();
             var points = new List<GH_Point>();
-            DA.GetDataList(1, points);
-
-            var values = new List<GH_Number>();
-            DA.GetDataList(2, values);
-
-            debug.Add(string.Format("{0} : Got other inputs.", stopwatch.ElapsedMilliseconds));
-
+            DA.GetDataList("Sample points", points);
+            var objects = new List<object>();
+            DA.GetDataList("Sample values", objects);
             bool gridspace = false;
-            DA.GetData(3, ref gridspace);
+            DA.GetData("Grid space", ref gridspace);
+
+            object m_grid = null;
+            DA.GetData("Grid", ref m_grid);
 
             if (!gridspace)
             {
                 Transform imat;
-                Transform mat = temp_grid.Transform.ToRhinoTransform();
+                Transform mat = (m_grid as GH_Grid).Value.Transform.ToRhinoTransform();
                 mat.TryGetInverse(out imat);
 
                 for (int i = 0; i < points.Count; ++i)
@@ -111,18 +92,63 @@ namespace DeepSight.GH.Components
                 fpoints[i * 3 + 2] = (int)Math.Floor(points[i].Value.Z + 0.5);
             }
 
-            debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null;
 
-            temp_grid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
 
-            debug.Add(string.Format("{0} : Finished sampling grid.", stopwatch.ElapsedMilliseconds));
+            if (temp_fgrid != null)
+            {
+                List<GH_Number> values = null;
+                try
+                {
+                    values = objects.Cast<GH_Number>().ToList();
+                }
+                catch
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input values to numbers.");
+                    return;
+                }
+                temp_fgrid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
 
+                DA.SetData("Grid", new GH_Grid(temp_fgrid));
+                DA.SetDataList("debug", debug);
+            }
+            else if (temp_vgrid != null)
+            {
+                List<GH_Vector> values = new List<GH_Vector>();
+                try
+                {
+                    for(int i=0; i<objects.Count; i++)
+                    {
+                        GH_Vector vec = new GH_Vector();
+                        GH_Convert.ToGHVector(objects[i], GH_Conversion.Both, ref vec);
+                        values.Add(vec);
+                    }
+                    //values = objects.Cast<GH_Vector>().ToList();
+                } catch
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input values to vectors.");
+                    return;
+                }
+                temp_vgrid.SetValues(fpoints, values.Select(x => new Vec3<float>((float)(x.Value.X), (float)(x.Value.Y), (float)(x.Value.Z))).ToArray());
 
-            DA.SetData(1, new GH_Grid(temp_grid));
-
-            debug.Add(string.Format("{0} : Set output values.", stopwatch.ElapsedMilliseconds));
-            DA.SetDataList(0, debug);
-
+                DA.SetData("Grid", new GH_Grid(temp_vgrid));
+                DA.SetDataList("debug", debug);
+            }
+            else return;
         }
 
         protected override System.Drawing.Bitmap Icon

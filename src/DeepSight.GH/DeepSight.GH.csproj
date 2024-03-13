@@ -84,7 +84,7 @@
     <Compile Include="Tools\VGridFilter.cs" />
     <Compile Include="VGridDisplace.cs" />
     <Compile Include="VGridSample.cs" />
-    <Compile Include="VGridSet.cs" />
+    <None Include="VGridSet.cs" />
     <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Display\GridDisplay.cs" />
     <Compile Include="Tools\GridFilter.cs" />
