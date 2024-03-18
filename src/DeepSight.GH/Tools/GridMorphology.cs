@@ -34,6 +34,17 @@ namespace DeepSight.GH.Components
 
     public class Cmpt_GridMorphology : GH_Component
     {
+        public enum MorphOpType
+        {
+            DILATE = 0,
+            ERODE = 1,
+            OPEN = 2,
+            CLOSE = 3,
+            POPEN = 4,
+            PCLOSE = 5,
+            AUTOMED = 6
+        }
+
         public Cmpt_GridMorphology()
           : base("GridMorph", "GMorph",
               "Perform morphological operations on a float grid.",

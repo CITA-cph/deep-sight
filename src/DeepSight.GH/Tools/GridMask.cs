@@ -56,14 +56,14 @@ namespace DeepSight.GH.Components
 
             DA.GetData("Mask", ref m_grid);
             if (m_grid is FGrid)
-                temp_fgrid = m_grid as FGrid;
+                mask_fgrid = m_grid as FGrid;
             else if (m_grid is VGrid)
-                temp_vgrid = m_grid as VGrid;
+                mask_vgrid = m_grid as VGrid;
             else if (m_grid is GH_Grid)
                 if ((m_grid as GH_Grid).Value is FGrid)
-                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                    mask_fgrid = (m_grid as GH_Grid).Value as FGrid;
                 else if ((m_grid as GH_Grid).Value is VGrid)
-                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                    mask_vgrid = (m_grid as GH_Grid).Value as VGrid;
                 else
                     return;
             else

@@ -38,7 +38,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridSet()
           : base("GridSet", "GSet",
               "Set grid values.",
-              DeepSight.GH.Api.ComponentCategory, "CGrid")
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 

@@ -27,12 +27,12 @@ using VGrid = DeepSight.Vec3fGrid;
 namespace DeepSight.GH.Components
 {
 
-    public class Cmpt_ComboGridFilter : GH_Component
+    public class Cmpt_GridFilter : GH_Component
     {
-        public Cmpt_ComboGridFilter()
-          : base("ComboGridFilter", "CGFil",
+        public Cmpt_GridFilter()
+          : base("GridFilter", "GFil",
               "Filter a float or vector grid.",
-              DeepSight.GH.Api.ComponentCategory, "CGrid")
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 

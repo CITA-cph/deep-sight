@@ -29,17 +29,6 @@ using Grid = DeepSight.Vec3fGrid;
 namespace DeepSight.GH.Components
 {
 
-    public enum MorphOpType
-    {
-        DILATE = 0,
-        ERODE = 1,
-        OPEN = 2,
-        CLOSE = 3,
-        POPEN = 4,
-        PCLOSE = 5,
-        AUTOMED = 6
-    }
-
     public class Cmpt_VGridMorphology : GH_Component
     {
         public Cmpt_VGridMorphology()

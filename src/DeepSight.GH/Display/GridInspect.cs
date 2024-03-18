@@ -51,7 +51,6 @@ namespace DeepSight.GH.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-
             object m_grid = null;
             GridApi temp_grid = null;
 

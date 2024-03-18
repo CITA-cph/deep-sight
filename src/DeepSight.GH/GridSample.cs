@@ -37,7 +37,7 @@ namespace DeepSight.GH.Components
         public Cmpt_GridSample()
           : base("GridSample", "GSmp",
               "Query a point in the grid.",
-              DeepSight.GH.Api.ComponentCategory, "CGrid")
+              DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
 

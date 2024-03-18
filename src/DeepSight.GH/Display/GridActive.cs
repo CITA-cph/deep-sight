@@ -26,7 +26,9 @@ using Grasshopper.Kernel;
 using DeepSight.RhinoCommon;
 using Grasshopper.Kernel.Types;
 
-using Grid = DeepSight.FloatGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
+using Eto.Forms;
 
 namespace DeepSight.GH.Components
 {
@@ -39,13 +41,9 @@ namespace DeepSight.GH.Components
         {
         }
 
-
-
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "Grid to inspect.", GH_ParamAccess.item);
-            //pManager.AddBoxParameter("Bounds", "B", "Optional bounding box to constrain values to.", GH_ParamAccess.item);
-            //pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -62,83 +60,66 @@ namespace DeepSight.GH.Components
             timer.Start();
             var debug = new List<string>();
 
-
             object m_grid = null;
-            Grid temp_grid = null;
+            DA.GetData("Grid", ref m_grid);
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null;
 
-            DA.GetData(0, ref m_grid);
-            
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
             else
                 return;
-           
-            var xform = temp_grid.Transform.ToRhinoTransform();
 
-            debug.Add(string.Format("Wrangled grid: {0}s", timer.ElapsedMilliseconds / 1000.0));
-
-            //Box bb = Box.Empty;
-            //DA.GetData("Bounds", ref bb);
-
-            //var points = new List<GH_Point>();
-            //var values = new List<float>();
-
-            var active_values = temp_grid.GetActiveVoxels();
-
-            debug.Add(string.Format("Got active voxels: {0}s", timer.ElapsedMilliseconds / 1000.0));
-
-
-            var N = active_values.Length / 3;
-
-            int i, j, k;
-            /*
-            if (bb.IsValid && false)
-                for (int x = 0; x < N; x++)
-                {
-                    i = active_values[x * 3];
-                    j = active_values[x * 3 + 1];
-                    k = active_values[x * 3 + 2];
-
-                    var pt = new Point3d(i, j, k);
-
-                    pt.Transform(xform);
-                    if (bb.Contains(pt))
-                    {
-                        points.Add(new GH_Point(new Point3d(i, j, k)));
-                        values.Add(temp_grid[i, j, k]);
-                    }
-                }
-            else
-            {*/
-
-            
-                var values = temp_grid.GetValuesIndex(active_values).Select(x => new GH_Number(x));
+            if (temp_fgrid != null)
+            {
+                var xform = temp_fgrid.Transform.ToRhinoTransform();
+                var active = temp_fgrid.GetActiveVoxels();
+                var N = active.Length / 3;
+                int i, j, k;
+                var values = temp_fgrid.GetValuesIndex(active).Select(x => new GH_Number(x));
                 var tpoints = new GH_Point[N];
                 for (int x = 0; x < N; x++)
                 {
-                    i = active_values[x * 3];
-                    j = active_values[x * 3 + 1];
-                    k = active_values[x * 3 + 2];
+                    i = active[x * 3];
+                    j = active[x * 3 + 1];
+                    k = active[x * 3 + 2];
 
                     tpoints[x] = new GH_Point(new Point3d(i, j, k));
                 }
-            //points = tpoints.ToList();
-            //}
-
-            debug.Add(string.Format("Got active values: {0}s", timer.ElapsedMilliseconds / 1000.0));
-
-            DA.SetData("Transform", xform);
-
-            DA.SetDataList("Points", tpoints);
-            debug.Add(string.Format("Set output points: {0}s", timer.ElapsedMilliseconds / 1000.0));
-
-            DA.SetDataList("Values", values);
-            debug.Add(string.Format("Set output values: {0}s", timer.ElapsedMilliseconds / 1000.0));
-
-            DA.SetDataList("debug", debug);
-
+                DA.SetData("Transform", xform);
+                DA.SetDataList("Points", tpoints);
+                DA.SetDataList("Values", values);
+                DA.SetDataList("debug", debug);
+            }
+            else if (temp_vgrid != null)
+            {
+                var xform = temp_vgrid.Transform.ToRhinoTransform();
+                var active = temp_vgrid.GetActiveVoxels();
+                var N = active.Length / 3;
+                int i, j, k;
+                var values = temp_vgrid.GetValuesIndex(active).Select(x => new GH_Vector(new Vector3d(x.X,x.Y,x.Z)));
+                var tpoints = new GH_Point[N];
+                for (int x = 0; x < N; x++)
+                {
+                    i = active[x * 3];
+                    j = active[x * 3 + 1];
+                    k = active[x * 3 + 2];
+                    tpoints[x] = new GH_Point(new Point3d(i, j, k));
+                }
+                DA.SetData("Transform", xform);
+                DA.SetDataList("Points", tpoints);
+                DA.SetDataList("Values", values);
+                DA.SetDataList("debug", debug);
+            }
         }
 
         protected override System.Drawing.Bitmap Icon
