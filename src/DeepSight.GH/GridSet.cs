@@ -78,7 +78,7 @@ namespace DeepSight.GH.Components
                 Transform mat = (m_grid as GH_Grid).Value.Transform.ToRhinoTransform();
                 mat.TryGetInverse(out imat);
 
-                for (int i = 0; i < points.Count; ++i)
+                for (int i = 0; i < points.Count; i++)
                 {
                     points[i] = (GH_Point)points[i].Transform(imat);
                 }

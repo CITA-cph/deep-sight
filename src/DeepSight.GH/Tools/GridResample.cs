@@ -17,9 +17,11 @@
  */
 
 using System;
+using System.Linq;
 using Grasshopper.Kernel;
 
-using Grid = DeepSight.FloatGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -46,31 +48,72 @@ namespace DeepSight.GH.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            object m_grid = null;
-            Grid temp_grid = null;
+
             double m_size = 0.15;
 
-            DA.GetData(0, ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
+
+
+            DA.GetData("Size", ref m_size);
+
+            object m_grid = null;
+            DA.GetData("Grid", ref m_grid);
+
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null;
+
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
             else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
             else
                 return;
 
-            if (temp_grid == null)
+            if (temp_fgrid != null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Unsupported grid type ({m_grid})");
-                return;
+                var ngrid = temp_fgrid.DuplicateGrid();
+                var new_grid = Tools.Resample(ngrid, m_size);
+
+                new_grid.Name = temp_fgrid.Name;
+
+                DA.SetData(0, new GH_Grid(new_grid));
             }
+            else if (temp_vgrid != null)
+            {
+                int[] active = temp_vgrid.GetActiveVoxels();
+                Vec3<float>[] values = temp_vgrid.GetValuesIndex(active);
+                var x_grid = new FGrid("x_grid", 0f);
+                var y_grid = new FGrid("y_grid", 0f);
+                var z_grid = new FGrid("z_grid", 0f);
+                x_grid.SetValues(active, values.Select(x => (float)x.X).ToArray());
+                y_grid.SetValues(active, values.Select(x => (float)x.Y).ToArray());
+                z_grid.SetValues(active, values.Select(x => (float)x.Z).ToArray());
 
-            DA.GetData(1, ref m_size);
+                Tools.Resample(x_grid, m_size);
+                Tools.Resample(y_grid, m_size);
+                Tools.Resample(z_grid, m_size);
 
-            var ngrid = temp_grid.DuplicateGrid();
-            var new_grid = Tools.Resample(ngrid, m_size);
-            new_grid.Name = temp_grid.Name;
+                VGrid new_grid = temp_vgrid.DuplicateGrid();
 
-            DA.SetData(0, new GH_Grid(new_grid));
+                float[] x_values = x_grid.GetValuesIndex(active).Cast<float>().ToArray();
+                float[] y_values = y_grid.GetValuesIndex(active).Cast<float>().ToArray();
+                float[] z_values = z_grid.GetValuesIndex(active).Cast<float>().ToArray();
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = new Vec3<float>(x_values[i], y_values[i], z_values[i]);
+                }
+
+                new_grid.SetValues(active, values);
+
+                DA.SetData(0, new GH_Grid(new_grid));
+            }
         }
 
         protected override System.Drawing.Bitmap Icon

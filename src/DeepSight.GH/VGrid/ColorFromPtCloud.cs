@@ -126,7 +126,7 @@ public class Cmpt_ColorFromPtCloud : GH_Component
 
                 for(int j=0; j<n; j++)
                 {
-                    weights[j] = (float)pc.PointAt(index[i][j]).DistanceTo(pts[i]);
+                    weights[j] = 1/(float)pc.PointAt(index[i][j]).DistanceTo(pts[i]);
                     System.Drawing.Color c = colors[index[i][j]];
                     local_values[j] = new Vec3<float>(c.R,c.G,c.B);
                 }

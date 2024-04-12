@@ -19,7 +19,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
@@ -59,6 +60,23 @@ namespace DeepSight.GH.Components
 
             List<System.Drawing.Color> col = new List<System.Drawing.Color>();
             DA.GetDataList(1, col);
+            if(col.Count != pts.Count)
+            {
+                if(col.Count <= 0 || col[0] == null)
+                {
+                    Color monochrome = Color.FromArgb(1);
+                    for (int i = 0; i < pts.Count; i++)
+                    {
+                        col.Add(monochrome);
+                    }
+                } else
+                {
+                    while(col.Count < pts.Count)
+                    {
+                        col.Add(col.Last());
+                    }
+                }
+            }
 
             PointCloud pc = new PointCloud();
             pc.AddRange(pts,col);
