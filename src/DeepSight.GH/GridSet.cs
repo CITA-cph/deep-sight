@@ -121,9 +121,11 @@ namespace DeepSight.GH.Components
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input values to numbers.");
                     return;
                 }
-                temp_fgrid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
+                FGrid new_fgrid = new FGrid();
+                new_fgrid.Transform = temp_fgrid.Transform;
+                new_fgrid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
 
-                DA.SetData("Grid", new GH_Grid(temp_fgrid));
+                DA.SetData("Grid", new GH_Grid(new_fgrid));
                 DA.SetDataList("debug", debug);
             }
             else if (temp_vgrid != null)
@@ -143,9 +145,12 @@ namespace DeepSight.GH.Components
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input values to vectors.");
                     return;
                 }
-                temp_vgrid.SetValues(fpoints, values.Select(x => new Vec3<float>((float)(x.Value.X), (float)(x.Value.Y), (float)(x.Value.Z))).ToArray());
 
-                DA.SetData("Grid", new GH_Grid(temp_vgrid));
+                VGrid new_vgrid = new VGrid();
+                new_vgrid.Transform = temp_vgrid.Transform;
+                new_vgrid.SetValues(fpoints, values.Select(x => new Vec3<float>((float)(x.Value.X), (float)(x.Value.Y), (float)(x.Value.Z))).ToArray());
+
+                DA.SetData("Grid", new GH_Grid(new_vgrid));
                 DA.SetDataList("debug", debug);
             }
             else return;
