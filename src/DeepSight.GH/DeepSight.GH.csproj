@@ -103,7 +103,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="VGrid\ColorFromPtCloud.cs" />
-    <Compile Include="VGrid\WarpSrf.cs" />
     <Compile Include="VGrid\GridMath.cs" />
     <Compile Include="VGrid\ConstructVGrid.cs" />
     <Compile Include="VGrid\DeconstructVGrid.cs" />

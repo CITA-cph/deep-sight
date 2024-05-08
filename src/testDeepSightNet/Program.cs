@@ -231,7 +231,7 @@ namespace testDeepSightNet
 
             var infolog = DeepSightCommon.InfoLog.Read(@"C:\Users\tsvi\Det Kongelige Akademi\ERC_TIMBER_TRACK - General\04_RESOURCES\Data\Microtec\20220301.142735.DK.feb.log01_char\infolog@20220301.142735.DK.feb.log01_char.tiff");
             return;
-            var grid = new FloatGrid();
+            var grid = new DeepSight.FloatGrid();
             grid[0, 0, 0] = 1.0f;
             grid[0, 0, 1] = 1.0f;
 
@@ -249,7 +249,7 @@ namespace testDeepSightNet
             Console.WriteLine("TestGridTypes");
             Console.WriteLine();
 
-            var fgrid = new FloatGrid();
+            var fgrid = new DeepSight.FloatGrid();
             fgrid[0,0,0] = 1.0f;
 
             var igrid = new Int32Grid();
@@ -349,16 +349,16 @@ namespace testDeepSightNet
         static void Main(string[] args)
         {
             LoadSettings("test.ini");
-            TestRender();
+            //TestRender();
 
-            //TestBasic();
-            //TestMesh();
+            TestBasic();
+            TestMesh();
 
 
-            //TestCSG();
-            //TestPoints();
-            //TestFile();
-            //TestGridTypes();
+            TestCSG();
+            TestPoints();
+            TestFile();
+            TestGridTypes();
 
 
             Console.Write("Press any key to exit.");

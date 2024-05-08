@@ -48,11 +48,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin</OutDir>
+    <OutDir>$(Platform)\$(Configuration)\bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin</OutDir>
+    <OutDir>$(Platform)\$(Configuration)\bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgUseStatic>false</VcpkgUseStatic>
@@ -68,22 +68,26 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\lz4\include;C:\lib\cpp\tbb\include;C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\git\vcpkg\installed\x64-windows-static\include;C:\git\vcpkg\installed\x64-windows-static\include\eigen3;</AdditionalIncludeDirectories>
       <AdditionalOptions>-W4 -wd4251 -wd4146 -wd4127 -wd4244 -wd4275 /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <Version>$(DEEPSIGHT_VERSION)</Version>
-      <AdditionalLibraryDirectories>C:\lib\cpp\zlib\lib\debug;C:\lib\cpp\tbb\lib\debug;C:\lib\cpp\openvdb-11.0\lib\debug;C:\lib\cpp\lz4\lib\debug;C:\lib\cpp\blosc\lib\debug;C:\lib\cpp\tiff\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openvdb.lib;tiffd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\git\vcpkg\installed\x64-windows-static\lib\debug;C:\git\openvdb\build\openvdb\openvdb\Debug;C:\lib\cpp\lz4\lib;C:\lib\cpp\tiff\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Imath-3_1.lib;libblosc.lib;libopenvdb.lib;tbb12.lib;lz4d.lib; zstd.lib;tiff.lib;lzma.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
       </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) "$(SolutionDir)bin\$(ProjectName).dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -95,10 +99,11 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\lib\cpp\blosc\include;C:\lib\cpp\lz4\include;C:\lib\cpp\tbb\include;C:\lib\cpp\openvdb-11.0\include;C:\lib\cpp\eigen-3.4.0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\git\vcpkg\installed\x64-windows-static\include;C:\git\vcpkg\installed\x64-windows-static\include\eigen3;</AdditionalIncludeDirectories>
       <AdditionalOptions>-W4 -wd4251 -wd4146 -wd4127 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,13 +112,16 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <Version>"$(DEEPSIGHT_VERSION)"</Version>
-      <AdditionalLibraryDirectories>C:\lib\cpp\zlib\lib;C:\lib\cpp\tbb\lib;C:\lib\cpp\openvdb-11.0\lib\debug;C:\lib\cpp\lz4\lib;C:\lib\cpp\blosc\lib;C:\lib\cpp\tiff\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openvdb.lib;tiff.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\git\vcpkg\installed\x64-windows-static\lib;C:\git\openvdb\build\openvdb\openvdb\Release;C:\lib\cpp\lz4\lib;C:\lib\cpp\tiff\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Imath-3_1.lib;libblosc.lib;libopenvdb.lib;tbb12.lib;lz4.lib;zstd.lib;zlib.lib;tiff.lib;lzma.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
       </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) "$(SolutionDir)bin\$(ProjectName).dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CombineAPI.h" />

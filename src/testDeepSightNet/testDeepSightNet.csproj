@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{601372DC-E2B0-41A2-B311-B42E8E952002}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>testRawLamNet</RootNamespace>
-    <AssemblyName>testRawLamNet</AssemblyName>
+    <RootNamespace>testDeepSightNet</RootNamespace>
+    <AssemblyName>testDeepSightNet</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

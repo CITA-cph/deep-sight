@@ -25,7 +25,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -54,14 +54,18 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_WINDOWS;%(PreprocessorDefinitions);PYTHON_VERSION=38</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OPENVDB_OPENEXR_STATICLIB;OPENVDB_STATICLIB;_USE_MATH_DEFINES;NOMINMAX;WIN32;_DEBUG;_CONSOLE;IMATH_HALF_NO_LOOKUP_TABLE;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(pythonpath)\lib\site-packages\pybind11\include;$(pythonpath)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\git\vcpkg\installed\x64-windows-static\include;C:\git\vcpkg\installed\x64-windows-static\include\eigen3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/wd4146 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(pythonpath)\libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\git\vcpkg\installed\x64-windows-static\debug\lib; C:\git\openvdb\build\openvdb\openvdb\Debug;C:\lib\cpp\lz4\lib\debug;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Imath-3_1.lib;libblosc.lib;libopenvdb.lib;tbb12.lib;lz4d.lib; zstd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -70,16 +74,20 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_WINDOWS;%(PreprocessorDefinitions);PYTHON_VERSION=38</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OPENVDB_OPENEXR_STATICLIB;OPENVDB_STATICLIB;_USE_MATH_DEFINES;NOMINMAX;WIN32;NDEBUG;IMATH_HALF_NO_LOOKUP_TABLE;_CONSOLE;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(pythonpath)\lib\site-packages\pybind11\include;$(pythonpath)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\git\vcpkg\installed\x64-windows-static\include;C:\git\vcpkg\installed\x64-windows-static\include\eigen3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/wd4146 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(pythonpath)\libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\git\vcpkg\installed\x64-windows-static\lib;C:\git\openvdb\build\openvdb\openvdb\Release;C:\lib\cpp\lz4\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Imath-3_1.lib;libblosc.lib;libopenvdb.lib;tbb12.lib;lz4.lib;zstd.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
