@@ -16,38 +16,36 @@
  * 
  */
 
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Geometry;
+using Rhino;
+using Rhino.DocObjects;
+using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using Grasshopper.Kernel;
-using Rhino.Geometry;
 
 namespace DeepSight.GH.Components
 {
 
-    public class Cmpt_PointCloudCreate : GH_Component
+    public class Cmpt_GetPointCloud: GH_Component
     {
-        public Cmpt_PointCloudCreate()
-          : base("PointCloudCreate", "PtClNew",
-              "Create point cloud with optional colors.",
+        public Cmpt_GetPointCloud()
+          : base("GetPointCloud", "PtClGet",
+              "Get point cloud(s) from document",
               DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            //pManager.AddGenericParameter("PointCloud", "PC", "Base point cloud to add to (optional)", GH_ParamAccess.item);
-            pManager.AddPointParameter("Points", "P", "Points to add to cloud.", GH_ParamAccess.list);
-            pManager.AddColourParameter("Colors", "C", "Colors for points (optional).", GH_ParamAccess.list);
-            pManager[1].Optional = true;
-
+            pManager.AddBooleanParameter("Get", "G", "Get from document", GH_ParamAccess.item, true);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("PointCloud", "PC", "PointCloud", GH_ParamAccess.item);
+            pManager.AddGenericParameter("PointClouds", "PC", "PointCloud", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -55,33 +53,23 @@ namespace DeepSight.GH.Components
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            List<Point3d> pts = new List<Point3d>();
-            DA.GetDataList(0, pts);
+            Boolean get = true;
+            DA.GetData("Get", ref get);
 
-            List<System.Drawing.Color> col = new List<System.Drawing.Color>();
-            DA.GetDataList(1, col);
-            if(col.Count != pts.Count)
+            List<Rhino.Geometry.PointCloud> clouds = new List<Rhino.Geometry.PointCloud>();
+            if (get)
             {
-                if(col.Count <= 0 || col[0] == null)
+                
+                foreach(RhinoObject obj in RhinoDoc.ActiveDoc.Objects)
                 {
-                    Color monochrome = Color.FromArgb(1);
-                    for (int i = 0; i < pts.Count; i++)
+                    if(obj is Rhino.DocObjects.PointCloudObject)
                     {
-                        col.Add(monochrome);
-                    }
-                } else
-                {
-                    while(col.Count < pts.Count)
-                    {
-                        col.Add(col.Last());
+                        clouds.Add(obj.Geometry as Rhino.Geometry.PointCloud);
                     }
                 }
             }
 
-            PointCloud pc = new PointCloud();
-            pc.AddRange(pts,col);
-
-            DA.SetData(0, pc);
+            DA.SetDataList("PointClouds", clouds);
 
         }
 
@@ -95,7 +83,7 @@ namespace DeepSight.GH.Components
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("5484E40A-D1CF-4283-8BAA-C3A5068938CB"); }
+            get { return new Guid("59A8A05A-2DC9-44D5-BD9A-A774FF1CF1F9"); }
         }
     }
 }

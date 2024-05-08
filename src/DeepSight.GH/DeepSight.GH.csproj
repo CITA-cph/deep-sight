@@ -71,16 +71,20 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="CreateConvert\GridFromPointCloud.cs" />
+    <Compile Include="CreateConvert\GetPointCloud.cs" />
     <Compile Include="CreateConvert\PointCloudNew.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
-    <Compile Include="Display\VGridDisplay.cs" />
+    <None Include="Display\VGridDisplay.cs" />
     <Compile Include="Display\GridSlice.cs" />
-    <Compile Include="Tools\GridDilate.cs" />
-    <Compile Include="Tools\VGridDilate.cs" />
-    <Compile Include="Tools\VGridFilter.cs" />
-    <Compile Include="VGridSample.cs" />
-    <Compile Include="VGridSet.cs" />
+    <Compile Include="Tools\GridMask.cs" />
+    <Compile Include="Tools\GridThreshold.cs" />
+    <Compile Include="Tools\GridMorphology.cs" />
+    <None Include="Tools\VGridMorphology.cs" />
+    <None Include="Tools\VGridFilter.cs" />
+    <None Include="VGridDisplace.cs" />
+    <None Include="VGridSample.cs" />
+    <None Include="VGridSet.cs" />
     <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Display\GridDisplay.cs" />
     <Compile Include="Tools\GridFilter.cs" />
@@ -103,13 +107,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="VGrid\ColorFromPtCloud.cs" />
-    <Compile Include="VGrid\GridMath.cs" />
+    <None Include="VGrid\VGridWarp.cs" />
+    <Compile Include="Tools\ScalarMath.cs" />
     <Compile Include="VGrid\ConstructVGrid.cs" />
     <Compile Include="VGrid\DeconstructVGrid.cs" />
-    <Compile Include="Weathering\GridExposure.cs" />
-    <Compile Include="Weathering\GridMaterial.cs" />
-    <Compile Include="Weathering\GridToolpath.cs" />
-    <Compile Include="Weathering\GridErode.cs" />
+    <None Include="Weathering\GridExposure.cs" />
+    <None Include="Weathering\GridMaterial.cs" />
+    <None Include="Weathering\GridToolpath.cs" />
+    <None Include="Weathering\GridErode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

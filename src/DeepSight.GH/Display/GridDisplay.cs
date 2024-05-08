@@ -37,7 +37,8 @@ using Rhino.Geometry;
 
 using DeepSight.RhinoCommon;
 
-using Grid = DeepSight.FloatGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
 
 namespace DeepSight.GH.Components
 {
@@ -53,13 +54,10 @@ namespace DeepSight.GH.Components
         }
 
         public bool m_refresh = false;
-
-
         public static float Alpha = 0.5f;
         public static float PointSize = 10;
         public static int MaxPoints = 10000000;
 
-        private Grid Grid = null;
         private PointCloud Cloud = null;
         Transform GridTransform;
         float[] Values;
@@ -85,9 +83,6 @@ namespace DeepSight.GH.Components
 
             pManager.AddBooleanParameter("Update", "U", "Update display with each change (can be slow)", GH_ParamAccess.item, false);
             pManager[3].Optional = true;
-
-            pManager.AddColourParameter("Color", "C", "Colour of display points.", GH_ParamAccess.item, Color.White);
-            pManager[4].Optional = true;
 
         }
 
@@ -117,81 +112,96 @@ namespace DeepSight.GH.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             Message = "";
-
-            object m_grid = null;
-            Grid temp_grid = null;
+           
             double m_threshold = 0.15;
             var steps = new List<int>();
             bool m_update = false;
+            DA.GetData("Update", ref m_update);
 
-            DA.GetData(3, ref m_update);
+            DA.GetData("Threshold", ref m_threshold);
+            if (!DA.GetDataList(2, steps))
+                steps = new List<int>() { 1, 1, 1 };
 
-            DA.GetData(0, ref m_grid);
-            if (m_grid is Grid)
-                temp_grid = m_grid as Grid;
-            else if (m_grid is GH_Grid)
-                temp_grid = (m_grid as GH_Grid).Value as Grid;
-            else
-                return;
+            for (int i = steps.Count; i <= 3; ++i)
+                steps.Add(steps[steps.Count - 1]);
 
-            if (temp_grid != Grid || m_update)
+            if (m_update)
             {
-                Grid = temp_grid;
                 Values = null;
                 Message = "Updating";
             }
 
-            DA.GetData(1, ref m_threshold);
-            if (!DA.GetDataList(2, steps))
-                steps = new List<int>() { 2, 2, 2 };
+            object m_grid = null;
+            DA.GetData("Grid", ref m_grid);
 
-            for (int i = steps.Count; i <= 3; ++i)
-                steps.Add(1);
+            FGrid temp_fgrid = null;
+            VGrid temp_vgrid = null;
 
-            Color color = Color.White;
-            DA.GetData("Color", ref color);
-
-            GridTransform = Grid.Transform.ToRhinoTransform();
-
-            if (Values == null)
-            {
-                Min = new int[] { 0, 0, 0 };
-                Max = new int[] { 0, 0, 0 };
-                //Grid.BoundingBox(out Min, out Max);
-                //Values = Grid.GetDenseGrid(Min, Max);
-            }
-
-            var size = new int[]{
-              Max[0] - Min[0] + 1,
-              Max[1] - Min[1] + 1,
-              Max[2] - Min[2] + 1};
-
+            if (m_grid is FGrid)
+                temp_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                temp_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
 
             Cloud = new PointCloud();
 
-            var active = Grid.GetActiveVoxels();
-
-            for (int i = 0; i < active.Length; i += 3)
+            if (temp_fgrid != null)
             {
-                if (Math.Abs(active[i]) % steps[0] != 0 || Math.Abs(active[i + 1]) % steps[1] != 0 || Math.Abs(active[i + 2]) % steps[2] != 0)
-                    continue;
-                var pt = new Point3d(active[i], active[i + 1], active[i + 2]);
-                var value = Grid[active[i], active[i + 1], active[i + 2]];
-                if (value < m_threshold) continue;
+                GridTransform = temp_fgrid.Transform.ToRhinoTransform();
 
-                value = Math.Max(0, Math.Min(1.0f, value));
+                var active = temp_fgrid.GetActiveVoxels();
 
-                //var grey = Math.Max(0, Math.Min(255, (int)(value * 255)));
-                //Cloud.Add(pt, System.Drawing.Color.FromArgb((int)(grey * Alpha), grey, grey, grey));
+                for (int i = 0; i < active.Length; i += 3)
+                {
+                    if (Math.Abs(active[i]) % steps[0] != 0 || Math.Abs(active[i + 1]) % steps[1] != 0 || Math.Abs(active[i + 2]) % steps[2] != 0)
+                        continue;
+                    var pt = new Point3d(active[i], active[i + 1], active[i + 2]);
+                    var value = temp_fgrid[active[i], active[i + 1], active[i + 2]];
+                    if (value < m_threshold) continue;
 
-                Cloud.Add(pt, Color.FromArgb(color.A, 
-                    (int)(color.R * value),
-                    (int)(color.G * value),
-                    (int)(color.B * value)
-                    ));
+                    value = Math.Max(0, Math.Min(1.0f, value));
+
+                    Cloud.Add(pt, Color.FromArgb(255,
+                        (int)(255 * value),
+                        (int)(255 * value),
+                        (int)(255 * value)
+                        ));
+                }
+
+                Cloud.Transform(GridTransform);
             }
+            else if(temp_vgrid != null)
+            {
+                GridTransform = temp_vgrid.Transform.ToRhinoTransform();
 
-            Cloud.Transform(GridTransform);
+                var active = temp_vgrid.GetActiveVoxels();
+
+                for (int i = 0; i < active.Length; i += 3)
+                {
+                    if (Math.Abs(active[i]) % steps[0] != 0 || Math.Abs(active[i + 1]) % steps[1] != 0 || Math.Abs(active[i + 2]) % steps[2] != 0)
+                        continue;
+                    var pt = new Point3d(active[i], active[i + 1], active[i + 2]);
+                    var value = temp_vgrid[active[i], active[i + 1], active[i + 2]];
+
+                    value.X = Math.Max(0f, Math.Min(1f, value.X));
+
+                    Cloud.Add(pt, Color.FromArgb(255,
+                        (int)(255 * value.X),
+                        (int)(255 * value.Y),
+                        (int)(255 * value.Z)
+                        ));
+                }
+
+                Cloud.Transform(GridTransform);
+            }
         }
 
         protected override System.Drawing.Bitmap Icon

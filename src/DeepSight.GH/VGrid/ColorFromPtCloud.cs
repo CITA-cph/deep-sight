@@ -29,12 +29,15 @@ using DeepSight.RhinoCommon;
 using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel.Types;
+using Eto.Drawing;
+using System.Data.SqlTypes;
 
 namespace DeepSight.GH.Components
 {
 
 public class Cmpt_ColorFromPtCloud : GH_Component
     {
+
         public Cmpt_ColorFromPtCloud()
           : base("PtCloudColor", "PtClColor",
               "Color voxels by nearest point in a cloud.",
@@ -44,8 +47,10 @@ public class Cmpt_ColorFromPtCloud : GH_Component
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "VGrid to be assigned colors.", GH_ParamAccess.item);
-            pManager.AddGenericParameter("PointCloud", "P", "Point cloud with colors.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "VGrid to be assigned colors", GH_ParamAccess.item);
+            pManager.AddGenericParameter("PointCloud", "P", "Point cloud with colors", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Number", "N", "Number", GH_ParamAccess.item, 1);
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -63,10 +68,15 @@ public class Cmpt_ColorFromPtCloud : GH_Component
             PointCloud pc = null;
             DA.GetData("PointCloud", ref pc);
             if (pc == null) return;
+            System.Drawing.Color[] colors = new System.Drawing.Color[pc.Count()];
             if (!pc.ContainsColors)
             {
+                colors = Enumerable.Repeat(new System.Drawing.Color(), colors.Length).ToArray();
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Point cloud does not contain colors.");
                 return;
+            } else
+            {
+                colors = pc.GetColors();
             }
 
             object m_grid = null;
@@ -80,8 +90,11 @@ public class Cmpt_ColorFromPtCloud : GH_Component
             else
                 return;
 
+            int n = 1;
+            DA.GetData("Number", ref n);
+
+
             int[] active = temp_grid.GetActiveVoxels();
-            System.Drawing.Color[] colors = pc.GetColors();
             Vec3<float>[] values = temp_grid.GetValuesIndex(active);
             debug.Add(string.Format("{0} : Finished getting colors.", stopwatch.ElapsedMilliseconds));
 
@@ -93,20 +106,49 @@ public class Cmpt_ColorFromPtCloud : GH_Component
             //    i += 3;
             //});
 
+            RTree rt = RTree.CreatePointCloudTree(pc);
+            if(rt == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Rtree was null");
+                return;
+            }
+            List<Point3d> pts = new List<Point3d>();
             for(int i=0; i<active.Length; i+=3)
             {
-                int index = pc.ClosestPoint(new Point3d(active[i], active[i + 1], active[i + 2]));
-                System.Drawing.Color c = colors[index];
-                values[i / 3] = new Vec3<float>(c.R, c.G, c.B);
+                pts.Add(new Point3d(active[i], active[i + 1], active[i + 2]));
+            }
+            int[][] index = RTree.PointCloudKNeighbors(pc, pts, n).ToArray();
+
+            for(int i=0; i<index.Length; i++)
+            {
+                float[] weights = new float[n];
+                Vec3<float>[] local_values = new Vec3<float>[n];
+
+                for(int j=0; j<n; j++)
+                {
+                    weights[j] = 1/(float)pc.PointAt(index[i][j]).DistanceTo(pts[i]);
+                    System.Drawing.Color c = colors[index[i][j]];
+                    local_values[j] = new Vec3<float>(c.R,c.G,c.B);
+                }
+                // normalize:
+                float sum = weights.Sum();
+                weights = weights.Select(x => x/sum).ToArray();
+                Vec3<float> newvalue = new Vec3<float>(0,0,0);
+                for (int j=0; j<n; j++)
+                {
+                    //weights[j] = 1 / n;
+                    newvalue.X += weights[j] * local_values[j].X;
+                    newvalue.Y += weights[j] * local_values[j].Y;
+                    newvalue.Z += weights[j] * local_values[j].Z;
+                }
+                values[i] = newvalue;
             }
 
             debug.Add(string.Format("{0} : Computed values.", stopwatch.ElapsedMilliseconds));
-
-
+            
             VGrid new_grid = temp_grid.DuplicateGrid();
             new_grid.SetValues(active, values);
             debug.Add(string.Format("{0} : Set values.", stopwatch.ElapsedMilliseconds));
-
 
             DA.SetDataList(0, debug);
             DA.SetData("Grid", new GH_Grid(new_grid));

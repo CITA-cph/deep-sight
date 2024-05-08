@@ -18,6 +18,7 @@
 
 using System;
 using System.Linq;
+using Eto.Forms;
 using Grasshopper.Kernel;
 
 using FGrid = DeepSight.FloatGrid;
@@ -26,11 +27,11 @@ using VGrid = DeepSight.Vec3fGrid;
 namespace DeepSight.GH.Components
 {
 
-    public class Cmpt_GridResample : GH_Component
+    public class Cmpt_GridMask: GH_Component
     {
-        public Cmpt_GridResample()
-          : base("GridResample", "GRes",
-              "Resample a grid to a new cell size.",
+        public Cmpt_GridMask()
+          : base("GridMask", "GMask",
+              "Mask a grid with the active values of another.",
               DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
@@ -38,29 +39,45 @@ namespace DeepSight.GH.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "Volume grid.", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Size", "S", "New cell size.", GH_ParamAccess.item, 5);
+            pManager.AddGenericParameter("Mask", "M", "Match active states to this grid.", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid", "G", "Resampled grid.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid", "G", "Resulting grid.", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
-            double m_size = 0.15;
-
-
-
-            DA.GetData("Size", ref m_size);
-
             object m_grid = null;
+            FGrid temp_fgrid = null, mask_fgrid = null;
+            VGrid temp_vgrid = null, mask_vgrid = null;
+            //Grid temp_grid, mask_grid = null;
+
+            DA.GetData("Mask", ref m_grid);
+            if (m_grid is FGrid)
+                mask_fgrid = m_grid as FGrid;
+            else if (m_grid is VGrid)
+                mask_vgrid = m_grid as VGrid;
+            else if (m_grid is GH_Grid)
+                if ((m_grid as GH_Grid).Value is FGrid)
+                    mask_fgrid = (m_grid as GH_Grid).Value as FGrid;
+                else if ((m_grid as GH_Grid).Value is VGrid)
+                    mask_vgrid = (m_grid as GH_Grid).Value as VGrid;
+                else
+                    return;
+            else
+                return;
+
+            int[] active = null;
+            if (mask_fgrid != null) {
+                active = mask_fgrid.GetActiveVoxels();
+            } else if (mask_vgrid != null)
+            {
+                active = mask_vgrid.GetActiveVoxels();
+            }
+
             DA.GetData("Grid", ref m_grid);
-
-            FGrid temp_fgrid = null;
-            VGrid temp_vgrid = null;
-
             if (m_grid is FGrid)
                 temp_fgrid = m_grid as FGrid;
             else if (m_grid is VGrid)
@@ -77,42 +94,25 @@ namespace DeepSight.GH.Components
 
             if (temp_fgrid != null)
             {
-                var ngrid = temp_fgrid.DuplicateGrid();
-                var new_grid = Tools.Resample(ngrid, m_size);
+                var new_grid = new FGrid("new_grid", 0f);
+                new_grid.Transform = temp_fgrid.Transform;
 
-                new_grid.Name = temp_fgrid.Name;
-
-                DA.SetData(0, new GH_Grid(new_grid));
-            }
-            else if (temp_vgrid != null)
-            {
-                int[] active = temp_vgrid.GetActiveVoxels();
-                Vec3<float>[] values = temp_vgrid.GetValuesIndex(active);
-                var x_grid = new FGrid("x_grid", 0f);
-                var y_grid = new FGrid("y_grid", 0f);
-                var z_grid = new FGrid("z_grid", 0f);
-                x_grid.SetValues(active, values.Select(x => (float)x.X).ToArray());
-                y_grid.SetValues(active, values.Select(x => (float)x.Y).ToArray());
-                z_grid.SetValues(active, values.Select(x => (float)x.Z).ToArray());
-
-                Tools.Resample(x_grid, m_size);
-                Tools.Resample(y_grid, m_size);
-                Tools.Resample(z_grid, m_size);
-
-                VGrid new_grid = temp_vgrid.DuplicateGrid();
-
-                float[] x_values = x_grid.GetValuesIndex(active).Cast<float>().ToArray();
-                float[] y_values = y_grid.GetValuesIndex(active).Cast<float>().ToArray();
-                float[] z_values = z_grid.GetValuesIndex(active).Cast<float>().ToArray();
-
-                for (int i = 0; i < values.Length; i++)
-                {
-                    values[i] = new Vec3<float>(x_values[i], y_values[i], z_values[i]);
-                }
-
+                float[] values = temp_fgrid.GetValuesIndex(active);
                 new_grid.SetValues(active, values);
 
                 DA.SetData(0, new GH_Grid(new_grid));
+
+            }
+            else if (temp_vgrid != null)
+            {
+                var new_grid = new VGrid("new_grid", new float[3] { 0, 0, 0 });
+                new_grid.Transform = temp_vgrid.Transform;
+
+                Vec3<float>[] values = temp_vgrid.GetValuesIndex(active);
+                new_grid.SetValues(active, values);
+
+                DA.SetData(0, new GH_Grid(new_grid));
+
             }
         }
 
@@ -120,13 +120,13 @@ namespace DeepSight.GH.Components
         {
             get
             {
-                return Properties.Resources.GridResample_01;
+                return Properties.Resources.GridFilter_01;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("0bf9ba62-b6af-4667-aed1-cfd8179eb911"); }
+            get { return new Guid("2406FA31-D1C6-4F73-8669-62525F13E43C"); }
         }
     }
 }

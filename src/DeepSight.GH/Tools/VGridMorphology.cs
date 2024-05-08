@@ -29,14 +29,6 @@ using Grid = DeepSight.Vec3fGrid;
 namespace DeepSight.GH.Components
 {
 
-    public enum MorphOpType
-    {
-        DILATE = 0,
-        ERODE = 1,
-        OPEN = 2,
-        CLOSE = 3
-    }
-
     public class Cmpt_VGridMorphology : GH_Component
     {
         public Cmpt_VGridMorphology()
@@ -77,7 +69,7 @@ namespace DeepSight.GH.Components
         {
             pManager.AddGenericParameter("Grid", "G", "Vector grid.", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Iterations", "I", "Number of filter iterations.", GH_ParamAccess.item, 1);
-            pManager.AddIntegerParameter("Mode", "M", "Type of morphology operation to perform.", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Mode", "M", "Type of morphology operation to perform. 0=dilate, 1=erode, 2=open, 3=close, 4=proper open, 5=proper close, 6=automedian", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -132,6 +124,58 @@ namespace DeepSight.GH.Components
                         Tools.Erode(new_grid, 1);
                     }
                     break;
+                //case (int)(MorphOpType.POPEN):
+                //    for (int i = 0; i < iterations; i++)
+                //    {
+                //        Grid I = new_grid.DuplicateGrid();
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
+                //    }
+                //    break;
+                //case (int)(MorphOpType.PCLOSE):
+                //    for (int i = 0; i < iterations; i++)
+                //    {
+                //        Grid I = new_grid.DuplicateGrid();
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        new_grid = Tools.Combine(I, new_grid, CombineType.MAX);
+                //    }
+                //    break;
+                //case (int)(MorphOpType.AUTOMED):
+                //    for (int i = 0; i < iterations; i++)
+                //    {
+                //        Grid I = new_grid.DuplicateGrid();
+
+                //        Grid new_grid_2 = new_grid.DuplicateGrid();
+
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Erode(new_grid, 1);
+                //        Tools.Dilate(new_grid, 1);
+                //        new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
+
+                //        Tools.Dilate(new_grid_2, 1);
+                //        Tools.Erode(new_grid_2, 1);
+                //        Tools.Erode(new_grid_2, 1);
+                //        Tools.Dilate(new_grid_2, 1);
+                //        Tools.Dilate(new_grid_2, 1);
+                //        Tools.Erode(new_grid_2, 1);
+                //        new_grid_2 = Tools.Combine(I, new_grid_2, CombineType.MAX);
+
+                //        new_grid = Tools.Combine(new_grid, new_grid_2, CombineType.MIN);
+                //    }
+                //    break;
                 default: return;
             }
             debug.Add(string.Format("{0} : Completed morphology operation.", stopwatch.ElapsedMilliseconds));

@@ -40,6 +40,8 @@ namespace DeepSight.GH.Components
             pManager.AddGenericParameter("Mesh", "M", "Mesh to convert to grid.", GH_ParamAccess.item);
             pManager.AddNumberParameter("Isovalue", "I", "Isovalue for level-set.", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Voxel size", "S", "Size of voxels.", GH_ParamAccess.item, 1.0);
+            pManager.AddNumberParameter("Exterior Bandwidth", "EB", "Max positive distance from mesh.", GH_ParamAccess.item, 3.0);
+            pManager.AddNumberParameter("Interior Bandwidth", "IB", "Max negative distance from mesh.", GH_ParamAccess.item, 3.0);
             pManager.AddTextParameter("Name", "N", "Name of grid", GH_ParamAccess.item, "default");
 
         }
@@ -57,20 +59,23 @@ namespace DeepSight.GH.Components
             DA.GetData("Mesh", ref mesh);
             if (mesh == null) return;
 
-            double iso = 0.0, voxel_size = 5.0;
+            double iso = 0.0, voxel_size = 1.0;
             DA.GetData("Isovalue", ref iso);
             DA.GetData("Voxel size", ref voxel_size);
 
             string name = "default";
             DA.GetData("Name", ref name);
 
-
             Transform inv, xform = Transform.Scale(Point3d.Origin, voxel_size);
             xform.TryGetInverse(out inv);
 
             mesh.Transform(inv);
 
-            Grid grid = mesh.ToVolume(xform, (float)iso, 3.0f, 3.0f);
+            double EB = 3.0f, IB = 3.0f;
+            DA.GetData("Exterior Bandwidth", ref EB);
+            DA.GetData("Interior Bandwidth", ref IB);
+
+            Grid grid = mesh.ToVolume(xform, (float)iso, (float)EB, (float)IB);
             grid.Name = name;
             //grid.SdfToFog();
 

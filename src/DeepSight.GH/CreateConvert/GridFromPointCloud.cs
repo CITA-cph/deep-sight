@@ -21,12 +21,11 @@ using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System.Collections.Generic;
 
-using Grid = DeepSight.Vec3fGrid;
+using FGrid = DeepSight.FloatGrid;
+using VGrid = DeepSight.Vec3fGrid;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using Grasshopper.Kernel.Types;
-using System.Drawing;
+using Eto.Forms;
 
 namespace DeepSight.GH.Components
 {
@@ -34,8 +33,8 @@ namespace DeepSight.GH.Components
     {
         public Cmpt_GridFromPointCloud()
           : base("PointCloud2Grid", "PC2G",
-              "Convert a pointcloud to a VGrid with colors.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+              "Convert a pointcloud to a grid (with colors if present).",
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
 
@@ -64,7 +63,7 @@ namespace DeepSight.GH.Components
             DA.GetData("PointCloud", ref pc);
             if (pc == null) return;
 
-            double voxel_size = 5.0;
+            double voxel_size = 1.0;
             DA.GetData("Voxel size", ref voxel_size);
 
             string name = "default";
@@ -74,10 +73,6 @@ namespace DeepSight.GH.Components
             xform.TryGetInverse(out inv);
 
             pc.Transform(inv);
-
-            Grid grid = new Grid();
-            grid.Name = name;
-            grid.Transform = xform.ToFloatArray(true);
 
             Point3d[] points = pc.GetPoints();
             int[] fpoints = new int[points.Length * 3];
@@ -99,32 +94,36 @@ namespace DeepSight.GH.Components
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
 
-            Vec3<float>[] rgbvecs = new Vec3<float>[points.Length];
             if (pc.ContainsColors)
             {
+                VGrid grid = new VGrid();
+                grid.Name = name;
+                grid.Transform = xform.ToFloatArray(true);
+
                 System.Drawing.Color[] colors = pc.GetColors();
+                Vec3<float>[] values = new Vec3<float>[points.Length];
 
-                debug.Add(string.Format("{0} : Finished getting colors.", stopwatch.ElapsedMilliseconds));
-
-                for (int i = 0; i < rgbvecs.Length; i++)
+                for (int i = 0; i < values.Length; i++)
                 {
                     System.Drawing.Color c = colors[i];
-                    rgbvecs[i] = new Vec3<float>((float)c.R, (float)c.G, (float)c.B);
+                    values[i] = new Vec3<float>((float)c.R / 255, (float)c.G / 255, (float)c.B / 255);
                 }
+
+                grid.SetValues(fpoints, values);
+                DA.SetData("Grid", new GH_Grid(grid));
             } else
             {
-                rgbvecs = Enumerable.Repeat(new Vec3<float>(0f, 0f, 0f),points.Length).ToArray();
+                FGrid grid = new FGrid();
+                grid.Name = name;
+                grid.Transform = xform.ToFloatArray(true);
+
+                float[] values = Enumerable.Repeat(1f, points.Length).ToArray();
+
+                grid.SetValues(fpoints, values);
+                DA.SetData("Grid", new GH_Grid(grid));
+
             }
 
-            debug.Add(string.Format("{0} : Finished converting to vec3f.", stopwatch.ElapsedMilliseconds));
-
-            grid.SetValues(fpoints, rgbvecs);
-
-            debug.Add(string.Format("{0} : Finished setting grid.", stopwatch.ElapsedMilliseconds));
-
-            DA.SetData("Grid", new GH_Grid(grid));
-
-            debug.Add(string.Format("{0} : Set output values.", stopwatch.ElapsedMilliseconds));
             DA.SetDataList(0, debug);
         }
 
