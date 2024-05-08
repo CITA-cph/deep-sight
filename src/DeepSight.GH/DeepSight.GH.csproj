@@ -120,10 +120,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DeepSightCommon\DeepSightCommon.vcxproj">
-      <Project>{28f3b902-577b-49f6-9d86-6a012284efd1}</Project>
-      <Name>DeepSightCommon</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DeepSightRhino\DeepSightRhino.csproj">
       <Project>{8b62411c-ebce-40fc-a1e7-6b5c085b1582}</Project>
       <Name>DeepSightRhino</Name>
