@@ -1,6 +1,6 @@
 ﻿/*
- * RawLamb
- * Copyright 2022 Tom Svilans
+ * Deep Sight
+ * Copyright 2024 Tom Svilans
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,13 @@ namespace DeepSight.GH.Components
         public Cmpt_GetPointCloud()
           : base("GetPointCloud", "PtClGet",
               "Get point cloud(s) from document",
-              DeepSight.GH.Api.ComponentCategory, "Create")
+              DeepSight.GH.Api.ComponentCategory, "Misc")
         {
         }
+
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridNew_01;
+        public override Guid ComponentGuid => new Guid("59A8A05A-2DC9-44D5-BD9A-A774FF1CF1F9");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -71,19 +75,6 @@ namespace DeepSight.GH.Components
 
             DA.SetDataList("PointClouds", clouds);
 
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridNew_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("59A8A05A-2DC9-44D5-BD9A-A774FF1CF1F9"); }
         }
     }
 }

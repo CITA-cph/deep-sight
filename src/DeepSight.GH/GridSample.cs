@@ -85,7 +85,7 @@ namespace DeepSight.GH.Components
 
                 for (int i = 0; i < points.Count; ++i)
                 {
-                    points[i] = (GH_Point)points[i].Transform(imat);
+                    points[i] = (GH_Point)points[i].DuplicatePoint().Transform(imat);
                 }
             }
 
@@ -108,22 +108,14 @@ namespace DeepSight.GH.Components
 
             if (temp_fgrid != null)
             {
-                var values = temp_fgrid.GetValuesWorld(coords);
-
-                DA.SetDataList("Values", values.Select(x => new GH_Number(x)));
-
-                DA.SetDataList("debug", debug);
+                DA.SetDataList("Values", temp_fgrid.GetValuesWorld(coords).Select(x => new GH_Number(x)));
             } 
             else if (temp_vgrid != null)
             {
-                var values = temp_vgrid.GetValuesWorld(coords);
-
-                DA.SetDataList("Values", values.Select(x => new GH_Vector(new Rhino.Geometry.Vector3d(x.X,x.Y,x.Z))));
-
-                DA.SetDataList("debug", debug);
+                DA.SetDataList("Values", temp_vgrid.GetValuesWorld(coords).Select(x => new GH_Vector(new Rhino.Geometry.Vector3d(x.X,x.Y,x.Z))));
             }
-            else return;
 
+            DA.SetDataList("debug", debug);
         }
 
         protected override System.Drawing.Bitmap Icon

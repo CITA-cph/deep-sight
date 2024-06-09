@@ -38,6 +38,10 @@ namespace DeepSight.GH.Components
         {
         }
 
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridMesh_01;
+        public override Guid ComponentGuid => new Guid("441990E4-8F4B-4AEC-8DCA-E4DA6767B844");
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("PointCloud", "PC", "PointCloud to convert to grid.", GH_ParamAccess.item);
@@ -93,7 +97,6 @@ namespace DeepSight.GH.Components
 
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
-
             if (pc.ContainsColors)
             {
                 VGrid grid = new VGrid();
@@ -111,6 +114,7 @@ namespace DeepSight.GH.Components
 
                 grid.SetValues(fpoints, values);
                 DA.SetData("Grid", new GH_Grid(grid));
+
             } else
             {
                 FGrid grid = new FGrid();
@@ -121,23 +125,9 @@ namespace DeepSight.GH.Components
 
                 grid.SetValues(fpoints, values);
                 DA.SetData("Grid", new GH_Grid(grid));
-
             }
 
             DA.SetDataList(0, debug);
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridMesh_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("441990E4-8F4B-4AEC-8DCA-E4DA6767B844"); }
         }
     }
 }

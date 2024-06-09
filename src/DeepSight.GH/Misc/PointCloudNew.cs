@@ -32,9 +32,13 @@ namespace DeepSight.GH.Components
         public Cmpt_PointCloudCreate()
           : base("PointCloudCreate", "PtClNew",
               "Create point cloud with optional colors.",
-              DeepSight.GH.Api.ComponentCategory, "Create")
+              DeepSight.GH.Api.ComponentCategory, "Misc")
         {
         }
+
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridNew_01;
+        public override Guid ComponentGuid => new Guid("5484E40A-D1CF-4283-8BAA-C3A5068938CB");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -83,19 +87,6 @@ namespace DeepSight.GH.Components
 
             DA.SetData(0, pc);
 
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridNew_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("5484E40A-D1CF-4283-8BAA-C3A5068938CB"); }
         }
     }
 }
