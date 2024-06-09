@@ -38,7 +38,10 @@ public class Cmpt_ScalarMath : GH_Component
               DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
+
         public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridGoo_01;
+        public override Guid ComponentGuid => new Guid("26455EE1-8C81-4EDE-90DA-8D5061047BA3");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -94,19 +97,6 @@ public class Cmpt_ScalarMath : GH_Component
             DA.SetDataList(0, debug);
             DA.SetData("Grid", new GH_Grid(new_grid));
 
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridGoo_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("26455EE1-8C81-4EDE-90DA-8D5061047BA3"); }
         }
     }
 }

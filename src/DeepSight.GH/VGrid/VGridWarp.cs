@@ -43,6 +43,8 @@ public class Cmpt_WarpSrf : GH_Component
         {
         }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.VGridResample_01;
+        public override Guid ComponentGuid => new Guid("54D9A22F-3B2F-4AEE-AA5F-52035C7A4E3B");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -145,19 +147,6 @@ public class Cmpt_WarpSrf : GH_Component
             }
             
 
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.VGridResample_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("54D9A22F-3B2F-4AEE-AA5F-52035C7A4E3B"); }
         }
     }
 }

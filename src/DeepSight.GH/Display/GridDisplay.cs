@@ -63,6 +63,10 @@ namespace DeepSight.GH.Components
         float[] Values;
         int[] Min, Max;
 
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridDisplay_01;
+        public override Guid ComponentGuid => new Guid("a111ca6d-14f0-4257-8d76-967592ca7c3c");
+
         //Return a BoundingBox that contains all the geometry you are about to draw.
         public override BoundingBox ClippingBox
         {
@@ -203,19 +207,6 @@ namespace DeepSight.GH.Components
                 Cloud.Transform(GridTransform);
             }
         }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridDisplay_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("a111ca6d-14f0-4257-8d76-967592ca7c3c"); }
-        }
     }
 
     public class ButtonRefreshComponentAttributes : GH_ComponentAttributes
@@ -297,7 +288,5 @@ namespace DeepSight.GH.Components
 
             return base.RespondToMouseDown(sender, e);
         }
-
     }
-
 }

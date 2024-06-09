@@ -38,7 +38,7 @@ using Rhino.Geometry;
 using DeepSight.RhinoCommon;
 
 using Grid = DeepSight.Vec3fGrid;
-using System.Diagnostics.Eventing.Reader;
+//using System.Diagnostics.Eventing.Reader;
 
 namespace DeepSight.GH.Components
 {
@@ -48,17 +48,21 @@ namespace DeepSight.GH.Components
         public Cmpt_VGridDisplay()
           : base("VGridDisplay", "VGDis",
               "Visualize a vector grid as a pointcloud.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+              DeepSight.GH.Api.ComponentCategory, "Display")
         {
             //Attributes = new ButtonRefreshComponentAttributes(this);
         }
+
+        
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridDisplay_01;
+        public override Guid ComponentGuid => new Guid("C128E42A-31CA-45D0-A8C9-FB9BB080D7F6");
 
         public bool m_refresh = false;
 
 
         public static float Alpha = 0.5f;
         public static float PointSize = 10;
-        public static int MaxPoints = 10000000;
+        public static int MaxPoints = 1e7;
 
         private Grid Grid = null;
         private PointCloud Cloud = null;
@@ -189,19 +193,6 @@ namespace DeepSight.GH.Components
             }
 
             if(!gridspace) Cloud.Transform(GridTransform);
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridDisplay_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("C128E42A-31CA-45D0-A8C9-FB9BB080D7F6"); }
         }
     }
     

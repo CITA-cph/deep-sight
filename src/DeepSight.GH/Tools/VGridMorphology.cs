@@ -39,6 +39,8 @@ namespace DeepSight.GH.Components
         }
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.VGridResample_01;
+        public override Guid ComponentGuid => new Guid("E06ACEA1-ED84-48C8-BF7C-B99B2C4D71D3");
 
         //public int[] GetNeighborIndices(int[] coords)
         //{
@@ -185,19 +187,6 @@ namespace DeepSight.GH.Components
 
             DA.SetDataList(0, debug);
             DA.SetData(1, new GH_Grid(new_grid));
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.VGridResample_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("E06ACEA1-ED84-48C8-BF7C-B99B2C4D71D3"); }
         }
     }
 }

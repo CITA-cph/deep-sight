@@ -30,8 +30,9 @@ namespace DeepSight.GH.Components
               DeepSight.GH.Api.ComponentCategory, "IO")
         {
         }
-
-
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridLoad_01;
+        public override Guid ComponentGuid => new Guid("d18197ba-60f2-4a46-8479-ce6f5380918a");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -53,19 +54,6 @@ namespace DeepSight.GH.Components
                 var grids = GridIO.Read(m_path);
                 DA.SetDataList("Grid", grids.Select(x => new GH_Grid(x)));
             }
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridLoad_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("d18197ba-60f2-4a46-8479-ce6f5380918a"); }
         }
     }
 }

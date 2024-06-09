@@ -74,7 +74,6 @@ namespace DeepSight.GH.Components
             }
 
             DA.SetDataList("PointClouds", clouds);
-
         }
     }
 }

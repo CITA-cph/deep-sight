@@ -71,8 +71,8 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="CreateConvert\GridFromPointCloud.cs" />
-    <Compile Include="CreateConvert\GetPointCloud.cs" />
-    <Compile Include="CreateConvert\PointCloudNew.cs" />
+    <Compile Include="Misc\GetPointCloud.cs" />
+    <Compile Include="Misc\PointCloudNew.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
     <None Include="Display\VGridDisplay.cs" />
