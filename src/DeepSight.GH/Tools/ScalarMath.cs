@@ -39,7 +39,7 @@ public class Cmpt_ScalarMath : GH_Component
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.GridGoo_01;
         public override Guid ComponentGuid => new Guid("26455EE1-8C81-4EDE-90DA-8D5061047BA3");
 

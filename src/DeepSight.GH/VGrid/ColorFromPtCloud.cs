@@ -41,7 +41,7 @@ public class Cmpt_ColorFromPtCloud : GH_Component
         public Cmpt_ColorFromPtCloud()
           : base("PtCloudColor", "PtClColor",
               "Color voxels by nearest point in a cloud.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+              DeepSight.GH.Api.ComponentCategory, "Misc")
         {
         }
         public override GH_Exposure Exposure => GH_Exposure.secondary;

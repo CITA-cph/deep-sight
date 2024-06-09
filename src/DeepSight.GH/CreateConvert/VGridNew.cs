@@ -31,7 +31,7 @@ namespace DeepSight.GH.Components
         public Cmpt_VGridCreate()
           : base("VGridCreate", "VGNew",
               "Create empty vector grid.",
-              DeepSight.GH.Api.ComponentCategory, "VGrid")
+              DeepSight.GH.Api.ComponentCategory, "Create")
         {
         }
         public override GH_Exposure Exposure => GH_Exposure.primary;

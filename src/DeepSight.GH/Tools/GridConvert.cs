@@ -32,7 +32,7 @@ namespace DeepSight.GH.Components
               DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.GridResample_01;
         public override Guid ComponentGuid => new Guid("795d171e-6df9-4058-8d2e-a7c0ed8fd38e");
 
