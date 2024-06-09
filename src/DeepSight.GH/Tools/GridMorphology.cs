@@ -51,6 +51,11 @@ namespace DeepSight.GH.Components
               DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
+
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridFilter_01;
+        public override Guid ComponentGuid => new Guid("C0B6B053-1347-42DF-BF02-01AD7E0CEA77");
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid", "G", "Vector grid.", GH_ParamAccess.item);
@@ -99,27 +104,27 @@ namespace DeepSight.GH.Components
                 FGrid new_grid = temp_fgrid.DuplicateGrid();
                 switch (mode)
                 {
-                    case (int)(MorphOpType.DILATE):
+                    case (int)MorphOpType.DILATE:
                         Tools.Dilate(new_grid, iterations);
                         break;
-                    case (int)(MorphOpType.ERODE):
+                    case (int)MorphOpType.ERODE:
                         Tools.Erode(new_grid, iterations);
                         break;
-                    case (int)(MorphOpType.OPEN):
+                    case (int)MorphOpType.OPEN:
                         for (int i = 0; i < iterations; i++)
                         {
                             Tools.Erode(new_grid, 1);
                             Tools.Dilate(new_grid, 1);
                         }
                         break;
-                    case (int)(MorphOpType.CLOSE):
+                    case (int)MorphOpType.CLOSE:
                         for (int i = 0; i < iterations; i++)
                         {
                             Tools.Dilate(new_grid, 1);
                             Tools.Erode(new_grid, 1);
                         }
                         break;
-                    case (int)(MorphOpType.POPEN):
+                    case (int)MorphOpType.POPEN:
                         for (int i = 0; i < iterations; i++)
                         {
                             FGrid I = new_grid.DuplicateGrid();
@@ -132,7 +137,7 @@ namespace DeepSight.GH.Components
                             new_grid = Tools.Combine(I, new_grid, CombineType.MIN);
                         }
                         break;
-                    case (int)(MorphOpType.PCLOSE):
+                    case (int)MorphOpType.PCLOSE:
                         for (int i = 0; i < iterations; i++)
                         {
                             FGrid I = new_grid.DuplicateGrid();
@@ -145,7 +150,7 @@ namespace DeepSight.GH.Components
                             new_grid = Tools.Combine(I, new_grid, CombineType.MAX);
                         }
                         break;
-                    case (int)(MorphOpType.AUTOMED):
+                    case (int)MorphOpType.AUTOMED:
                         for (int i = 0; i < iterations; i++)
                         {
                             FGrid I = new_grid.DuplicateGrid();
@@ -183,29 +188,29 @@ namespace DeepSight.GH.Components
                 VGrid new_grid = temp_vgrid.DuplicateGrid();
                 switch (mode)
                 {
-                    case (int)(MorphOpType.DILATE):
+                    case (int)MorphOpType.DILATE:
                         Tools.Dilate(new_grid, iterations);
                         break;
-                    case (int)(MorphOpType.ERODE):
+                    case (int)MorphOpType.ERODE:
                         Tools.Erode(new_grid, iterations);
                         break;
-                    case (int)(MorphOpType.OPEN):
+                    case (int)MorphOpType.OPEN:
                         for (int i = 0; i < iterations; i++)
                         {
                             Tools.Erode(new_grid, 1);
                             Tools.Dilate(new_grid, 1);
                         }
                         break;
-                    case (int)(MorphOpType.CLOSE):
+                    case (int)MorphOpType.CLOSE:
                         for (int i = 0; i < iterations; i++)
                         {
                             Tools.Dilate(new_grid, 1);
                             Tools.Erode(new_grid, 1);
                         }
                         break;
-                    case (int)(MorphOpType.POPEN):
-                    case (int)(MorphOpType.PCLOSE):
-                    case (int)(MorphOpType.AUTOMED):
+                    case (int)MorphOpType.POPEN:
+                    case (int)MorphOpType.PCLOSE:
+                    case (int)MorphOpType.AUTOMED:
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "This operation is not currently supported on Vector Grids");
                         break;
                     default: return;
@@ -215,19 +220,6 @@ namespace DeepSight.GH.Components
                 DA.SetDataList("debug", debug);
                 DA.SetData("Grid", new GH_Grid(new_grid));
             }
-        }
-
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.GridFilter_01;
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("C0B6B053-1347-42DF-BF02-01AD7E0CEA77"); }
         }
     }
 }

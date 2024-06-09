@@ -38,6 +38,7 @@ public class Cmpt_ScalarMath : GH_Component
               DeepSight.GH.Api.ComponentCategory, "Tools")
         {
         }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {

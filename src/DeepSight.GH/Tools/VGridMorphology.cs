@@ -37,6 +37,9 @@ namespace DeepSight.GH.Components
               DeepSight.GH.Api.ComponentCategory, "VGrid")
         {
         }
+
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+
         //public int[] GetNeighborIndices(int[] coords)
         //{
         //    int[] nbrs = new int[27 * 3];

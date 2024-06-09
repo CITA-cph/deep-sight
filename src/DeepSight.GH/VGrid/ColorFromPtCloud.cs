@@ -44,6 +44,7 @@ public class Cmpt_ColorFromPtCloud : GH_Component
               DeepSight.GH.Api.ComponentCategory, "VGrid")
         {
         }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
