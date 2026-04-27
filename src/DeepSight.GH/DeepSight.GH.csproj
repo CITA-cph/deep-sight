@@ -97,9 +97,9 @@
     <Compile Include="CreateConvert\GridNew.cs" />
     <Compile Include="Tools\GridConvert.cs" />
     <Compile Include="Tools\GridResample.cs" />
-    <Compile Include="GridSample.cs" />
+    <Compile Include="Tools\GridSample.cs" />
     <Compile Include="IO\GridSave.cs" />
-    <Compile Include="GridSet.cs" />
+    <Compile Include="Tools\GridSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
