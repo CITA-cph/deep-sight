@@ -32,7 +32,7 @@ namespace DeepSight
         private static extern void FloatGrid_SetValues(IntPtr ptr, int num_coords, int[] coords, float[] values);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        private static extern long FloatGrid_GetActiveVoxels(IntPtr ptr, long capacity, int[] coords);
+        private static extern void FloatGrid_GetActiveVoxels(IntPtr ptr, int[] coords);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         private static extern void FloatGrid_SetActiveState(IntPtr ptr, int[] coord, int state);
@@ -50,21 +50,17 @@ namespace DeepSight
 
         public FloatGrid(IntPtr ptr)
         {
-            // Was a bare `Ptr = ptr;`. A null handle (which every native
-            // factory now returns on failure) produced an object that looked
-            // usable and crashed on first use.
-            Adopt(ptr, "FloatGrid");
+            Ptr = ptr;
         }
 
         public FloatGrid(string name="default", float background=0.0f)
         {
-            Adopt(GridBase_CreateFloat(background), "FloatGrid");
+            Ptr = GridBase_CreateFloat(background);
             Name = name;
         }
 
         public override GridApi Duplicate()
         {
-            ThrowIfDisposed();
             return new FloatGrid(GridApi.GridBase_Duplicate(Ptr));
         }
 
@@ -88,10 +84,6 @@ namespace DeepSight
 
         public override float[] GetValuesIndex(int[] coordinates)
         {
-            ThrowIfDisposed();
-            if (coordinates == null) throw new ArgumentNullException(nameof(coordinates));
-            if (coordinates.Length % 3 != 0)
-                throw new ArgumentException("Coordinates must be XYZ triplets (length divisible by 3).", nameof(coordinates));
             int N = coordinates.Length / 3;
             float[] values = new float[N];
 
@@ -101,10 +93,6 @@ namespace DeepSight
 
         public override float[] GetValuesWorld(double[] coordinates)
         {
-            ThrowIfDisposed();
-            if (coordinates == null) throw new ArgumentNullException(nameof(coordinates));
-            if (coordinates.Length % 3 != 0)
-                throw new ArgumentException("Coordinates must be XYZ triplets (length divisible by 3).", nameof(coordinates));
             int N = coordinates.Length / 3;
             float[] values = new float[N];
 
@@ -114,59 +102,18 @@ namespace DeepSight
 
         public override void SetValues(int[] coordinates, float[] values)
         {
-            ThrowIfDisposed();
-            if (coordinates == null) throw new ArgumentNullException(nameof(coordinates));
-            if (coordinates.Length % 3 != 0)
-                throw new ArgumentException("Coordinates must be XYZ triplets (length divisible by 3).", nameof(coordinates));
-            if (values == null) throw new ArgumentNullException(nameof(values));
-            if (values.Length != coordinates.Length / 3)
-                throw new ArgumentException(
-                    "Expected one value per coordinate triplet; the native side reads that many "
-                    + "regardless of the array's actual length.", nameof(values));
             FloatGrid_SetValues(Ptr, coordinates.Length / 3, coordinates, values);
         }
 
-        /// <summary>
-        /// Index-space coordinates of every active voxel, as XYZ triplets.
-        /// </summary>
-        /// <remarks>
-        /// Rewritten to use a size-then-fill handshake. The previous version
-        /// allocated a buffer from GridBase_GetActiveVoxelCount() and then
-        /// called a native function that took no capacity argument and wrote
-        /// 3 * activeVoxelCount ints into it on trust. Those two numbers did
-        /// not have to agree: activeVoxelCount() counts voxels inside active
-        /// tiles, which the native enumeration loop skipped, so the tail of the
-        /// array was left uninitialised (and the reverse ordering of the two
-        /// calls, or a grid mutated in between, overran it). The native side
-        /// now expands tiles and refuses to write past the capacity it is told.
-        /// </remarks>
         public override int[] GetActiveVoxels()
         {
-            ThrowIfDisposed();
-
-            long count = FloatGrid_GetActiveVoxels(Ptr, 0, null);
-            if (count < 0) NativeError.ThrowIfFailed("GetActiveVoxels");
-            if (count == 0) return new int[0];
-
-            long elements = count * 3;
-            if (elements > int.MaxValue)
-                throw new InvalidOperationException(
-                    $"Grid has {count} active voxels, too many to return in a single array.");
-
-            int[] coords = new int[elements];
-
-            long written = FloatGrid_GetActiveVoxels(Ptr, count, coords);
-            if (written < 0) NativeError.ThrowIfFailed("GetActiveVoxels");
-            if (written > count)
-                throw new InvalidOperationException("Grid was modified while reading active voxels.");
-
+            int[] coords = new int[GridBase_GetActiveVoxelCount(Ptr) * 3];
+            FloatGrid_GetActiveVoxels(Ptr, coords);
             return coords;
         }
 
         public override float[] GetNeighbours(int[] coordinates)
         {
-            ThrowIfDisposed();
-            RequireXyz(coordinates, nameof(coordinates));
             var values = new float[27];
             FloatGrid_GetNeighbours(Ptr, coordinates, values);
             return values;
@@ -174,20 +121,11 @@ namespace DeepSight
 
         public override void SetActiveState(int[] coordinates, bool on)
         {
-            ThrowIfDisposed();
-            RequireXyz(coordinates, nameof(coordinates));
             FloatGrid_SetActiveState(Ptr, coordinates, on ? 1 : 0);
         }
 
         public override void SetActiveStates(int[] coordinates, bool[] on)
         {
-            ThrowIfDisposed();
-            if (coordinates == null) throw new ArgumentNullException(nameof(coordinates));
-            if (coordinates.Length % 3 != 0)
-                throw new ArgumentException("Coordinates must be XYZ triplets (length divisible by 3).", nameof(coordinates));
-            if (on == null) throw new ArgumentNullException(nameof(on));
-            if (on.Length != coordinates.Length / 3)
-                throw new ArgumentException("Expected one state per coordinate triplet.", nameof(on));
             FloatGrid_SetActiveStates(Ptr, coordinates.Length / 3, coordinates, on.Select(x => (x ? 1 : 0)).ToArray());
         }
 

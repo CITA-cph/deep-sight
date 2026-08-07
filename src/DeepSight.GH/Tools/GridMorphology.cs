@@ -85,19 +85,27 @@ namespace DeepSight.GH.Components
             FGrid temp_fgrid = null;
             VGrid temp_vgrid = null;
 
-            if (m_grid is FGrid)
-                temp_fgrid = m_grid as FGrid;
-            else if (m_grid is VGrid)
-                temp_vgrid = m_grid as VGrid;
-            else if (m_grid is GH_Grid)
-                if ((m_grid as GH_Grid).Value is FGrid)
-                    temp_fgrid = (m_grid as GH_Grid).Value as FGrid;
-                else if ((m_grid as GH_Grid).Value is VGrid)
-                    temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
-                else
-                    return;
-            else
+            if (!DA.GetData("Grid", ref m_grid)) return;
+
+            // Unwrap to the concrete grid type. Grasshopper passes a GH_Grid,
+            // so that branch is the one that normally fires; the bare FGrid/VGrid
+            // cases are for direct scripting.
+            GridApi baseGrid = GH_Grid.ParseStructure(m_grid);
+            if (baseGrid == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is not a grid.");
                 return;
+            }
+
+            temp_fgrid = baseGrid as FGrid;
+            temp_vgrid = baseGrid as VGrid;
+
+            if (temp_fgrid == null && temp_vgrid == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "GridMorph works on float and vector grids only.");
+                return;
+            }
 
             if (temp_fgrid != null)
             {

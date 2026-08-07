@@ -71,21 +71,23 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="CreateConvert\GridFromPointCloud.cs" />
+    <Compile Include="Display\GridBoxes.cs" />
+    <Compile Include="Display\GridSlice.cs" />
+    <Compile Include="Display\GridVectorDisplay.cs" />
     <Compile Include="Misc\GetPointCloud.cs" />
     <Compile Include="Misc\PointCloudNew.cs" />
     <Compile Include="CreateConvert\VGridNew.cs" />
     <Compile Include="Display\GridActive.cs" />
     <None Include="Display\VGridDisplay.cs" />
-    <Compile Include="Display\GridSlice.cs" />
+    <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Tools\GridMask.cs" />
-    <Compile Include="Tools\GridThreshold.cs" />
     <Compile Include="Tools\GridMorphology.cs" />
+    <Compile Include="Tools\GridThreshold.cs" />
     <None Include="Tools\VGridMorphology.cs" />
     <None Include="Tools\VGridFilter.cs" />
     <None Include="VGridDisplace.cs" />
     <None Include="VGridSample.cs" />
     <None Include="VGridSet.cs" />
-    <Compile Include="Tools\GridCombine.cs" />
     <Compile Include="Display\GridDisplay.cs" />
     <Compile Include="Tools\GridFilter.cs" />
     <Compile Include="Display\GridInspect.cs" />
@@ -176,6 +178,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\VGridSample_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridSlice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridBox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GridDisplayVector.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Voxel_Combine.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets" Condition="Exists('..\..\packages\RhinoCommon.7.15.22039.13001\build\RhinoCommon.targets')" />

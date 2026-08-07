@@ -118,6 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="GridBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GridBox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridDisplayVector" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GridDisplayVector.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="GridDisplay_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridDisplay_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -148,6 +154,9 @@
   <data name="GridSet_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridSet_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="GridSlice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GridSlice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="VGridDisplay_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\VGridDisplay_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -159,5 +168,8 @@
   </data>
   <data name="VGridSample_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\VGridSample_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Voxel_Combine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Voxel_Combine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

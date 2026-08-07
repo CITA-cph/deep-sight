@@ -55,7 +55,6 @@
     <Compile Include="Grid.cs" />
     <Compile Include="GridTypes\GridBase.cs" />
     <Compile Include="GridIO.cs" />
-    <Compile Include="NativeError.cs" />
     <Compile Include="InfoLog.cs" />
     <Compile Include="LayeredGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

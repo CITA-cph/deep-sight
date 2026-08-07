@@ -1,23 +1,18 @@
 #ifndef GRIDBASE_H
 #define GRIDBASE_H
 
-// NOTE: <windows.h> used to be included here. It has been removed: this is a
-// core header pulled in by nearly every translation unit, and windows.h drags
-// in ~thousands of macros (including min/max, which is why NOMINMAX was needed)
-// that collide with OpenVDB and Eigen. The two places that actually need the
-// Win32 COM allocator (GridBaseAPI.cpp, ReadWrite.cpp) include it themselves.
+#define NOMINMAX
+#include <windows.h>
 
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/Interpolation.h>
 
-#include <stdexcept>
 #include <string>
 #include <memory>
-#include <vector>
+
 
 #include <Eigen/Geometry>
 
-#include "config.h"
 
 namespace DeepSight
 {
@@ -37,114 +32,70 @@ namespace DeepSight
 #pragma endregion Constructor_Init
 
 #pragma region Generic
-		void set_name(const std::string& name);
-		std::string get_name() const;
+		void set_name(std::string name);
+		std::string get_name();
 
-		/// Set the grid's index-to-world transform.
-		///
-		/// IMPORTANT - matrix convention: the Eigen matrix passed here is
-		/// interpreted using Eigen's *default column-major storage*, and is
-		/// handed to OpenVDB's Mat4 which is *row-major*. The two conventions
-		/// cancel out, so a flat 16-element buffer laid out in row-major order
-		/// (the layout the C# `Transform` property documents, and the layout
-		/// Rhino uses) round-trips correctly through set_transform/get_transform.
-		///
-		/// The consequence is that the Eigen::Matrix4d objects these two
-		/// functions accept and return are the *transpose* of the mathematical
-		/// transform. Do not feed the result of get_transform() into Eigen
-		/// matrix arithmetic without transposing it first.
-		void set_transform(const Eigen::Matrix4d& xform);
-		Eigen::Matrix4d get_transform() const;
+		void set_transform(Eigen::Matrix4d xform);
+		Eigen::Matrix4d get_transform();
 
-		void clip_index(const int* min, const int* max);
-		void clip_world(const double* min, const double* max);
+		void clip_index(int* min, int* max);
+		void clip_world(double* min, double* max);
 
-		void prune(float tolerance = 0.0f);
+		void prune(float tolerance=0.0f);
 
-		int get_grid_class() const;
+		int get_grid_class();
 		void set_grid_class(int c);
 
-		void get_bounding_box(int* min, int* max) const;
+		void get_bounding_box(int* min, int* max);
 
-		std::string get_type() const;
-
-		/// Number of active voxels. Returns Index64 rather than int: a 2000^3
-		/// dense region already exceeds INT_MAX, and CT scan volumes at that
-		/// scale are the normal case for this library, not an edge case.
-		openvdb::Index64 get_active_voxel_count() const;
+		std::string get_type();
 
 #pragma endregion Generic
 
-#pragma region Casting
-
-		/// Downcast m_grid to a concrete grid type, throwing instead of
-		/// returning null on failure.
-		///
-		/// openvdb::gridPtrCast returns a null pointer when the runtime type
-		/// does not match, and every call site in this file used to dereference
-		/// the result unchecked. That is trivially reachable from managed code:
-		/// GridIO.Read() hands back whatever grid types are in the .vdb file,
-		/// so calling a FloatGrid method on a file containing a Vec3f grid
-		/// dereferenced null and killed the host process. Throwing here turns
-		/// that into an error message at the API boundary instead.
-		template<typename GridT>
-		typename GridT::Ptr grid_as() const
-		{
-			if (!m_grid)
-				throw std::runtime_error("Grid is empty (null tree).");
-
-			typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
-			if (!grid)
-			{
-				throw std::runtime_error(
-					"Grid type mismatch: this grid holds '" + m_grid->type() +
-					"' but was accessed as '" + GridT::gridType() + "'.");
-			}
-			return grid;
-		}
-
-#pragma endregion Casting
 
 #pragma region Get_Set
 
 		template<typename GridT>
-		typename GridT::ValueType get_value_is(const Eigen::Vector3i& xyz);
+		typename GridT::ValueType get_value_is(Eigen::Vector3i xyz);
 
 		template<typename GridT>
-		typename GridT::ValueType get_value_ws(const Eigen::Vector3d& xyz);
+		typename GridT::ValueType get_value_ws(Eigen::Vector3d xyz);
+
+		//template <typename GridT>
+		//typename GridT::ValueType get_interpolated_value(Eigen::Vector3f xyz);
 
 		template <typename GridT>
-		Eigen::Matrix<typename GridT::ValueType, 27, 1> get_neighbourhood(const Eigen::Vector3i& xyz);
+		Eigen::Matrix<typename GridT::ValueType, 27, 1> get_neighbourhood(Eigen::Vector3i xyz);
 
 		template <typename GridT>
-		std::vector<typename GridT::ValueType> get_values_is(const std::vector<Eigen::Vector3i>& xyz);
+		std::vector<typename GridT::ValueType> get_values_is(std::vector<Eigen::Vector3i>& xyz);
 
 		template <typename GridT>
-		std::vector<typename GridT::ValueType> get_values_ws(const std::vector<Eigen::Vector3d>& xyz);
+		std::vector<typename GridT::ValueType> get_values_ws(std::vector<Eigen::Vector3d>& xyz);
 
 		template<typename GridT>
-		void set_value(const Eigen::Vector3i& xyz, const typename GridT::ValueType& value);
+		void set_value(Eigen::Vector3i xyz, typename GridT::ValueType value);
 
 		template<typename GridT>
-		void set_values(const std::vector<Eigen::Vector3i>& xyz, const std::vector<typename GridT::ValueType>& values);
+		void set_values(std::vector<Eigen::Vector3i>& xyz, std::vector<typename GridT::ValueType> values);
 
 		template<typename GridT>
 		std::vector<Eigen::Vector3i> get_active_voxels();
 
 		template<typename GridT>
-		bool get_active_state(const Eigen::Vector3i& xyz);
+		bool get_active_state(Eigen::Vector3i xyz);
 
 		template<typename GridT>
-		std::vector<bool> get_active_states(const std::vector<Eigen::Vector3i>& xyz);
+		std::vector<bool> get_active_states(std::vector<Eigen::Vector3i>& xyz);
 
 		template<typename GridT>
-		void set_active_state(const Eigen::Vector3i& xyz, bool state);
+		void set_active_state(Eigen::Vector3i xyz, bool state);
 
 		template<typename GridT>
-		void set_active_states(const std::vector<Eigen::Vector3i>& xyz, const std::vector<bool>& states);
+		void set_active_states(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states);
 
 		template<typename GridT>
-		void inactivate_below(const typename GridT::ValueType& min);
+		void inactivate_below(typename GridT::ValueType min);
 
 #pragma endregion Get_Set
 
@@ -154,172 +105,187 @@ namespace DeepSight
 	template<typename GridT>
 	void GridBase::initialize(typename GridT::ValueType background)
 	{
+		//m_grid = GridT::create(openvdb::zeroVal<GridT::ValueType>());
 		m_grid = GridT::create(background);
 	}
+
 
 
 #pragma region Get_Set
 
 	template<typename GridT>
-	typename GridT::ValueType GridBase::get_value_is(const Eigen::Vector3i& xyz)
+	typename GridT::ValueType GridBase::get_value_is(Eigen::Vector3i xyz)
 	{
-		// Previously this built an openvdb::tools::GridSampler and called
-		// isSample() on integer coordinates. That does a full trilinear
-		// interpolation to recover a value that is exact at lattice points --
-		// eight tree lookups and a pile of float math per call, and for
-		// Int32Grid it round-tripped through floating point. A direct accessor
-		// lookup is one traversal and is exact for every value type.
-		typename GridT::Ptr grid = grid_as<GridT>();
-		typename GridT::ConstAccessor accessor = grid->getConstAccessor();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
+		openvdb::tools::GridSampler<GridT, openvdb::tools::BoxSampler> sampler(*grid);
+		typename GridT::ValueType indexValue = (typename GridT::ValueType)sampler.isSample(openvdb::Vec3i(xyz.x(), xyz.y(), xyz.z()));
 
-		return accessor.getValue(openvdb::Coord(xyz.x(), xyz.y(), xyz.z()));
+		return indexValue;
 	}
 
 	template<typename GridT>
-	typename GridT::ValueType GridBase::get_value_ws(const Eigen::Vector3d& xyz)
+	typename GridT::ValueType GridBase::get_value_ws(Eigen::Vector3d xyz)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
 		openvdb::tools::GridSampler<GridT, openvdb::tools::BoxSampler> sampler(*grid);
+		typename GridT::ValueType worldValue = (typename GridT::ValueType)sampler.wsSample(openvdb::Vec3R(xyz.x(), xyz.y(), xyz.z()));
 
-		return sampler.wsSample(openvdb::Vec3R(xyz.x(), xyz.y(), xyz.z()));
+		return worldValue;
 	}
 
 	template <typename GridT>
-	std::vector<typename GridT::ValueType> GridBase::get_values_is(const std::vector<Eigen::Vector3i>& xyz)
+	std::vector<typename GridT::ValueType> GridBase::get_values_is(std::vector<Eigen::Vector3i>& xyz)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
-		typename GridT::ConstAccessor accessor = grid->getConstAccessor();
-
 		std::vector<typename GridT::ValueType> values;
-		values.reserve(xyz.size());		// avoid O(log n) reallocations of a
-										// potentially multi-million element buffer
 
-		for (const auto& c : xyz)
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
+		typename GridT::Accessor accessor = grid->getAccessor();
+
+		for (auto iter = xyz.begin();
+			iter != xyz.end();
+			iter++)
 		{
-			values.push_back(accessor.getValue(openvdb::Coord(c.x(), c.y(), c.z())));
+			values.push_back(
+				accessor.getValue(
+					openvdb::math::Coord(
+						iter->x(),
+						iter->y(),
+						iter->z()
+					)
+				)
+			);
 		}
 		return values;
 	}
 
 	template <typename GridT>
-	std::vector<typename GridT::ValueType> GridBase::get_values_ws(const std::vector<Eigen::Vector3d>& xyz)
+	std::vector<typename GridT::ValueType> GridBase::get_values_ws(std::vector<Eigen::Vector3d>& xyz)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
+		std::vector<typename GridT::ValueType> values;
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
+
 		openvdb::tools::GridSampler<GridT, openvdb::tools::BoxSampler> sampler(*grid);
 
-		std::vector<typename GridT::ValueType> values;
-		values.reserve(xyz.size());
-
-		for (const auto& c : xyz)
+		for (auto iter = xyz.begin();
+			iter != xyz.end();
+			iter++)
 		{
-			values.push_back(sampler.wsSample(openvdb::Vec3R(c.x(), c.y(), c.z())));
+			values.push_back(sampler.wsSample(openvdb::Vec3R(iter->x(), iter->y(), iter->z())));
 		}
 		return values;
 	}
 
 	template <typename GridT>
-	Eigen::Matrix<typename GridT::ValueType, 27, 1> GridBase::get_neighbourhood(const Eigen::Vector3i& xyz)
+	Eigen::Matrix<typename GridT::ValueType, 27, 1> GridBase::get_neighbourhood(Eigen::Vector3i xyz)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
-		typename GridT::ConstAccessor accessor = grid->getConstAccessor();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
+		typename GridT::Accessor accessor = grid->getAccessor();
 
-		const int x = xyz.x(), y = xyz.y(), z = xyz.z();
+		int x = xyz[0], y = xyz[1], z = xyz[2];
 		Eigen::Matrix<typename GridT::ValueType, 27, 1> neighbourhood;
 
-		// Replaces 27 hand-written, hand-indexed lines. The original was
-		// correct, but a single transposed index in that block would have been
-		// invisible on review; the loop makes the ordering (x fastest, then y,
-		// then z) explicit and impossible to get subtly wrong.
-		int n = 0;
-		for (int dz = -1; dz <= 1; ++dz)
-			for (int dy = -1; dy <= 1; ++dy)
-				for (int dx = -1; dx <= 1; ++dx)
-					neighbourhood[n++] = accessor.getValue(openvdb::Coord(x + dx, y + dy, z + dz));
+		neighbourhood[0] = accessor.getValue(openvdb::Coord(x - 1, y - 1, z - 1));
+		neighbourhood[1] = accessor.getValue(openvdb::Coord(x, y - 1, z - 1));
+		neighbourhood[2] = accessor.getValue(openvdb::Coord(x + 1, y - 1, z - 1));
+
+		neighbourhood[3] = accessor.getValue(openvdb::Coord(x - 1, y, z - 1));
+		neighbourhood[4] = accessor.getValue(openvdb::Coord(x, y, z - 1));
+		neighbourhood[5] = accessor.getValue(openvdb::Coord(x + 1, y, z - 1));
+
+		neighbourhood[6] = accessor.getValue(openvdb::Coord(x - 1, y + 1, z - 1));
+		neighbourhood[7] = accessor.getValue(openvdb::Coord(x, y + 1, z - 1));
+		neighbourhood[8] = accessor.getValue(openvdb::Coord(x + 1, y + 1, z - 1));
+
+		neighbourhood[9] = accessor.getValue(openvdb::Coord(x - 1, y - 1, z));
+		neighbourhood[10] = accessor.getValue(openvdb::Coord(x, y - 1, z));
+		neighbourhood[11] = accessor.getValue(openvdb::Coord(x + 1, y - 1, z));
+
+		neighbourhood[12] = accessor.getValue(openvdb::Coord(x - 1, y, z));
+		neighbourhood[13] = accessor.getValue(openvdb::Coord(x, y, z));
+		neighbourhood[14] = accessor.getValue(openvdb::Coord(x + 1, y, z));
+
+		neighbourhood[15] = accessor.getValue(openvdb::Coord(x - 1, y + 1, z));
+		neighbourhood[16] = accessor.getValue(openvdb::Coord(x, y + 1, z));
+		neighbourhood[17] = accessor.getValue(openvdb::Coord(x + 1, y + 1, z));
+
+		neighbourhood[18] = accessor.getValue(openvdb::Coord(x - 1, y - 1, z + 1));
+		neighbourhood[19] = accessor.getValue(openvdb::Coord(x, y - 1, z + 1));
+		neighbourhood[20] = accessor.getValue(openvdb::Coord(x + 1, y - 1, z + 1));
+
+		neighbourhood[21] = accessor.getValue(openvdb::Coord(x - 1, y, z + 1));
+		neighbourhood[22] = accessor.getValue(openvdb::Coord(x, y, z + 1));
+		neighbourhood[23] = accessor.getValue(openvdb::Coord(x + 1, y, z + 1));
+
+		neighbourhood[24] = accessor.getValue(openvdb::Coord(x - 1, y + 1, z + 1));
+		neighbourhood[25] = accessor.getValue(openvdb::Coord(x, y + 1, z + 1));
+		neighbourhood[26] = accessor.getValue(openvdb::Coord(x + 1, y + 1, z + 1));
 
 		return neighbourhood;
 	}
 
 	template<typename GridT>
-	void GridBase::set_value(const Eigen::Vector3i& xyz, const typename GridT::ValueType& value)
+	void GridBase::set_value(Eigen::Vector3i xyz, typename GridT::ValueType value)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
 		typename GridT::Accessor accessor = grid->getAccessor();
 
-		accessor.setValue(openvdb::Coord(xyz.x(), xyz.y(), xyz.z()), value);
+		accessor.setValue(openvdb::math::Coord(xyz.x(), xyz.y(), xyz.z()), value);
 	}
 
 	template <typename GridT>
-	void GridBase::set_values(const std::vector<Eigen::Vector3i>& xyz, const std::vector<typename GridT::ValueType>& values)
+	void GridBase::set_values(std::vector<Eigen::Vector3i>& xyz, std::vector<typename GridT::ValueType> values)
 	{
-		// The old loop silently stopped at the shorter of the two ranges, so a
-		// caller that passed mismatched arrays got a partially written grid and
-		// no indication anything was wrong. Fail loudly instead.
-		if (xyz.size() != values.size())
-			throw std::invalid_argument("set_values: coordinate and value counts differ.");
-
-		typename GridT::Ptr grid = grid_as<GridT>();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
 		typename GridT::Accessor accessor = grid->getAccessor();
 
-		for (std::size_t i = 0; i < xyz.size(); ++i)
+		for (auto iter = std::make_pair(xyz.cbegin(), values.cbegin());
+			iter.first != xyz.end() && iter.second != values.end();
+			++iter.first, ++iter.second)
 		{
 			accessor.setValue(
-				openvdb::Coord(xyz[i].x(), xyz[i].y(), xyz[i].z()),
-				values[i]);
+				openvdb::math::Coord(
+					(*iter.first).x(),
+					(*iter.first).y(),
+					(*iter.first).z()
+				), *iter.second
+			);
 		}
 	}
 
 	template<typename GridT>
 	std::vector<Eigen::Vector3i> GridBase::get_active_voxels()
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
-
 		std::vector<Eigen::Vector3i> values;
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
 
 		for (typename GridT::ValueOnCIter iter = grid->cbeginValueOn(); iter.test(); ++iter)
 		{
 			if (iter.isVoxelValue())
 			{
-				const openvdb::Coord c = iter.getCoord();
-				values.push_back(Eigen::Vector3i(c.x(), c.y(), c.z()));
-			}
-			else
-			{
-				// Active *tiles* represent a whole cube of active voxels with a
-				// single tree node. The old code skipped them entirely, which
-				// meant get_active_voxels() could return far fewer entries than
-				// activeVoxelCount() reported -- and since the C API used that
-				// count to size the caller's buffer, the tail of the buffer was
-				// left uninitialised. Expand tiles so the two agree.
-				openvdb::CoordBBox bbox;
-				iter.getBoundingBox(bbox);
-				for (const openvdb::Coord& c : bbox)
-				{
-					values.push_back(Eigen::Vector3i(c.x(), c.y(), c.z()));
-				}
+				values.push_back(Eigen::Vector3i(iter.getCoord().data()));
 			}
 		}
 		return values;
 	}
 
 	template<typename GridT>
-	bool GridBase::get_active_state(const Eigen::Vector3i& xyz)
+	bool GridBase::get_active_state(Eigen::Vector3i xyz)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
-		typename GridT::ConstAccessor accessor = grid->getConstAccessor();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
+		typename GridT::Accessor accessor = grid->getAccessor();
 
-		return accessor.isValueOn(openvdb::Coord(xyz.x(), xyz.y(), xyz.z()));
+		return accessor.isValueOn(openvdb::math::Coord(xyz.data()));
 	}
 
 	template<typename GridT>
-	void GridBase::inactivate_below(const typename GridT::ValueType& threshold)
+	void GridBase::inactivate_below(typename GridT::ValueType threshold)
 	{
-		typename GridT::Ptr ptr = grid_as<GridT>();
-		const typename GridT::ValueType background = ptr->background();
+		typename GridT::Ptr ptr = openvdb::gridPtrCast<GridT>(m_grid);
+		typename GridT::ValueType background = ptr->background();
 
-		for (auto iter = ptr->beginValueOn(); iter; ++iter)
+		for (auto iter = ptr->beginValueOn(); iter; ++iter) 
 		{
-			if (iter.getValue() < threshold)
-			{
+			if (iter.getValue() < threshold) {
 				iter.setValue(background);
 				iter.setValueOff();
 			}
@@ -327,55 +293,62 @@ namespace DeepSight
 	}
 
 	template<typename GridT>
-	std::vector<bool> GridBase::get_active_states(const std::vector<Eigen::Vector3i>& xyz)
+	std::vector<bool> GridBase::get_active_states(std::vector<Eigen::Vector3i>& xyz)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
-		typename GridT::ConstAccessor accessor = grid->getConstAccessor();
-
 		std::vector<bool> states;
-		states.reserve(xyz.size());
 
-		for (const auto& c : xyz)
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
+		typename GridT::Accessor accessor = grid->getAccessor();
+
+		for (auto iter = xyz.begin(); iter != xyz.end(); ++iter)
 		{
-			states.push_back(accessor.isValueOn(openvdb::Coord(c.x(), c.y(), c.z())));
+			states.push_back(accessor.isValueOn(openvdb::math::Coord((*iter).data())));
 		}
 
 		return states;
 	}
 
 	template<typename GridT>
-	void GridBase::set_active_state(const Eigen::Vector3i& xyz, bool state)
+	void GridBase::set_active_state(Eigen::Vector3i xyz, bool state)
 	{
-		typename GridT::Ptr grid = grid_as<GridT>();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
 		typename GridT::Accessor accessor = grid->getAccessor();
 
-		accessor.setActiveState(openvdb::Coord(xyz.x(), xyz.y(), xyz.z()), state);
+		accessor.setActiveState(
+			openvdb::math::Coord(xyz.data()), state);
 	}
 
 	template<typename GridT>
-	void GridBase::set_active_states(const std::vector<Eigen::Vector3i>& xyz, const std::vector<bool>& states)
+	void GridBase::set_active_states(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states)
 	{
-		if (xyz.size() != states.size())
-			throw std::invalid_argument("set_active_states: coordinate and state counts differ.");
-
-		typename GridT::Ptr grid = grid_as<GridT>();
+		typename GridT::Ptr grid = openvdb::gridPtrCast<GridT>(m_grid);
 		typename GridT::Accessor accessor = grid->getAccessor();
 
-		for (std::size_t i = 0; i < xyz.size(); ++i)
+		for (auto iter = std::make_pair(xyz.cbegin(), states.cbegin());
+			iter.first != xyz.end() && iter.second != states.end();
+			++iter.first, ++iter.second)
 		{
 			accessor.setActiveState(
-				openvdb::Coord(xyz[i].x(), xyz[i].y(), xyz[i].z()), states[i]);
+				openvdb::math::Coord((*iter.first).data()), *iter.second);
 		}
 	}
 
 #pragma endregion Get_Set
 
-// The INSTANTIATE_GRIDBASE macro that used to live here was removed. It was
-// dead code (never invoked anywhere in the tree) and it would not have compiled
-// if it had been: it declared `initialize<GridT>()` with no arguments when the
-// real signature takes a background value, and declared set_value as returning
-// ValueT when it returns void. Explicit instantiation is unnecessary anyway --
-// these templates are defined in the header and instantiated on use.
+#define INSTANTIATE_GRIDBASE(GridT, ValueT) \
+	template<> void GridBase::initialize<GridT>();\
+	template<> ValueT GridBase::get_value_is<GridT>(Eigen::Vector3i xyz);\
+	template<> ValueT GridBase::get_value_ws<GridT>(Eigen::Vector3d xyz);\
+	template<> std::vector<ValueT> GridBase::get_values_is<GridT>(std::vector<Eigen::Vector3i>& xyz);\
+	template<> std::vector<ValueT> GridBase::get_values_ws<GridT>(std::vector<Eigen::Vector3d>& xyz);\
+	template<> ValueT GridBase::set_value<GridT>(Eigen::Vector3i xyz, ValueT value);\
+	template<> void GridBase::set_values<GridT>(std::vector<Eigen::Vector3i>& xyz, std::vector<ValueT> values);\
+	template<> std::vector<Eigen::Vector3i> GridBase::get_active_voxels<GridT>();\
+	template<> bool GridBase::get_active_state<GridT>(Eigen::Vector3i xyz);\
+	template<> std::vector<bool> GridBase::get_active_states<GridT>(std::vector<Eigen::Vector3i>& xyz);\
+	template<> void GridBase::set_active_state<GridT>(Eigen::Vector3i xyz, bool state);\
+	template<> void GridBase::set_active_states<GridT>(std::vector<Eigen::Vector3i>& xyz, std::vector<bool>& states);
+
 
 }
 #endif

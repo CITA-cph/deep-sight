@@ -63,9 +63,29 @@ namespace DeepSight.GH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GridBox {
+            get {
+                object obj = ResourceManager.GetObject("GridBox", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GridDisplay_01 {
             get {
                 object obj = ResourceManager.GetObject("GridDisplay_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GridDisplayVector {
+            get {
+                object obj = ResourceManager.GetObject("GridDisplayVector", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,6 +183,16 @@ namespace DeepSight.GH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GridSlice {
+            get {
+                object obj = ResourceManager.GetObject("GridSlice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap VGridDisplay_01 {
             get {
                 object obj = ResourceManager.GetObject("VGridDisplay_01", resourceCulture);
@@ -196,6 +226,16 @@ namespace DeepSight.GH.Properties {
         internal static System.Drawing.Bitmap VGridSample_01 {
             get {
                 object obj = ResourceManager.GetObject("VGridSample_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Voxel_Combine {
+            get {
+                object obj = ResourceManager.GetObject("Voxel_Combine", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -170,7 +170,7 @@ namespace DeepSight
         private static extern void GridBase_SetGridClass(IntPtr ptr, int c);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern long GridBase_GetActiveVoxelCount(IntPtr ptr);
+        internal static extern int GridBase_GetActiveVoxelCount(IntPtr ptr);
 
         [DllImport(Api.DeepSightApiPath, SetLastError = false, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.LPStr)]
@@ -183,51 +183,8 @@ namespace DeepSight
         internal static extern void GridBase_GetTransform(IntPtr ptr, float[] xform);
         #endregion
 
-        private IntPtr m_ptr;
-
-        /// <summary>
-        /// The native grid handle. IntPtr.Zero once disposed.
-        /// </summary>
-        public IntPtr Ptr
-        {
-            get { return m_ptr; }
-            protected set { m_ptr = value; }
-        }
-
+        public IntPtr Ptr { get; protected set; }
         protected bool m_valid;
-
-        /// <summary>
-        /// Guard for every method that dereferences Ptr natively.
-        /// </summary>
-        /// <remarks>
-        /// Without this, calling any member on a disposed grid passed
-        /// IntPtr.Zero to the native side, which dereferenced it and took the
-        /// whole process down with an access violation. A managed exception is
-        /// recoverable; an AV in Rhino is not.
-        /// </remarks>
-        protected void ThrowIfDisposed()
-        {
-            if (Ptr == IntPtr.Zero)
-                throw new ObjectDisposedException(GetType().Name, "The underlying grid has been disposed.");
-        }
-
-        /// <summary>
-        /// Validate an [x, y, z] argument before it reaches native code.
-        /// </summary>
-        protected static void RequireXyz(Array a, string name)
-        {
-            if (a == null) throw new ArgumentNullException(name);
-            if (a.Length != 3) throw new ArgumentException("Expected 3 values ([x, y, z]).", name);
-        }
-
-        /// <summary>
-        /// Adopt a handle returned by a native factory call, or throw.
-        /// </summary>
-        protected void Adopt(IntPtr handle, string context)
-        {
-            Ptr = NativeError.Check(handle, context);
-            m_valid = true;
-        }
 
         /// <summary>
         /// Name of grid.
@@ -236,39 +193,22 @@ namespace DeepSight
         {
             get
             {
-                ThrowIfDisposed();
-                string name = GridBase_GetName(Ptr);
-                NativeError.ThrowIfFailed("Get Name");
-                return name;
+                return GridBase_GetName(Ptr);
             }
             set
             {
-                ThrowIfDisposed();
-                if (value == null) throw new ArgumentNullException(nameof(value));
                 GridBase_SetName(Ptr, value);
-                NativeError.ThrowIfFailed("Set Name");
             }
         }
 
         /// <summary>
         /// The active voxel count.
         /// </summary>
-        /// <remarks>
-        /// Widened from int to long. openvdb::GridBase::activeVoxelCount()
-        /// returns an Index64, and this property used to truncate it to 32 bits
-        /// -- a dense 2000^3 region already overflows, and volumes that size are
-        /// the normal case for this library. The truncated value was then used
-        /// to size the buffer passed to GetActiveVoxels(), so the overflow
-        /// turned directly into a heap overwrite.
-        /// </remarks>
-        public long ActiveVoxelCount
+        public int ActiveVoxelCount
         {
             get
             {
-                ThrowIfDisposed();
-                long count = GridBase_GetActiveVoxelCount(Ptr);
-                if (count < 0) NativeError.ThrowIfFailed("ActiveVoxelCount");
-                return count;
+                return GridBase_GetActiveVoxelCount(Ptr);
             }
         }
 
@@ -279,10 +219,7 @@ namespace DeepSight
         {
             get
             {
-                ThrowIfDisposed();
-                string type = GridBase_GetType(Ptr);
-                NativeError.ThrowIfFailed("Get Type");
-                return type;
+                return GridBase_GetType(Ptr);
             }
         }
 
@@ -293,34 +230,21 @@ namespace DeepSight
         {
             get
             {
-                ThrowIfDisposed();
                 float[] xform = new float[16];
                 GridBase_GetTransform(Ptr, xform);
-                NativeError.ThrowIfFailed("Get Transform");
                 return xform;
             }
             set
             {
-                ThrowIfDisposed();
-                if (value == null) throw new ArgumentNullException(nameof(value));
-
-                // The native side reads exactly 16 floats out of this buffer.
-                // A shorter array was read past the end.
-                if (value.Length != 16)
-                    throw new ArgumentException("Transform must be 16 values (4x4, row-major).", nameof(value));
-
                 GridBase_SetTransform(Ptr, value);
-                NativeError.ThrowIfFailed("Set Transform");
             }
         }
 
         public void BoundingBox(out int[] min, out int[] max)
         {
-            ThrowIfDisposed();
             min = new int[3];
             max = new int[3];
             GridBase_GetBoundingBoxIndex(Ptr, min, max);
-            NativeError.ThrowIfFailed("BoundingBox");
         }
 
         /// <summary>
@@ -328,39 +252,20 @@ namespace DeepSight
         /// </summary>
         /// <param name="min">The minimum extents of the bounding box ([x, y, z]).</param>
         /// <param name="max">The maximum extents of the bounding box ([x, y, z]).</param>
-        public void ClipWorld(double[] min, double[] max)
-        {
-            ThrowIfDisposed();
-            RequireXyz(min, nameof(min));
-            RequireXyz(max, nameof(max));
-            GridBase_ClipWorld(Ptr, min, max);
-            NativeError.ThrowIfFailed("ClipWorld");
-        }
+        public void ClipWorld(double[] min, double[] max) => GridBase_ClipWorld(Ptr, min, max);
 
         /// <summary>
         /// Clip the grid to an index-space bounding box.
         /// </summary>
         /// <param name="min">The minimum extents of the bounding box ([x, y, z]).</param>
         /// <param name="max">The maximum extents of the bounding box ([x, y, z]).</param>
-        public void ClipIndex(int[] min, int[] max)
-        {
-            ThrowIfDisposed();
-            RequireXyz(min, nameof(min));
-            RequireXyz(max, nameof(max));
-            GridBase_ClipIndex(Ptr, min, max);
-            NativeError.ThrowIfFailed("ClipIndex");
-        }
+        public void ClipIndex(int[] min, int[] max) => GridBase_ClipIndex(Ptr, min, max);
 
         /// <summary>
         /// Prune the grid tree within a specified tolerance.
         /// </summary>
         /// <param name="tolerance">Tolerance to prune the tree to.</param>
-        public void Prune(float tolerance = 0.0f)
-        {
-            ThrowIfDisposed();
-            GridBase_Prune(Ptr, tolerance);
-            NativeError.ThrowIfFailed("Prune");
-        }
+        public void Prune(float tolerance=0.0f) => GridBase_Prune(Ptr, tolerance);
 
         /// <summary>
         /// Duplicate the grid.
@@ -375,16 +280,11 @@ namespace DeepSight
         {
             get
             {
-                ThrowIfDisposed();
-                int c = GridBase_GetGridClass(Ptr);
-                if (c < 0) NativeError.ThrowIfFailed("Get GridClass");
-                return (GridClass)c;
+                return (GridClass)GridBase_GetGridClass(Ptr);
             }
             set
             {
-                ThrowIfDisposed();
                 GridBase_SetGridClass(Ptr, (int)value);
-                NativeError.ThrowIfFailed("Set GridClass");
             }
         }
 
@@ -392,32 +292,9 @@ namespace DeepSight
 
 
         #region Dispose
-
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        /// <remarks>
-        /// There was no finalizer before. GridApi held a raw native pointer and
-        /// relied entirely on the caller remembering to call Dispose(); if they
-        /// did not -- and nothing in DeepSight.GH did -- the native GridBase and
-        /// its entire OpenVDB tree were leaked for the lifetime of the process.
-        /// For a volumetric library where one grid is routinely hundreds of MB
-        /// and Grasshopper recreates them on every solve, that is not a slow
-        /// leak, it is the dominant memory behaviour.
-        ///
-        /// Dispose() remains the right thing to call: the finalizer is a safety
-        /// net that releases the memory eventually, not a substitute for
-        /// deterministic cleanup.
-        /// </remarks>
-        ~GridApi()
-        {
-            Dispose(false);
-        }
-
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         public override string ToString()
@@ -425,18 +302,17 @@ namespace DeepSight
             return string.Format("Grid ({0})", Name);
         }
 
-        /// <summary>
-        /// True while this object owns a live native grid.
-        /// </summary>
-        /// <remarks>
-        /// This used to be permanently false: m_valid defaults to false and no
-        /// constructor anywhere in the library ever set it to true, so IsValid
-        /// returned false even for a perfectly good freshly-created grid.
-        /// Constructors now go through Adopt(), which sets it.
-        /// </remarks>
         public bool IsValid
         {
-            get { return this.Ptr != IntPtr.Zero && this.m_valid; }
+            get
+            {
+                if (this.Ptr == IntPtr.Zero) return false;
+                return this.m_valid;
+            }
+            private set
+            {
+                this.m_valid = value;
+            }
         }
 
         /// <summary>
@@ -445,20 +321,21 @@ namespace DeepSight
         /// <param name="bDisposing">holds value indicating if this was called from dispose or finalizer</param>
         protected virtual void Dispose(bool bDisposing)
         {
-            // Read-and-clear so that a double Dispose(), or a Dispose() racing
-            // the finalizer, cannot call GridBase_Delete twice on the same
-            // pointer. The old code had a check-then-act gap here.
-            IntPtr handle = System.Threading.Interlocked.Exchange(ref m_ptr, IntPtr.Zero);
-
-            if (handle != IntPtr.Zero)
+            if (this.Ptr != IntPtr.Zero)
             {
                 // cleanup everything on the c++ side
-                GridBase_Delete(handle);
-                this.m_valid = false;
+                GridBase_Delete(this.Ptr);
+
+                // clear pointer
+                this.Ptr = IntPtr.Zero;
+                this.IsValid = false;
             }
 
-            // GC.SuppressFinalize moved to Dispose(); calling it from
-            // Dispose(false) (i.e. from the finalizer) is meaningless.
+            // finalize garbage collection
+            if (bDisposing)
+            {
+                GC.SuppressFinalize(this);
+            }
         }
         #endregion
     }
