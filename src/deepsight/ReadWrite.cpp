@@ -9,7 +9,10 @@ namespace DeepSight
 		//bool verbose = false;
 		unsigned int crop_x = crop, crop_y = crop;
 
-		if (!verbose)
+		// Was `if (!verbose)`: the banner printed only when the caller asked for
+		// *quiet* output, and was suppressed in verbose mode. Compare
+		// load_vector_tiff below, which has the same block written correctly.
+		if (verbose)
 		{
 			std::cout << "Opening scalar multi-page TIFF '" << path << "'" << std::endl;
 			std::cout << "Threshold: " << threshold << std::endl;
@@ -31,7 +34,15 @@ namespace DeepSight
 		if (tif) {
 			try
 			{
-				unsigned int width, height, samplesperpixel, bitspersample;
+				// TIFFGetField is varargs: it writes exactly the width the tag's
+				// type declares, with no conversion and no diagnostic. IMAGEWIDTH
+				// and IMAGELENGTH are LONG (uint32), but SAMPLESPERPIXEL and
+				// BITSPERSAMPLE are SHORT (uint16). Passing `unsigned int*` for the
+				// latter two wrote 2 bytes into a 4-byte slot and left the high half
+				// uninitialised, which is why the verbose dump printed garbage.
+				// Initialised as well, so a missing tag leaves a defined value.
+				uint32_t width = 0, height = 0;
+				uint16_t samplesperpixel = 0, bitspersample = 0;
 				ValueT max_val = 0.0;
 
 				do {
@@ -52,7 +63,19 @@ namespace DeepSight
 						std::cout << "    bitspersample: " << bitspersample << std::endl;
 					}
 
-					unsigned int npixels = width * height; // get the total number of pixels
+					// width * height in 32-bit arithmetic silently wraps for large
+					// scans (a 70k x 70k page is enough), producing a raster buffer
+					// far smaller than the loop below then indexes into. Compute in
+					// 64-bit and reject anything that will not fit.
+					const uint64_t npixels64 = static_cast<uint64_t>(width) * static_cast<uint64_t>(height);
+					if (npixels64 == 0 || npixels64 > (SIZE_MAX / sizeof(uint32_t)))
+					{
+						TIFFClose(tif);
+						std::cerr << "TIFF page has invalid or unsupported dimensions ("
+							<< width << " x " << height << ")" << std::endl;
+						return Grid<ValueT>::Ptr(nullptr);
+					}
+					const size_t npixels = static_cast<size_t>(npixels64); // total number of pixels
 
 					raster = (uint32_t*)_TIFFmalloc(npixels * sizeof(uint32_t)); // allocate temp memory (must use the tiff library malloc)
 					if (raster == NULL) // check the raster's memory was allocaed
@@ -65,6 +88,7 @@ namespace DeepSight
 					// Check the tif read to the raster correctly
 					if (!TIFFReadRGBAImage(tif, width, height, raster, 0))
 					{
+						_TIFFfree(raster);	// was leaked on this path
 						TIFFClose(tif);
 						std::cerr << "Could not read raster of TIFF image" << std::endl;
 						return std::shared_ptr<Grid<ValueT>>(nullptr);
@@ -111,7 +135,10 @@ namespace DeepSight
 
 				return ds_grid;
 			}
-			catch (std::exception e)
+			// Was `catch (std::exception e)` -- catching by value slices any derived
+			// exception (openvdb::IoError, std::bad_alloc) down to its base, so
+			// what() reported the generic base message instead of the real cause.
+			catch (const std::exception& e)
 			{
 				std::cout << e.what() << std::endl;
 				return Grid<ValueT>::Ptr(nullptr);
@@ -149,7 +176,10 @@ namespace DeepSight
 		TIFF* tif = TIFFOpen(path.c_str(), "r");
 
 		if (tif) {
-			unsigned int width, height, samplesperpixel, bitspersample;
+			// See the note in load_scalar_tiff: SAMPLESPERPIXEL and BITSPERSAMPLE
+			// are 16-bit tags and must not be read into an `unsigned int`.
+			uint32_t width = 0, height = 0;
+			uint16_t samplesperpixel = 0, bitspersample = 0;
 			ValueT max_val = openvdb::Vec3f(0,0,0);
 
 			do {
@@ -170,7 +200,16 @@ namespace DeepSight
 					std::cout << "    bitspersample: " << bitspersample << std::endl;
 				}
 
-				unsigned int npixels = width * height; // get the total number of pixels
+				// See the note in load_scalar_tiff on 32-bit overflow here.
+				const uint64_t npixels64 = static_cast<uint64_t>(width) * static_cast<uint64_t>(height);
+				if (npixels64 == 0 || npixels64 > (SIZE_MAX / sizeof(uint32_t)))
+				{
+					TIFFClose(tif);
+					std::cerr << "TIFF page has invalid or unsupported dimensions ("
+						<< width << " x " << height << ")" << std::endl;
+					return std::shared_ptr<Grid<ValueT>>(nullptr);
+				}
+				const size_t npixels = static_cast<size_t>(npixels64); // total number of pixels
 
 				raster = (uint32_t*)_TIFFmalloc(npixels * sizeof(uint32_t)); // allocate temp memory (must use the tiff library malloc)
 				if (raster == NULL) // check the raster's memory was allocaed
@@ -183,6 +222,7 @@ namespace DeepSight
 				// Check the tif read to the raster correctly
 				if (!TIFFReadRGBAImage(tif, width, height, raster, 0))
 				{
+					_TIFFfree(raster);	// was leaked on this path
 					TIFFClose(tif);
 					std::cerr << "Could not read raster of TIFF image" << std::endl;
 					return std::shared_ptr<Grid<ValueT>>(nullptr);
@@ -454,7 +494,10 @@ namespace DeepSight
 
 				return infolog;
 			}
-			catch (std::exception e)
+			// Was `catch (std::exception e)` -- catching by value slices any derived
+			// exception (openvdb::IoError, std::bad_alloc) down to its base, so
+			// what() reported the generic base message instead of the real cause.
+			catch (const std::exception& e)
 			{
 				std::cout << e.what() << std::endl;
 				return std::shared_ptr<RawLam::InfoLog>(nullptr);
@@ -468,77 +511,118 @@ namespace DeepSight
 		return std::shared_ptr<RawLam::InfoLog>(nullptr);
 	}
 
-	std::vector<GridBase*> read_vdb(const std::string path)
+	std::vector<GridBase*> read_vdb(const std::string& path)
 	{
-		openvdb::initialize();
-
 		openvdb::io::File file(path);
-		file.open();
+		file.open();		// throws openvdb::IoError on a missing/corrupt file
 
-		std::vector<GridBase*> grids;
+		// unique_ptrs while building. If readGrid() throws part-way through a
+		// multi-grid file (truncated stream, unregistered grid type), the
+		// GridBase objects already constructed used to be leaked outright --
+		// and each one can own hundreds of MB of tree.
+		std::vector<std::unique_ptr<GridBase>> owned;
 
-		//auto grid_ptr_vec = file.getGrids();
-
-		//for(auto iter=grid_ptr_vec->begin(); iter != grid_ptr_vec->end(); ++iter)
-
-		for (openvdb::io::File::NameIterator nameIter = file.beginName();
-			nameIter != file.endName(); ++nameIter)
+		try
 		{
-			//std::cout << "Reading " << (*iter)->type() << std::endl;
-			auto grid = new GridBase();
-			//grid->m_grid = openvdb::GridBase::Ptr( * iter);
-			//std::cout << "Grid set: " << grid->m_grid->type() << std::endl;
-			//std::cout << "Grid ptr: " << grid << std::endl;
-			grid->m_grid = file.readGrid(nameIter.gridName());
-			grids.push_back(grid);
+			for (openvdb::io::File::NameIterator nameIter = file.beginName();
+				nameIter != file.endName(); ++nameIter)
+			{
+				std::unique_ptr<GridBase> grid(new GridBase());
+				grid->m_grid = file.readGrid(nameIter.gridName());
+				owned.push_back(std::move(grid));
+			}
+		}
+		catch (...)
+		{
+			file.close();	// was left open on the throwing path
+			throw;
 		}
 
 		file.close();
+
+		std::vector<GridBase*> grids;
+		grids.reserve(owned.size());
+		for (auto& g : owned) grids.push_back(g.release());
 
 		return grids;
 	}
 
-	void ReadWrite_ReadVdb(const char* path, int* num_grids, GridBase** grid_ptrs)
+	// -----------------------------------------------------------------------
+	// C ABI entry points.
+	//
+	// Both of these call straight into OpenVDB file I/O, which throws
+	// openvdb::IoError for the single most common failure in the whole library
+	// -- a path that does not exist. Previously that exception unwound out of
+	// an extern "C" frame and into the CLR, killing Rhino outright. They are
+	// now wrapped, and report failure through DeepSight_GetLastError().
+	// -----------------------------------------------------------------------
+
+	extern "C"
 	{
-		std::vector<GridBase*> grids = read_vdb(path);
-		//std::cout << "Found " << grids.size() << " grids... " << std::endl;
-		//std::cout << "Size of grids array: " << sizeof(grids) << std::endl;
-		//std::cout << "Size of single ptr : " << sizeof(GridBase*) << std::endl;
-
-		*grid_ptrs = (GridBase*)CoTaskMemAlloc(sizeof(GridBase*) * grids.size());
-		CopyMemory(*grid_ptrs, grids.data(), sizeof(GridBase*) * grids.size());
-		*num_grids = grids.size();
-
-		/*
-
-		SAFEARRAY* psa = SafeArrayCreateVector(VT_I4, 0, grids.size());
-		if (psa == nullptr)
-			return nullptr;
-
-		void* data;
-		SafeArrayAccessData(psa, &data);
-		CopyMemory(data, grids.data(), grids.size() * sizeof(GridBase*));
-		SafeArrayUnaccessData(psa);
-		return psa;
-		*/
-	}
-
-	void ReadWrite_WriteVdb(const char* path, int num_grids, GridBase** grids, int float_as_half)
-	{
-		openvdb::io::File file(path);
-		openvdb::GridPtrVec grids_out;
-
-		for (int i = 0; i < num_grids; ++i)
+		void DEEPSIGHT_CALL ReadWrite_ReadVdb(const char* path, int* num_grids, GridBase*** grid_ptrs)
 		{
-			auto grid = grids[i]->m_grid;
-			grid->pruneGrid();
-			grid->setSaveFloatAsHalf(float_as_half != 0);
-			grids_out.push_back(grid);
+			api_guard([&] {
+				if (path == nullptr) throw std::invalid_argument("ReadWrite_ReadVdb: null path.");
+				if (num_grids == nullptr) throw std::invalid_argument("ReadWrite_ReadVdb: null num_grids.");
+				if (grid_ptrs == nullptr) throw std::invalid_argument("ReadWrite_ReadVdb: null grid_ptrs.");
+
+				// Report zero before doing any work, so that a caller that
+				// ignores the error state still sees a consistent (empty)
+				// result rather than a stale count with a null buffer.
+				*num_grids = 0;
+				*grid_ptrs = nullptr;
+
+				std::vector<GridBase*> grids = read_vdb(path);
+
+				if (grids.empty())
+					return;		// CoTaskMemAlloc(0) may return null, and the
+								// old code CopyMemory'd into it unconditionally
+
+				const size_t bytes = sizeof(GridBase*) * grids.size();
+				GridBase** buffer = static_cast<GridBase**>(::CoTaskMemAlloc(bytes));
+				if (buffer == nullptr)
+				{
+					// Do not leak the grids we just read if we cannot hand
+					// them back.
+					for (GridBase* g : grids) delete g;
+					throw std::bad_alloc();
+				}
+
+				std::memcpy(buffer, grids.data(), bytes);
+
+				*grid_ptrs = buffer;
+				*num_grids = static_cast<int>(grids.size());
+			});
 		}
 
-		file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+		void DEEPSIGHT_CALL ReadWrite_WriteVdb(const char* path, int num_grids, GridBase* const* grids, int float_as_half)
+		{
+			api_guard([&] {
+				if (path == nullptr) throw std::invalid_argument("ReadWrite_WriteVdb: null path.");
+				if (num_grids < 0) throw std::invalid_argument("ReadWrite_WriteVdb: negative grid count.");
+				if (num_grids > 0 && grids == nullptr) throw std::invalid_argument("ReadWrite_WriteVdb: null grid array.");
 
-		file.write(grids_out);
-		file.close();
+				openvdb::GridPtrVec grids_out;
+				grids_out.reserve(static_cast<size_t>(num_grids));
+
+				for (int i = 0; i < num_grids; ++i)
+				{
+					// A null or empty entry used to be dereferenced blind.
+					if (grids[i] == nullptr || !grids[i]->m_grid)
+						throw std::invalid_argument(
+							"ReadWrite_WriteVdb: grid " + std::to_string(i) + " is null or empty.");
+
+					auto grid = grids[i]->m_grid;
+					grid->pruneGrid();
+					grid->setSaveFloatAsHalf(float_as_half != 0);
+					grids_out.push_back(grid);
+				}
+
+				openvdb::io::File file(path);
+				file.setCompression(openvdb::io::COMPRESS_ACTIVE_MASK | openvdb::io::COMPRESS_BLOSC);
+				file.write(grids_out);
+				file.close();
+			});
+		}
 	}
 }

@@ -72,13 +72,15 @@ namespace DeepSight.GH.Components
             Transform inv, xform = Transform.Scale(Point3d.Origin, voxel_size);
             xform.TryGetInverse(out inv);
 
-            mesh.Transform(inv);
+            // Work on a copy; mesh belongs to the caller.
+            Rhino.Geometry.Mesh work = mesh.DuplicateMesh();
+            work.Transform(inv);
 
             double EB = 3.0f, IB = 3.0f;
             DA.GetData("Exterior Bandwidth", ref EB);
             DA.GetData("Interior Bandwidth", ref IB);
 
-            Grid grid = mesh.ToVolume(xform, (float)iso, (float)EB, (float)IB);
+            Grid grid = work.ToVolume(xform, (float)iso, (float)EB, (float)IB);
             grid.Name = name;
             //grid.SdfToFog();
 

@@ -63,6 +63,36 @@ namespace DeepSight.GH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ColortoValue {
+            get {
+                object obj = ResourceManager.GetObject("ColortoValue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Curve2Grid {
+            get {
+                object obj = ResourceManager.GetObject("Curve2Grid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtractHypervoxel_01 {
+            get {
+                object obj = ResourceManager.GetObject("ExtractHypervoxel_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GridBox {
             get {
                 object obj = ResourceManager.GetObject("GridBox", resourceCulture);
@@ -86,6 +116,16 @@ namespace DeepSight.GH.Properties {
         internal static System.Drawing.Bitmap GridDisplayVector {
             get {
                 object obj = ResourceManager.GetObject("GridDisplayVector", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GridErosion {
+            get {
+                object obj = ResourceManager.GetObject("GridErosion", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -186,6 +226,106 @@ namespace DeepSight.GH.Properties {
         internal static System.Drawing.Bitmap GridSlice {
             get {
                 object obj = ResourceManager.GetObject("GridSlice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Hypervoxel_fuse {
+            get {
+                object obj = ResourceManager.GetObject("Hypervoxel_fuse", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Hypervoxel_fuse1 {
+            get {
+                object obj = ResourceManager.GetObject("Hypervoxel_fuse1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Hypervoxel_slice {
+            get {
+                object obj = ResourceManager.GetObject("Hypervoxel_slice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HypervoxelBase {
+            get {
+                object obj = ResourceManager.GetObject("HypervoxelBase", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HyperVoxelLoad {
+            get {
+                object obj = ResourceManager.GetObject("HyperVoxelLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HypervoxelMetamorph {
+            get {
+                object obj = ResourceManager.GetObject("HypervoxelMetamorph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HyperVoxelSave {
+            get {
+                object obj = ResourceManager.GetObject("HyperVoxelSave", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MergeHypervoxel_01 {
+            get {
+                object obj = ResourceManager.GetObject("MergeHypervoxel_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap meshgrid {
+            get {
+                object obj = ResourceManager.GetObject("meshgrid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Pointcloud2grid {
+            get {
+                object obj = ResourceManager.GetObject("Pointcloud2grid", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

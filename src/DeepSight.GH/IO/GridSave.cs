@@ -85,12 +85,31 @@ namespace DeepSight.GH.Components
                 return;
             }
 
-            if (!System.IO.Path.HasExtension(m_path))
+            // A folder is not a file path. Path.HasExtension is also fooled by a
+            // dot anywhere in the last segment ("My.Folder\"), so it would skip
+            // appending .vdb and then try to write to a directory.
+            if (System.IO.Directory.Exists(m_path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "Filepath is a folder. Supply a full path including a filename, " +
+                    "e.g. C:\\path\\grid.vdb");
+                DA.SetDataList("debug", debug);
+                return;
+            }
+
+            if (!m_path.EndsWith(".vdb", StringComparison.OrdinalIgnoreCase))
                 m_path = m_path + ".vdb";
 
-            if (!string.IsNullOrEmpty(m_path))
+            try
             {
                 GridIO.Write(m_path, input_grids.ToArray());
+                debug.Add($"Wrote {input_grids.Count} grid(s) to {m_path}");
+            }
+            catch (Exception e)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Write failed: " + e.Message);
+                DA.SetDataList("debug", debug);
+                return;
             }
 
             DA.SetDataList("debug", debug);

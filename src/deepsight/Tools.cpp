@@ -1,5 +1,7 @@
 #include "Tools.h"
 
+#include <memory>
+
 namespace DeepSight
 {
 #pragma region Filter_Tools
@@ -7,7 +9,9 @@ namespace DeepSight
 	template<typename GridT>
 	void filter(GridBase* grid, int width, int iterations, int type)
 	{
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		// grid_as<> throws on a type mismatch instead of returning null and
+		// letting the next line dereference it.
+		typename GridT::Ptr source = grid->grid_as<GridT>();
 
 		openvdb::tools::Filter<GridT> tool(*source);
 		switch (type)
@@ -26,9 +30,14 @@ namespace DeepSight
 	template<typename GridT>
 	GridBase* resample(GridBase* grid, float scale)
 	{
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
-		typename GridT::Ptr target = openvdb::gridPtrCast<GridT>(source->deepCopyGrid());
-		target->clear();
+		typename GridT::Ptr source = grid->grid_as<GridT>();
+
+		// Was: deepCopyGrid() followed by clear(). That allocated a full copy of
+		// the source tree -- potentially several GB for a scan volume -- and
+		// then immediately threw the tree away, just to inherit the background
+		// value and metadata. copyWithNewTree() gets the same result without
+		// touching the voxel data.
+		typename GridT::Ptr target = openvdb::gridPtrCast<GridT>(source->copyGridWithNewTree());
 
 		target->setTransform(
 			openvdb::math::Transform::createLinearTransform(scale));
@@ -51,39 +60,50 @@ namespace DeepSight
 
 		openvdb::tools::resampleToMatch<openvdb::tools::QuadraticSampler>(*source, *target);
 
-		GridBase* new_grid = new GridBase();
+		std::unique_ptr<GridBase> new_grid(new GridBase());
 		new_grid->m_grid = target;
 
-		return new_grid;
+		return new_grid.release();
 	}
 
 	template<typename GridT>
 	GridBase* mean_curvature(GridBase* grid)
 	{
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
-		GridBase* new_grid = new GridBase();
+		// This function had no return statement. Falling off the end of a
+		// non-void function is undefined behaviour -- MSVC emits it as a
+		// warning, not an error, so it compiled and returned whatever happened
+		// to be in the return register, and leaked new_grid every call.
+		typename GridT::Ptr source = grid->grid_as<GridT>();
+
+		std::unique_ptr<GridBase> new_grid(new GridBase());
 		new_grid->m_grid = openvdb::tools::meanCurvature(*source);
+
+		return new_grid.release();
 	}
 
 	template<typename GridT>
 	void erode(GridBase* grid, int iterations)
 	{
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		typename GridT::Ptr source = grid->grid_as<GridT>();
 		openvdb::tools::erodeActiveValues(source->tree(), iterations, openvdb::tools::NearestNeighbors::NN_FACE_EDGE_VERTEX);
 	}
 
 	template<typename GridT>
 	void dilate(GridBase* grid, int iterations)
 	{
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		typename GridT::Ptr source = grid->grid_as<GridT>();
 		openvdb::tools::dilateActiveValues(source->tree(), iterations, openvdb::tools::NearestNeighbors::NN_FACE_EDGE_VERTEX);
 	}
 
+	// NOTE: this was an empty stub -- it cast the grid and then did nothing,
+	// so any caller silently got a no-op. It is not declared in Tools.h and
+	// nothing calls it. Left in place but marked, rather than deleted, in case
+	// it is work-in-progress: if it is, openvdb::tools::gradient(*source) is
+	// the call it wants; if not, delete it.
 	template<typename GridT>
-	void gradient(GridBase* grid)
+	void gradient(GridBase* /*grid*/)
 	{
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
-		//openvdb::tools::
+		static_assert(sizeof(GridT) > 0, "gradient() is not implemented.");
 	}
 
 #pragma endregion Filter_Tools
@@ -94,7 +114,7 @@ namespace DeepSight
 	void volume_to_mesh(GridBase* grid, float isovalue, std::vector<Eigen::Vector3f>& verts, std::vector<Eigen::Vector4i>& quads, std::vector<Eigen::Vector3i>& tris)
 	{
 		openvdb::tools::VolumeToMesh mesher(isovalue);
-		typename GridT::Ptr source = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		typename GridT::Ptr source = grid->grid_as<GridT>();
 
 		mesher(*source);
 
@@ -143,10 +163,12 @@ namespace DeepSight
 		openvdb::FloatGrid::Ptr new_grid = openvdb::tools::meshToVolume<openvdb::FloatGrid, MeshType>
 			(mesh, *xform, exteriorBandWidth, interiorBandWidth);
 
-		GridBase* grid = new GridBase();
-		grid->m_grid = new_grid->deepCopy();
+		std::unique_ptr<GridBase> grid(new GridBase());
+		// new_grid was just created by meshToVolume and has no other owner, so
+		// the deepCopy() that used to be here doubled peak memory for nothing.
+		grid->m_grid = new_grid;
 
-		return grid;
+		return grid.release();
 	}
 
 	GridBase* volume_from_points(int num_points, float* points, float radius, float voxelsize)
@@ -167,9 +189,9 @@ namespace DeepSight
 		pgrid.rasterizeSpheres(plist);
 		pgrid.finalize();
 
-		auto dgrid = new GridBase();
+		std::unique_ptr<GridBase> dgrid(new GridBase());
 		dgrid->m_grid = grid;
-		return dgrid;
+		return dgrid.release();
 	}
 #pragma endregion Conversion_Tools
 #pragma region Template_specialization

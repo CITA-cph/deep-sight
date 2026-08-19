@@ -118,6 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ColortoValue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ColortoValue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Curve2Grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve2Grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtractHypervoxel_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtractHypervoxel_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="GridBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridBox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -126,6 +135,9 @@
   </data>
   <data name="GridDisplay_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridDisplay_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridErosion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GridErosion.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GridFilter_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridFilter_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -156,6 +168,36 @@
   </data>
   <data name="GridSlice" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GridSlice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HypervoxelBase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HypervoxelBase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HyperVoxelLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HyperVoxelLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HypervoxelMetamorph" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HypervoxelMetamorph.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HyperVoxelSave" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HyperVoxelSave.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Hypervoxel_fuse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Hypervoxel_fuse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Hypervoxel_fuse1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Hypervoxel_fuse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Hypervoxel_slice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Hypervoxel_slice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MergeHypervoxel_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeHypervoxel_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="meshgrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\meshgrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pointcloud2grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Pointcloud2grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="VGridDisplay_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\VGridDisplay_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

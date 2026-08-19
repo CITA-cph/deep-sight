@@ -48,6 +48,7 @@
     <Compile Include="Convert.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="GridTypes\DoubleGrid.cs" />
+    <Compile Include="HyperVoxel.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="GridTypes\Vec3fGrid.cs" />
     <Compile Include="GridTypes\Int32Grid.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Grid.cs" />
     <Compile Include="GridTypes\GridBase.cs" />
     <Compile Include="GridIO.cs" />
+    <Compile Include="NativeError.cs" />
     <Compile Include="InfoLog.cs" />
     <Compile Include="LayeredGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

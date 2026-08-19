@@ -40,7 +40,9 @@ namespace DeepSight
 	template<typename GridT>
 	void sdf_to_fog(GridBase* grid, float cutoffDistance)
 	{
-		auto tgrid = openvdb::gridPtrCast<GridT>(grid->m_grid);
+		// grid_as<> throws on a type mismatch; gridPtrCast returned null and
+		// the next line dereferenced it.
+		auto tgrid = grid->grid_as<GridT>();
 		openvdb::tools::sdfToFogVolume<GridT>(*tgrid, cutoffDistance);
 	}
 

@@ -68,9 +68,16 @@ namespace DeepSight.GH.Components
                 else if ((m_grid as GH_Grid).Value is VGrid)
                     mask_vgrid = (m_grid as GH_Grid).Value as VGrid;
                 else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                        "Mask must be a float or vector grid.");
                     return;
+                }
             else
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Mask input is not a grid.");
                 return;
+            }
 
             int[] active = null;
             if (mask_fgrid != null) {
@@ -91,9 +98,49 @@ namespace DeepSight.GH.Components
                 else if ((m_grid as GH_Grid).Value is VGrid)
                     temp_vgrid = (m_grid as GH_Grid).Value as VGrid;
                 else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                        "Grid must be a float or vector grid.");
                     return;
+                }
             else
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Grid input is not a grid.");
                 return;
+            }
+
+
+            float[] srcXform = null, maskXform = null;
+            try
+            {
+                srcXform = (temp_fgrid != null) ? temp_fgrid.Transform
+                         : (temp_vgrid != null ? temp_vgrid.Transform : null);
+                maskXform = (mask_fgrid != null) ? mask_fgrid.Transform
+                          : (mask_vgrid != null ? mask_vgrid.Transform : null);
+            }
+            catch { }
+
+            if (srcXform != null && maskXform != null
+                && srcXform.Length == 16 && maskXform.Length == 16)
+            {
+                for (int i = 0; i < 16; i++)
+                {
+                    if (Math.Abs(srcXform[i] - maskXform[i]) > 1e-5f)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+                            "Grid and Mask have different transforms, so their voxel coordinates " +
+                            "do not refer to the same physical points. Resample one onto the other " +
+                            "first, or the masked result will be meaningless.");
+                        break;
+                    }
+                }
+            }
+
+            if (active == null || active.Length == 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Mask has no active voxels.");
+                return;
+            }
 
             if (temp_fgrid != null)
             {

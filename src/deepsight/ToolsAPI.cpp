@@ -1,27 +1,111 @@
 #include "ToolsAPI.h"
+#include "ApiGuard.h"
+
+// Every export here forwards into OpenVDB, all of which can throw. Without the
+// api_guard wrapper those exceptions unwound out of an extern "C" frame into
+// managed code, which terminates the host process. See ApiGuard.h.
 
 namespace DeepSight
 {
-	GridBase* FloatGrid_Resample (GridBase* ptr, float scale) { return resample<openvdb::FloatGrid>(ptr, scale); }
-	GridBase* DoubleGrid_Resample(GridBase* ptr, float scale) { return resample<openvdb::DoubleGrid>(ptr, scale); }
-	GridBase* Int32Grid_Resample (GridBase* ptr, float scale) { return resample<openvdb::Int32Grid>(ptr, scale); }
+	namespace
+	{
+		GridBase* require_grid(GridBase* p)
+		{
+			if (p == nullptr) throw std::invalid_argument("Null grid handle.");
+			return p;
+		}
+	}
 
-	void FloatGrid_Filter(GridBase* ptr, int width, int iterations, int type) { filter<openvdb::FloatGrid>(ptr, width, iterations, type); }
-	void DoubleGrid_Filter(GridBase* ptr, int width, int iterations, int type) { filter<openvdb::DoubleGrid>(ptr, width, iterations, type); }
-	void Int32Grid_Filter(GridBase* ptr, int width, int iterations, int type) { filter<openvdb::Int32Grid>(ptr, width, iterations, type); }
+	extern "C"
+	{
+		GridBase* DEEPSIGHT_CALL FloatGrid_Resample(GridBase* ptr, float scale)
+		{
+			return api_guard([&] { return resample<openvdb::FloatGrid>(require_grid(ptr), scale); },
+				static_cast<GridBase*>(nullptr));
+		}
 
-	void FloatGrid_SdfToFog(GridBase* ptr, float cutoffDistance) { sdf_to_fog<openvdb::FloatGrid>(ptr, cutoffDistance); }
-	void DoubleGrid_SdfToFog(GridBase* ptr, float cutoffDistance) { sdf_to_fog<openvdb::DoubleGrid>(ptr, cutoffDistance); }
-	void Int32Grid_SdfToFog(GridBase* ptr, float cutoffDistance) { sdf_to_fog<openvdb::Int32Grid>(ptr, cutoffDistance); }
+		GridBase* DEEPSIGHT_CALL DoubleGrid_Resample(GridBase* ptr, float scale)
+		{
+			return api_guard([&] { return resample<openvdb::DoubleGrid>(require_grid(ptr), scale); },
+				static_cast<GridBase*>(nullptr));
+		}
 
-	void FloatGrid_Erode(GridBase* ptr, int iterations) { erode<openvdb::FloatGrid>(ptr, iterations); }
-	void DoubleGrid_Erode(GridBase* ptr, int iterations) { erode<openvdb::DoubleGrid>(ptr, iterations); }
-	void Int32Grid_Erode(GridBase* ptr, int iterations) { erode<openvdb::Int32Grid>(ptr, iterations); }
-	void Vec3fGrid_Erode(GridBase* ptr, int iterations) { erode<openvdb::Vec3fGrid>(ptr, iterations); }
+		GridBase* DEEPSIGHT_CALL Int32Grid_Resample(GridBase* ptr, float scale)
+		{
+			return api_guard([&] { return resample<openvdb::Int32Grid>(require_grid(ptr), scale); },
+				static_cast<GridBase*>(nullptr));
+		}
 
-	void FloatGrid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::FloatGrid>(ptr, iterations); }
-	void DoubleGrid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::DoubleGrid>(ptr, iterations); }
-	void Int32Grid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::Int32Grid>(ptr, iterations); }
-	void Vec3fGrid_Dilate(GridBase* ptr, int iterations) { dilate<openvdb::Vec3fGrid>(ptr, iterations); } 
 
+		void DEEPSIGHT_CALL FloatGrid_Filter(GridBase* ptr, int width, int iterations, int type)
+		{
+			api_guard([&] { filter<openvdb::FloatGrid>(require_grid(ptr), width, iterations, type); });
+		}
+
+		void DEEPSIGHT_CALL DoubleGrid_Filter(GridBase* ptr, int width, int iterations, int type)
+		{
+			api_guard([&] { filter<openvdb::DoubleGrid>(require_grid(ptr), width, iterations, type); });
+		}
+
+		void DEEPSIGHT_CALL Int32Grid_Filter(GridBase* ptr, int width, int iterations, int type)
+		{
+			api_guard([&] { filter<openvdb::Int32Grid>(require_grid(ptr), width, iterations, type); });
+		}
+
+		void DEEPSIGHT_CALL FloatGrid_SdfToFog(GridBase* ptr, float cutoffDistance)
+		{
+			api_guard([&] { sdf_to_fog<openvdb::FloatGrid>(require_grid(ptr), cutoffDistance); });
+		}
+
+		void DEEPSIGHT_CALL DoubleGrid_SdfToFog(GridBase* ptr, float cutoffDistance)
+		{
+			api_guard([&] { sdf_to_fog<openvdb::DoubleGrid>(require_grid(ptr), cutoffDistance); });
+		}
+
+		void DEEPSIGHT_CALL Int32Grid_SdfToFog(GridBase* ptr, float cutoffDistance)
+		{
+			api_guard([&] { sdf_to_fog<openvdb::Int32Grid>(require_grid(ptr), cutoffDistance); });
+		}
+
+		void DEEPSIGHT_CALL FloatGrid_Erode(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { erode<openvdb::FloatGrid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL DoubleGrid_Erode(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { erode<openvdb::DoubleGrid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL Int32Grid_Erode(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { erode<openvdb::Int32Grid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL Vec3fGrid_Erode(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { erode<openvdb::Vec3fGrid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL FloatGrid_Dilate(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { dilate<openvdb::FloatGrid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL DoubleGrid_Dilate(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { dilate<openvdb::DoubleGrid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL Int32Grid_Dilate(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { dilate<openvdb::Int32Grid>(require_grid(ptr), iterations); });
+		}
+
+		void DEEPSIGHT_CALL Vec3fGrid_Dilate(GridBase* ptr, int iterations)
+		{
+			api_guard([&] { dilate<openvdb::Vec3fGrid>(require_grid(ptr), iterations); });
+		}
+
+	}
 }
