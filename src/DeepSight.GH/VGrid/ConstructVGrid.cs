@@ -126,9 +126,9 @@ namespace DeepSight.GH.Components
             //FGrid mask = new FGrid("Mask", 0);
 
             VGrid new_grid = new VGrid("new_grid", new float[3] { 0, 0, 0 });
-            new_grid.SetActiveStates(X_grid.GetActiveVoxels(), Enumerable.Repeat(true, X_grid.ActiveVoxelCount).ToArray());
-            new_grid.SetActiveStates(Y_grid.GetActiveVoxels(), Enumerable.Repeat(true, Y_grid.ActiveVoxelCount).ToArray());
-            new_grid.SetActiveStates(Z_grid.GetActiveVoxels(), Enumerable.Repeat(true, Z_grid.ActiveVoxelCount).ToArray());
+            new_grid.SetActiveStates(X_grid.GetActiveVoxels(), Enumerable.Repeat(true, (int)X_grid.ActiveVoxelCount).ToArray());
+            new_grid.SetActiveStates(Y_grid.GetActiveVoxels(), Enumerable.Repeat(true, (int)Y_grid.ActiveVoxelCount).ToArray());
+            new_grid.SetActiveStates(Z_grid.GetActiveVoxels(), Enumerable.Repeat(true, (int)Z_grid.ActiveVoxelCount).ToArray());
 
             int[] active = new_grid.GetActiveVoxels();
             Vec3<float>[] values = new Vec3<float>[new_grid.ActiveVoxelCount];

@@ -44,6 +44,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\version.props" />
+    <Import Project="..\..\deepsight-paths.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -99,7 +100,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\lib\cpp\tiff\include;C:\git\vcpkg\installed\x64-windows-static\include;C:\git\vcpkg\installed\x64-windows-static\include\eigen3;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-W4 -wd4251 -wd4146 -wd4127 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessToFile>false</PreprocessToFile>
@@ -113,7 +114,7 @@
       <EnableUAC>false</EnableUAC>
       <Version>"$(DEEPSIGHT_VERSION)"</Version>
       <AdditionalLibraryDirectories>C:\git\vcpkg\installed\x64-windows-static\lib;C:\git\openvdb\build\openvdb\openvdb\Release;C:\lib\cpp\lz4\lib;C:\lib\cpp\tiff\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Imath-3_1.lib;libblosc.lib;libopenvdb.lib;tbb12.lib;lz4.lib;zstd.lib;zlib.lib;tiff.lib;lzma.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Imath-3_2.lib;libblosc.lib;libopenvdb.lib;tbb12.lib;lz4.lib;zstd.lib;zs.lib;tiff.lib;lzma.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -133,6 +134,7 @@
     <ClInclude Include="Grid-export.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GridBase.h" />
+    <ClInclude Include="ApiGuard.h" />
     <ClInclude Include="GridBaseAPI.h" />
     <ClInclude Include="InfoLog-export.h" />
     <ClInclude Include="InfoLog.h" />
@@ -153,6 +155,7 @@
     <ClCompile Include="Grid-export.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GridBase.cpp" />
+    <ClCompile Include="ApiGuard.cpp" />
     <ClCompile Include="GridBaseAPI.cpp" />
     <ClCompile Include="InfoLog-export.cpp" />
     <ClCompile Include="InfoLog.cpp" />
