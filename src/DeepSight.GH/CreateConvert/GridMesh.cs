@@ -33,7 +33,7 @@ namespace DeepSight.GH.Components
         {
         }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridMesh_01;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.meshgrid;
         public override Guid ComponentGuid => new Guid("90a8da23-75a6-4ebc-a83c-405bb725b5cf");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)

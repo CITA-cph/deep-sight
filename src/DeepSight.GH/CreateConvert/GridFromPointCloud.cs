@@ -39,7 +39,7 @@ namespace DeepSight.GH.Components
         }
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.GridMesh_01;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.Pointcloud2grid;
         public override Guid ComponentGuid => new Guid("441990E4-8F4B-4AEC-8DCA-E4DA6767B844");
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -76,9 +76,13 @@ namespace DeepSight.GH.Components
             Transform inv, xform = Transform.Scale(Point3d.Origin, voxel_size);
             xform.TryGetInverse(out inv);
 
-            pc.Transform(inv);
+            // Work on a copy. pc is the caller's point cloud, not ours -
+            // transforming it in place permanently rescales the upstream data,
+            // so every re-solve compounds the scale and the geometry collapses.
+            PointCloud pcw = (PointCloud)pc.Duplicate();
+            pcw.Transform(inv);
 
-            Point3d[] points = pc.GetPoints();
+            Point3d[] points = pcw.GetPoints();
             int[] fpoints = new int[points.Length * 3];
 
             //Parallel.For(0, points.Length - 1, i =>
@@ -97,13 +101,13 @@ namespace DeepSight.GH.Components
 
             debug.Add(string.Format("{0} : Flattened list of samples.", stopwatch.ElapsedMilliseconds));
 
-            if (pc.ContainsColors)
+            if (pcw.ContainsColors)
             {
                 VGrid grid = new VGrid();
                 grid.Name = name;
                 grid.Transform = xform.ToFloatArray(true);
 
-                System.Drawing.Color[] colors = pc.GetColors();
+                System.Drawing.Color[] colors = pcw.GetColors();
                 Vec3<float>[] values = new Vec3<float>[points.Length];
 
                 for (int i = 0; i < values.Length; i++)

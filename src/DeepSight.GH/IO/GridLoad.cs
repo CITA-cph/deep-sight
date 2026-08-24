@@ -49,10 +49,40 @@ namespace DeepSight.GH.Components
             string m_path = String.Empty;
 
             DA.GetData("Filepath", ref m_path);
-            if (System.IO.File.Exists(m_path) && m_path.EndsWith(".vdb"))
+
+            if (string.IsNullOrEmpty(m_path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No filepath supplied.");
+                return;
+            }
+
+            // Was EndsWith(".vdb") without a comparison mode, so a file named
+            // scan.VDB was rejected as though it did not exist.
+            if (!m_path.EndsWith(".vdb", StringComparison.OrdinalIgnoreCase))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Not a .vdb file: " + m_path);
+                return;
+            }
+
+            if (!System.IO.File.Exists(m_path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "File not found: " + m_path);
+                return;
+            }
+
+            try
             {
                 var grids = GridIO.Read(m_path);
+                if (grids == null || grids.Length == 0)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "File contained no grids.");
+                    return;
+                }
                 DA.SetDataList("Grid", grids.Select(x => new GH_Grid(x)));
+            }
+            catch (Exception e)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not read the file: " + e.Message);
             }
         }
     }

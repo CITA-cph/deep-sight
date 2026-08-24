@@ -119,17 +119,44 @@ namespace DeepSight.GH.Components
                 {
                     values = objects.Cast<GH_Number>().ToList();
                 }
-                catch
+                // Narrowed from a bare `catch`. Catching everything meant a
+                // genuine failure -- an OutOfMemoryException on a large grid,
+                // or a DeepSightNativeException from the layer below -- was
+                // reported to the user as "could not convert to numbers",
+                // which sends them looking in entirely the wrong place.
+                catch (InvalidCastException)
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input values to numbers.");
                     return;
                 }
-                FGrid new_fgrid = new FGrid();
-                new_fgrid.Transform = temp_fgrid.Transform;
-                new_fgrid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
 
-                DA.SetData("Grid", new GH_Grid(new_fgrid));
-                DA.SetDataList("debug", debug);
+                // The point and value counts were never compared. A mismatch
+                // used to reach the native SetValues, which reads one value per
+                // coordinate triplet regardless of how long the array actually
+                // is -- i.e. it read past the end of the managed array.
+                if (values.Count != points.Count)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                        $"Need one value per point ({points.Count} points, {values.Count} values).");
+                    return;
+                }
+
+                try
+                {
+                    FGrid new_fgrid = new FGrid();
+                    new_fgrid.Transform = temp_fgrid.Transform;
+                    new_fgrid.SetValues(fpoints, values.Select(x => (float)x.Value).ToArray());
+
+                    DA.SetData("Grid", new GH_Grid(new_fgrid));
+                    DA.SetDataList("debug", debug);
+                }
+                catch (Exception e)
+                {
+                    // Surface native/argument failures in the GH panel rather
+                    // than letting them escape as an unhandled component error.
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                    return;
+                }
             }
             else if (temp_vgrid != null)
             {
@@ -139,22 +166,43 @@ namespace DeepSight.GH.Components
                     for(int i=0; i<objects.Count; i++)
                     {
                         GH_Vector vec = new GH_Vector();
-                        GH_Convert.ToGHVector(objects[i], GH_Conversion.Both, ref vec);
+                        if (!GH_Convert.ToGHVector(objects[i], GH_Conversion.Both, ref vec))
+                            throw new InvalidCastException($"Value {i} is not a vector.");
                         values.Add(vec);
                     }
                     //values = objects.Cast<GH_Vector>().ToList();
-                } catch
+                }
+                // See the note on the scalar branch above: narrowed from a
+                // bare catch. GH_Convert.ToGHVector signals failure by
+                // returning false rather than throwing, so that return value
+                // is now checked too instead of being discarded.
+                catch (InvalidCastException)
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input values to vectors.");
                     return;
                 }
 
-                VGrid new_vgrid = new VGrid();
-                new_vgrid.Transform = temp_vgrid.Transform;
-                new_vgrid.SetValues(fpoints, values.Select(x => new Vec3<float>((float)(x.Value.X), (float)(x.Value.Y), (float)(x.Value.Z))).ToArray());
+                if (values.Count != points.Count)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                        $"Need one value per point ({points.Count} points, {values.Count} values).");
+                    return;
+                }
 
-                DA.SetData("Grid", new GH_Grid(new_vgrid));
-                DA.SetDataList("debug", debug);
+                try
+                {
+                    VGrid new_vgrid = new VGrid();
+                    new_vgrid.Transform = temp_vgrid.Transform;
+                    new_vgrid.SetValues(fpoints, values.Select(x => new Vec3<float>((float)(x.Value.X), (float)(x.Value.Y), (float)(x.Value.Z))).ToArray());
+
+                    DA.SetData("Grid", new GH_Grid(new_vgrid));
+                    DA.SetDataList("debug", debug);
+                }
+                catch (Exception e)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                    return;
+                }
             }
             else return;
         }
